@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 279937349}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ceillingCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,7 +257,7 @@ GameObject:
   - component: {fileID: 688348766}
   - component: {fileID: 688348765}
   - component: {fileID: 688348767}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: HandGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,12 +347,13 @@ MonoBehaviour:
   playerTransform: {fileID: 717775820}
   cannonTransform: {fileID: 1800664001}
   recoil: 0.2
+  recoilMultiplier: 10
   magazineSize: 0
   currentAmmo: 0
   totalAmmo: 0
   reloadTime: 0
   bulletSpeed: 0
-  fireRate: 0.3
+  fireRate: 0.1
   bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
 --- !u!1 &710109773
 GameObject:
@@ -553,11 +554,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_JumpForce: 400
   m_CrouchSpeed: 0.36
-  m_MovementSmoothing: 0.05
+  m_MovementSmoothing: 0.1
   m_AirControl: 1
   m_WhatIsGround:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1
   m_GroundCheck: {fileID: 2133435366}
   m_CeilingCheck: {fileID: 279937349}
   m_CrouchDisableCollider: {fileID: 0}
@@ -584,7 +585,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: 555ba5501e999f94898521d5a7c11783, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -594,7 +595,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!1 &1424418870
 GameObject:
@@ -605,7 +606,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1424418871}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: weaponCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -639,7 +640,7 @@ GameObject:
   - component: {fileID: 1668505343}
   - component: {fileID: 1668505342}
   - component: {fileID: 1668505340}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: playerObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -767,7 +768,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1800664001}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -798,7 +799,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2133435366}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: groundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -814,7 +815,7 @@ Transform:
   m_GameObject: {fileID: 2133435365}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.26304245, y: -0.51842284, z: -0.04245063}
+  m_LocalPosition: {x: -0.26304245, y: -0.42, z: -0.04245063}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -1,5 +1,4 @@
-using System;
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
 
 namespace weapons
@@ -8,7 +7,11 @@ namespace weapons
     {
         public Transform playerTransform;
         public Transform cannonTransform;
+        
         public float recoil;
+        public float recoilMultiplier;
+        private Coroutine _knockBackCoroutine;
+        
         public int magazineSize;
         public int currentAmmo;
         public int totalAmmo;
@@ -57,8 +60,35 @@ namespace weapons
             _recoilPosition = new Vector3(_originalPosition.x - recoil, _originalPosition.y, _originalPosition.z);
             transform.localPosition = _recoilPosition;
             _nextFireTime = fireRate;
-            
+
             Instantiate(bulletPrefab, cannonTransform.position, transform.rotation);
+
+            // If a knockback coroutine is already running, stop it
+            if (_knockBackCoroutine != null)
+            {
+                StopCoroutine(_knockBackCoroutine);
+            }
+
+            // Start a new knockback coroutine
+            _knockBackCoroutine = StartCoroutine(KnockBack());
+        }
+
+        private IEnumerator KnockBack()
+        {
+            Vector2 knockbackDirection = -cannonTransform.right;
+            Rigidbody2D playerRigidbody = playerTransform.GetComponent<Rigidbody2D>();
+
+            float currentRecoil = recoil * recoilMultiplier;
+            playerRigidbody.velocity = Vector2.zero;
+            while (currentRecoil > 0)
+            {
+                playerRigidbody.AddForce(knockbackDirection * currentRecoil, ForceMode2D.Impulse);
+                currentRecoil -= Time.fixedDeltaTime * 10; // Adjust the 10 to control how quickly the force decreases
+
+                yield return null; // Wait for the next frame
+            }
+
+            _knockBackCoroutine = null; // Reset the coroutine reference when it's done
         }
     }
 }

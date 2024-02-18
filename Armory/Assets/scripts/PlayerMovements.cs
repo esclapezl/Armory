@@ -13,7 +13,7 @@ public class PlayerMovements : MonoBehaviour
     
     private void Update()
     {
-        _horizontalMove = Input.GetAxis("Horizontal") * runSpeed;
+        _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
     }
     
     private void FixedUpdate()
