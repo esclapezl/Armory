@@ -43,5 +43,10 @@ public class PlayerMovements : MonoBehaviour
         Vector3 theScale = weaponTransform.localScale;
         theScale.y *= -1;
         weaponTransform.localScale = theScale;
+
+        // Invert the angle of the weapon
+        float currentRotation = weaponTransform.localEulerAngles.z;
+        float newRotation = -currentRotation;
+        weaponTransform.localEulerAngles = new Vector3(0, 0, newRotation);
     }
 }
