@@ -20,31 +20,38 @@ namespace weapons.HandGun
     
         void OnCollisionEnter2D(Collision2D collision)
         {
-            if (_bouces == 0)
+            if(!collision.gameObject.CompareTag("Untagged") && !collision.gameObject.CompareTag("Bullet"))
             {
-                Destroy(gameObject);
-            }
-            else
-            {
-                float currentRotation = transform.localEulerAngles.z;
-                float newRotation;
-                // Check if the collision is with a horizontal or vertical surface
-                if (Mathf.Abs(collision.contacts[0].normal.x) > Mathf.Abs(collision.contacts[0].normal.y))
+                if (_bouces == 0 || collision.gameObject.CompareTag("Player"))
                 {
-                    // Collision with a vertical surface
-                    newRotation = (180 - currentRotation) % 360;
+                    Destroy(gameObject);
+                    if(collision.gameObject.CompareTag("Player"))
+                    {
+                        collision.gameObject.GetComponent<PlayerMovements>().TakeDamage();
+                    }
                 }
                 else
                 {
-                    // Collision with a horizontal surface
-                    newRotation = -currentRotation;
+                    float currentRotation = transform.localEulerAngles.z;
+                    float newRotation;
+                    // Check if the collision is with a horizontal or vertical surface
+                    if (Mathf.Abs(collision.contacts[0].normal.x) > Mathf.Abs(collision.contacts[0].normal.y))
+                    {
+                        // Collision with a vertical surface
+                        newRotation = (180 - currentRotation) % 360;
+                    }
+                    else
+                    {
+                        // Collision with a horizontal surface
+                        newRotation = -currentRotation;
+                    }
+                    transform.localEulerAngles = new Vector3(0, 0, newRotation);
+                    
+                    Vector2 newDirection = Quaternion.Euler(0, 0, newRotation) * Vector2.right;
+                    _rb.velocity = newDirection * speed;
+                    
+                    _bouces--;
                 }
-                transform.localEulerAngles = new Vector3(0, 0, newRotation);
-                
-                Vector2 newDirection = Quaternion.Euler(0, 0, newRotation) * Vector2.right;
-                _rb.velocity = newDirection * speed;
-                
-                _bouces--;
             }
         }
     }
