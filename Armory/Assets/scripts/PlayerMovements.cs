@@ -7,8 +7,8 @@ using UnityEngine.Serialization;
 public class PlayerMovements : MonoBehaviour
 {
     public PlayerController controller;
-    public float runSpeed = 40f;
-    private float _horizontalMove = 0f;
+    
+    
     public bool armed = true;
     public Transform weaponCenterTransform;
     public Transform weaponTransform;
@@ -19,14 +19,11 @@ public class PlayerMovements : MonoBehaviour
     private Coroutine _damageCoroutine;
     private void Update()
     {
-        _horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
+        
     }
     
     private void FixedUpdate()
     {
-        //horizontal movement
-        controller.Move(_horizontalMove * Time.fixedDeltaTime, false, false, armed);
-        
         //weapon rotation
         Vector3 mouseWorld = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
         Vector3 rotation = mouseWorld - transform.position;
@@ -69,12 +66,11 @@ public class PlayerMovements : MonoBehaviour
     {
         Color targetColor = new Color(1, 0, 0);
         playerFilterSprite.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
-
+        _damageCoroutine = null;
         while(playerFilterSprite.color.a > 0)
         {
             playerFilterSprite.color = Color.Lerp(playerFilterSprite.color, new Color(targetColor.r, targetColor.g, targetColor.b, 0f), Time.deltaTime * 10);
             yield return null;
         }
-        _damageCoroutine = null;
     }
 }

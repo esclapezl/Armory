@@ -7,52 +7,67 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
-	
-    [SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
-	[Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
-	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .02f;	// How much to smooth out the movement
-	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
 	[SerializeField] private LayerMask m_WhatIsGround;							// A mask determining what is ground to the character
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
 	[SerializeField] private Collider2D m_CrouchDisableCollider;				// A collider that will be disabled when crouching
 	[SerializeField] private GameObject _player;
-	public float airFriction;
-	
 	const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
-	public bool m_Grounded;            // Whether or not the player is grounded.
+	public bool grounded;        
 	const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
-	private Rigidbody2D m_Rigidbody2D;
+	private Rigidbody2D _rigidbody2D;
 	public bool m_FacingRight = true;  // For determining which way the player is currently facing.
-	private Vector3 m_Velocity = Vector3.zero;
+	private Vector3 _Velocity = Vector3.zero;
+	private bool _armed = true;
+	
+	[Header("Movement Settings")]
+	[SerializeField] private float _runSpeed;
+	[Range(0, .3f)] [SerializeField] private float _EnterMovementSmoothing;
+	[Range(0, .3f)] [SerializeField] private float _ExitMovementSmoothing;
+	private float _horizontalMove;
+	private float _previousSpeed;
 
-	[Header("Events")]
-	[Space]
+	[Header("Jump Settings")]
+	[SerializeField] private float _JumpForce;
+	[SerializeField] private bool _canAirControl;      
+	[SerializeField] public float airFriction; //for gun knockback
+	[SerializeField] public float airControl; //for moving in the air
+	[Range(0, .1f)] [SerializeField] private float _coyoteTimeDuration;
+	private float _coyoteTime;
+	[Range(0, .3f)] [SerializeField] private float _jumpBufferDuration;
+	private float _jumpBuffer;
+	private bool _jumpInput;
 
-	public UnityEvent OnLandEvent;
-
-	[System.Serializable]
-	public class BoolEvent : UnityEvent<bool> { }
-
-	public BoolEvent OnCrouchEvent;
-	private bool m_wasCrouching = false;
-
+	[Header("Crouch Settings")]
+	[Range(0, 1)] [SerializeField] private float _CrouchSpeed;          
+	private bool _crouching;
+	private bool _crouchInput;
 	private void Awake()
 	{
-		m_Rigidbody2D = GetComponent<Rigidbody2D>();
+		_rigidbody2D = GetComponent<Rigidbody2D>();
+	}
 
-		if (OnLandEvent == null)
-			OnLandEvent = new UnityEvent();
-
-		if (OnCrouchEvent == null)
-			OnCrouchEvent = new BoolEvent();
+	private void Update()
+	{
+		_horizontalMove = Input.GetAxisRaw("Horizontal") * _runSpeed;
+		if (Input.GetButtonDown("Crouch"))
+		{
+			_crouchInput = true;
+		}
+		if (Input.GetButtonDown("Jump"))
+		{
+			_jumpInput = true;
+		}
 	}
 
 	private void FixedUpdate()
 	{
-		bool wasGrounded = m_Grounded;
-		m_Grounded = false;
-
+		MoveControl(_horizontalMove * Time.fixedDeltaTime, _armed);
+		CrouchControl(_crouchInput);
+		_crouchInput = false;
+		JumpControl(_jumpInput);
+		_jumpInput = false;
+		grounded = false;
 		// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 		// This can be done using layers instead but Sample Assets will not overwrite your project settings.
 		Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
@@ -60,92 +75,62 @@ public class PlayerController : MonoBehaviour
 		{
 			if (colliders[i].gameObject != gameObject)
 			{
-				m_Grounded = true;
-				if (!wasGrounded)
-					OnLandEvent.Invoke();
+				grounded = true;
 			}
 		}
 	}
 
-
-	public void Move(float move, bool crouch, bool jump, bool armed)
+	public void MoveControl(float moveInput, bool armed)
 	{
-		// If crouching, check to see if the character can stand up
-		if (!crouch)
-		{
-			// If the character has a ceiling preventing them from standing up, keep them crouching
-			if (Physics2D.OverlapCircle(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround))
-			{
-				crouch = true;
-			}
-		}
-
 		//only control the player if grounded or airControl is turned on
-		if (m_Grounded || m_AirControl)
+		if (grounded || _canAirControl)
 		{
-
 			// If crouching
-			if (crouch)
+			if (_crouching)
 			{
-				if (!m_wasCrouching)
-				{
-					m_wasCrouching = true;
-					OnCrouchEvent.Invoke(true);
-				}
-
 				// Reduce the speed by the crouchSpeed multiplier
-				move *= m_CrouchSpeed;
-
+				moveInput *= _CrouchSpeed;
+			
 				// Disable one of the colliders when crouching
 				if (m_CrouchDisableCollider != null)
+				{
 					m_CrouchDisableCollider.enabled = false;
+				}
 			} else
 			{
 				// Enable the collider when not crouching
 				if (m_CrouchDisableCollider != null)
-					m_CrouchDisableCollider.enabled = true;
-
-				if (m_wasCrouching)
 				{
-					m_wasCrouching = false;
-					OnCrouchEvent.Invoke(false);
+					m_CrouchDisableCollider.enabled = true;
 				}
 			}
 
 			// Move the character by finding the target velocity
-			if (move != 0 || m_Grounded)
+			if (moveInput != 0 || grounded)
 			{
-				float speedModifier = m_Grounded ? 1 : 0.5f; // If the player is grounded, speedModifier is 1, otherwise it's 0.5
-				float smoothingModifier = m_Grounded ? 1 : 3; // If the player is grounded, smoothingModifier is 1, otherwise it's 0.5
-				Vector3 targetVelocity = new Vector2(move * 10f * speedModifier, m_Rigidbody2D.velocity.y);
-				// And then smoothing it out and applying it to the character
-				m_Rigidbody2D.velocity = Vector3.SmoothDamp(
-					m_Rigidbody2D.velocity,
+				float smoothingModifier = grounded ? 1 : airControl; // if the player is falling, it's harder to control
+				Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
+				if (moveInput == 0) //checks if player stopped pressing
+				{
+					smoothingModifier *= _ExitMovementSmoothing;
+				}
+				else
+				{
+					smoothingModifier *= _EnterMovementSmoothing;
+				}
+				_rigidbody2D.velocity = Vector3.SmoothDamp(
+					_rigidbody2D.velocity,
 					targetVelocity,
-					ref m_Velocity,
-					m_MovementSmoothing * smoothingModifier
+					ref _Velocity,
+					 smoothingModifier
 					);
+				_previousSpeed = _rigidbody2D.velocity.x;
 			}
 			
-			// If the input is moving the player right and the player is facing left...
-			if (move > 0 && !m_FacingRight && !armed)
+			if ((moveInput > 0 && !m_FacingRight && !armed) || (moveInput < 0 && m_FacingRight && !armed))
 			{
-				// ... flip the player.
 				Flip();
 			}
-			// Otherwise if the input is moving the player left and the player is facing right...
-			else if (move < 0 && m_FacingRight && !armed)
-			{
-				// ... flip the player.
-				Flip();
-			}
-		}
-		// If the player should jump...
-		if (m_Grounded && jump)
-		{
-			// Add a vertical force to the player.
-			m_Grounded = false;
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 	}
 
@@ -159,5 +144,76 @@ public class PlayerController : MonoBehaviour
 		Vector3 theScale = _player.transform.localScale;
 		theScale.x *= -1;
 		_player.transform.localScale = theScale;
+	}
+
+	public void JumpControl(bool jumpInput)
+	{
+		if (jumpInput)
+		{
+			if (grounded || _coyoteTime > 0) //check for ground or remaining coyote time
+			{
+				Jump();
+			}
+			else
+			{
+				_jumpBuffer = _jumpBufferDuration;
+			}
+		}
+		else if (grounded)
+		{
+			_coyoteTime = -1f;
+			if (_jumpBuffer > 0) //check for remaining jump buffer
+			{
+				Jump();
+			}
+		}
+		else
+		{
+			if (_coyoteTime > 0)
+			{
+				_coyoteTime = Mathf.Max(_coyoteTime - Time.fixedDeltaTime, 0);
+			}
+			else if(_coyoteTime < 0) //leaves ground
+			{
+				_coyoteTime = _coyoteTimeDuration;
+			}
+			
+			if(_jumpBuffer > 0)
+			{
+				_jumpBuffer = Mathf.Max(_jumpBuffer - Time.fixedDeltaTime, 0);
+			}
+		}
+	}
+	
+	private void Jump()
+	{
+		grounded = false;
+		_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
+		_rigidbody2D.AddForce(new Vector2(0f, _JumpForce));
+		_coyoteTime = 0;
+		_jumpBuffer = 0;
+	}
+
+	public void CrouchControl(bool crouchInput)
+	{
+		_crouching = crouchInput;
+		if (!crouchInput)
+		{
+			// If the character has a ceiling preventing them from standing up, keep them crouching
+			if (Physics2D.OverlapCircle(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround))
+			{
+				_crouching = true;
+			}
+		}
+	}
+
+	private void Crouch()
+	{
+		
+	}
+
+	private void StandUp()
+	{
+		
 	}
 }

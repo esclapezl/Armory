@@ -58,7 +58,7 @@ namespace weapons.HandGun
                 Shoot();
             }
 
-            if (((playerController.m_Grounded && currentAmmo == 0) || 
+            if (((playerController.grounded && currentAmmo == 0) || 
                  (Input.GetButtonDown("Reload") && currentAmmo < magazineSize))
                 && !_isReloading &&  totalAmmo > 0)
             {
@@ -80,8 +80,12 @@ namespace weapons.HandGun
 
         private void Shoot()
         {
+            Collider2D hitCollider = Physics2D.OverlapCircle(cannonTransform.position, 0.1f);
+            if (hitCollider == null)
+            {
+                Instantiate(bulletPrefab, cannonTransform.position, transform.rotation);
+            }
             _nextFireTime = fireRate;
-            Instantiate(bulletPrefab, cannonTransform.position, transform.rotation);
             ToggleUidBullet(_ammoDisplay.Count-currentAmmo);
             currentAmmo--;
             
@@ -177,9 +181,9 @@ namespace weapons.HandGun
             {
                 var position = playerTransform.position;
                 Vector3 bulletposition = new Vector3(
-                    position.x - uidSize / magazineSize * i,
-                    position.y + 1,
-                    position.z
+                     - uidSize / magazineSize * i,
+                     + 1,
+                    0
                 );
 
                 GameObject uidBullet = Instantiate(uidBulletPrefab, 
