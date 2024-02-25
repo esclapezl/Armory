@@ -19,13 +19,14 @@ namespace Weapons.Shotgun
                     bulletRotation.z += Random.Range(-10, 10);
                     GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, Quaternion.Euler(bulletRotation));
                     Bullet bullet = bulletObject.GetComponent<Bullet>();
-                    bullet.SetSpeed(Random.Range(5, 10));
+                    bulletObject.transform.localScale = new Vector3(2.5f, 2.5f, 1);
+                    bullet.SetSpeed(Random.Range(bulletSpeed-5, bulletSpeed));
                 }
                 
             }
             NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize-CurrentAmmo);
-            CurrentAmmo--;
+            AmmoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
+            currentAmmo--;
 
             KnockBack();
         }
@@ -43,11 +44,11 @@ namespace Weapons.Shotgun
             }
             
             //refill mag
-            for (int i = CurrentAmmo; i < Mathf.Min(TotalAmmo + CurrentAmmo, magazineSize); i++)
+            for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
                 AmmoDisplay.EnableBullet(magazineSize-i-1);
-                CurrentAmmo++;
-                TotalAmmo--;
+                currentAmmo++;
+                totalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);
             }
             

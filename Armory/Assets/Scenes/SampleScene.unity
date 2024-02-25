@@ -326,7 +326,7 @@ Transform:
   m_GameObject: {fileID: 688348764}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -346,13 +346,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  recoil: 0.5
-  recoilMultiplier: 2
+  gunRecoil: 1
+  playerRecoilForce: 10
+  playerRecoilDuration: 0.1
   bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
   magazineSize: 5
-  CurrentAmmo: 0
-  TotalAmmo: 2
+  currentAmmo: 0
+  totalAmmo: 20
   reloadTime: 0.5
+  bulletSpeed: 15
   fireRate: 0.1
 --- !u!114 &688348768
 MonoBehaviour:
@@ -367,8 +369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uidBulletPrefab: {fileID: 5870247845092338748, guid: 0e680f0e845d5f441bb7a99bd8e65c9b, type: 3}
-  maxBulletSize: 1
-  minDisplayGap: 0.1
+  maxBulletSize: 1.2
+  minDisplayGap: 0
 --- !u!1 &710109773
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,8 +574,8 @@ MonoBehaviour:
   _EnterMovementSmoothing: 0.05
   _ExitMovementSmoothing: 0.08
   _JumpForce: 400
-  _canAirControl: 1
-  airFriction: 3
+  canAirControl: 1
+  shotFired: 0
   airControl: 2
   _coyoteTimeDuration: 0.1
   _jumpBufferDuration: 0.3
@@ -593,7 +595,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 2
+  m_GravityScale: 2.5
   m_Material: {fileID: 6200000, guid: 555ba5501e999f94898521d5a7c11783, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -842,7 +844,7 @@ GameObject:
   m_Component:
   - component: {fileID: 864150561}
   - component: {fileID: 864150564}
-  - component: {fileID: 864150563}
+  - component: {fileID: 864150565}
   - component: {fileID: 864150562}
   m_Layer: 3
   m_Name: Shotgun
@@ -860,7 +862,7 @@ Transform:
   m_GameObject: {fileID: 864150560}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -879,30 +881,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68c2de17d997854ca00e79e08654d41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uidBulletPrefab: {fileID: 5870247845092338748, guid: 0e680f0e845d5f441bb7a99bd8e65c9b, type: 3}
-  maxBulletSize: 1
+  uidBulletPrefab: {fileID: 5870247845092338748, guid: 696339e1258427943aa785a1a6e678dd, type: 3}
+  maxBulletSize: 1.2
   minDisplayGap: 0.1
---- !u!114 &864150563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 864150560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0eff76b1d049cac41ac2048698eb00c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  active: 0
-  recoil: 0.5
-  recoilMultiplier: 2
-  bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
-  magazineSize: 5
-  CurrentAmmo: 0
-  TotalAmmo: 2
-  reloadTime: 0.5
-  fireRate: 0.1
 --- !u!212 &864150564
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -944,7 +925,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2ec599051624a074b90b84db2f8ba238, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 954f9e1ee0fdf154f8530bf45c45d8d9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -955,6 +936,29 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &864150565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 864150560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa5ffe599aed49959974aa0c8e222e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  active: 0
+  gunRecoil: 2
+  playerRecoilForce: 15
+  playerRecoilDuration: 0.2
+  bulletPrefab: {fileID: 1932262067096333803, guid: 7db461ab9bfd6a34f9b36676f1c336e0, type: 3}
+  magazineSize: 1
+  currentAmmo: 0
+  totalAmmo: 20
+  reloadTime: 0.5
+  bulletSpeed: 15
+  fireRate: 0.1
 --- !u!1 &920659834
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,7 +984,7 @@ Transform:
   m_GameObject: {fileID: 920659834}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.261, y: 0.164, z: 1}
+  m_LocalPosition: {x: 0.15, y: 0.158, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1272,7 +1276,7 @@ Transform:
   m_GameObject: {fileID: 1424418870}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

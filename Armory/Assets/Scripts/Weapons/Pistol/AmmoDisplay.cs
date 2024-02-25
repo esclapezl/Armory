@@ -8,7 +8,7 @@ namespace Weapons.Pistol
     {
         [Header("UID Bullet Settings")]
         [SerializeField] public GameObject uidBulletPrefab;
-        [SerializeField] [Range(0, 1)] public float maxBulletSize;
+        [SerializeField] [Range(0, 2)] public float maxBulletSize;
         [SerializeField] [Range(0, 1)] public float minDisplayGap;
         [System.NonSerialized] private List<GameObject> _ammoDisplay;
         [System.NonSerialized] private Transform _displayTransform;
@@ -31,7 +31,7 @@ namespace Weapons.Pistol
         
             float uidSize = bulletSize * 0.2f * _weapon.magazineSize + minDisplayGap * (_weapon.magazineSize - 1);
         
-            GameObject magazineUid = new GameObject("magazineUID");
+            GameObject magazineUid = new GameObject(_weapon.name+"MagazineUID");
             magazineUid.transform.parent = _weapon.PlayerTransform;
             _displayTransform = magazineUid.transform;
             for (int i = 0; i < _weapon.magazineSize; i++)
@@ -50,15 +50,13 @@ namespace Weapons.Pistol
             
                 uidBullet.transform.parent = magazineUid.transform;
                 uidBullet.transform.localScale = new Vector3(bulletSize, bulletSize, 1);
-                uidBullet.transform.Rotate(0, 0, 90);
                 _ammoDisplay.Add(uidBullet);
-                if (_weapon.CurrentAmmo < _weapon.magazineSize - i)
+                if (_weapon.currentAmmo < _weapon.magazineSize - i)
                 {
                     ToggleUidBullet(i);
                 }
             }
             magazineUid.transform.localPosition = new Vector3(uidSize/2 - bulletSize * 0.2f/2, 0, -2);
-            
             HideAmmo();
         }
     
@@ -68,7 +66,7 @@ namespace Weapons.Pistol
             {
                 Transform child = _displayTransform.GetChild(i);
                 child.GetComponent<SpriteRenderer>().color = new Color(1,1,1,1);
-                if(i >= _weapon.CurrentAmmo)
+                if(i < _weapon.magazineSize - _weapon.currentAmmo)
                 {
                     ToggleUidBullet(i);
                 }

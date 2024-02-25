@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Weapons.Pistol;
 
 namespace weapons
@@ -14,26 +15,28 @@ namespace weapons
         [NonSerialized] protected PlayerMovements PlayerMovements;
         [NonSerialized] protected Transform CannonTransform;
 
+        [FormerlySerializedAs("recoil")]
         [Header("Recoil Settings")]
-        [SerializeField] [Range(0, 1)] public float recoil;
-        [SerializeField] [Range(0, 100)] public float recoilMultiplier;
+        [SerializeField] [Range(0, 2)] public float gunRecoil;
+        [SerializeField] [Range(0, 100)] public float playerRecoilForce;
+        [SerializeField] [Range(0, 100)] public float playerRecoilDuration;
         protected Vector3 OriginalPosition;
         protected Vector3 RecoilPosition;
     
         [Header("Bullet Settings")]
         [SerializeField] public GameObject bulletPrefab;
         [SerializeField] [Range(0, 100)] public int magazineSize;
-        [SerializeField] public int CurrentAmmo;
-        [SerializeField] public int TotalAmmo;
+        [SerializeField] public int currentAmmo;
+        [SerializeField] public int totalAmmo;
         [SerializeField] [Range(0, 10)] public float reloadTime;
+        [SerializeField] [Range(0, 20)] public float bulletSpeed;
         [NonSerialized] public bool IsReloading;
         [NonSerialized] protected AmmoDisplay AmmoDisplay;
 
         [Header("Fire Rate Settings")]
         [SerializeField] [Range(0, 1)] public float fireRate;
         [NonSerialized] protected float NextFireTime;
-    
-        protected Coroutine PlayerKnockBackCoroutine;
+        
         protected Coroutine GunKnockBackCoroutine;
         public Coroutine ReloadCoroutine;
 
@@ -47,31 +50,37 @@ namespace weapons
 
         private void Start()
         {
+            float gunSize = GetComponent<SpriteRenderer>().bounds.size.x;
+            float margin = 0.1f;
             transform.localPosition = new Vector3(
-                PlayerTransform.localScale.x,
+                PlayerTransform.localScale.x / 2 + gunSize / 2 + margin,
                 transform.localPosition.y,
                 0
             );
             OriginalPosition = transform.localPosition;
             NextFireTime = 0f;
-            CurrentAmmo = Mathf.Min(magazineSize, TotalAmmo);
+            currentAmmo = Mathf.Min(magazineSize, totalAmmo);
         }
     
         void Update()
         {
-            if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && CurrentAmmo > 0 && !IsReloading && active) {
-                Shoot();
-            }
-
-            if (((PlayerMovements.grounded && CurrentAmmo == 0) || 
-                 (Input.GetButtonDown("Reload") && CurrentAmmo < magazineSize))
-                && !IsReloading &&  TotalAmmo > 0)
+            if (active && !IsReloading)
             {
-                if (ReloadCoroutine != null)
-                {
-                    StopCoroutine(ReloadCoroutine);
+                if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && currentAmmo > 0) {
+                    Shoot();
                 }
-                ReloadCoroutine = StartCoroutine(Reload());
+
+                if (currentAmmo == 0 || Input.GetButtonDown("Reload") 
+                    && currentAmmo < magazineSize
+                    && totalAmmo > 0 
+                    && PlayerMovements.grounded)
+                {
+                    if (ReloadCoroutine != null)
+                    {
+                        StopCoroutine(ReloadCoroutine);
+                    }
+                    ReloadCoroutine = StartCoroutine(Reload());
+                }
             }
         }
     
@@ -85,11 +94,7 @@ namespace weapons
 
         public void KnockBack()
         {
-            if (PlayerKnockBackCoroutine != null)
-            {
-                StopCoroutine(PlayerKnockBackCoroutine);
-            }
-            PlayerKnockBackCoroutine = StartCoroutine(PlayerKnockBack());
+            PlayerKnockBack();
         
             if (GunKnockBackCoroutine != null)
             {
@@ -98,26 +103,20 @@ namespace weapons
             GunKnockBackCoroutine = StartCoroutine(GunKnockBack());
         }
     
-        private IEnumerator PlayerKnockBack()
+        private void PlayerKnockBack()
         {
             Vector2 knockbackDirection = -CannonTransform.right;
             Rigidbody2D playerRigidbody = PlayerTransform.GetComponent<Rigidbody2D>();
-
-            float currentRecoil = recoil * recoilMultiplier;
+            
+            float currentRecoil = playerRecoilForce;
             playerRigidbody.velocity = Vector2.zero;
-            float airFriction = PlayerMovements.airFriction;
-            while (currentRecoil > 0)
-            {
-                playerRigidbody.AddForce(knockbackDirection * currentRecoil, ForceMode2D.Impulse);
-                currentRecoil -= Time.fixedDeltaTime * airFriction; // Adjust the 10 to control how quickly the force decreases
-                yield return null;
-            }
-            PlayerKnockBackCoroutine = null;
+            playerRigidbody.AddForce(knockbackDirection * currentRecoil, ForceMode2D.Impulse);
+            PlayerMovements.shotFired = true;
         }
     
         private IEnumerator GunKnockBack()
         {
-            RecoilPosition = new Vector3(OriginalPosition.x - recoil, OriginalPosition.y, OriginalPosition.z);
+            RecoilPosition = new Vector3(OriginalPosition.x - gunRecoil, OriginalPosition.y, OriginalPosition.z);
             transform.localPosition = RecoilPosition;
             while (Vector3.Distance(transform.localPosition, OriginalPosition) > 0.01f)
             {

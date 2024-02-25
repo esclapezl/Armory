@@ -13,11 +13,11 @@ namespace Weapons.Pistol
             {
                 GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
                 Bullet bullet = bulletObject.GetComponent<Bullet>();
-                bullet.SetSpeed(Random.Range(5, 10));
+                bullet.SetSpeed(bulletSpeed);
             }
             NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize-CurrentAmmo);
-            CurrentAmmo--;
+            AmmoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
+            currentAmmo--;
 
             KnockBack();
         }
@@ -35,11 +35,11 @@ namespace Weapons.Pistol
             }
             
             //refill mag
-            for (int i = CurrentAmmo; i < Mathf.Min(TotalAmmo + CurrentAmmo, magazineSize); i++)
+            for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
                 AmmoDisplay.EnableBullet(magazineSize-i-1);
-                CurrentAmmo++;
-                TotalAmmo--;
+                currentAmmo++;
+                totalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);
             }
             

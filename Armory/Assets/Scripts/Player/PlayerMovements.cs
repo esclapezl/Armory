@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -26,8 +27,8 @@ namespace Player
 
 		[Header("Jump Settings")]
 		[SerializeField] private float _JumpForce;
-		[SerializeField] private bool _canAirControl;      
-		[SerializeField] public float airFriction; //for gun knockback
+		[SerializeField] public bool canAirControl;   
+		[SerializeField] public bool shotFired; 
 		[SerializeField] public float airControl; //for moving in the air
 		[Range(0, .1f)] [SerializeField] private float _coyoteTimeDuration;
 		private float _coyoteTime;
@@ -50,6 +51,10 @@ namespace Player
 		private void Update()
 		{
 			_horizontalMove = Input.GetAxisRaw("Horizontal") * _runSpeed;
+			if (shotFired && _horizontalMove != 0)
+			{
+				shotFired = false;
+			}
 			if (Input.GetButtonDown("Crouch"))
 			{
 				_crouchInput = true;
@@ -76,6 +81,7 @@ namespace Player
 				if (colliders[i].gameObject != gameObject)
 				{
 					grounded = true;
+					shotFired = false;
 				}
 			}
 		}
@@ -83,7 +89,7 @@ namespace Player
 		public void MoveControl(float moveInput, bool armed)
 		{
 			//only control the player if grounded or airControl is turned on
-			if (grounded || _canAirControl)
+			if (grounded || canAirControl)
 			{
 				// If crouching
 				if (_crouching)
@@ -106,24 +112,26 @@ namespace Player
 				}
 
 				// Move the character by finding the target velocity
-				float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
-				Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
-				if (moveInput == 0) //checks if player stopped pressing
+				if (!shotFired)
 				{
-					smoothingModifier *= _ExitMovementSmoothing;
+					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
+					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
+					if (moveInput == 0) //checks if player stopped pressing
+					{
+						smoothingModifier *= _ExitMovementSmoothing;
+					}
+					else
+					{
+						smoothingModifier *= _EnterMovementSmoothing;
+					}
+					_rigidbody2D.velocity = Vector3.SmoothDamp(
+						_rigidbody2D.velocity,
+						targetVelocity,
+						ref _Velocity,
+						smoothingModifier
+					);
 				}
-				else
-				{
-					smoothingModifier *= _EnterMovementSmoothing;
-				}
-				_rigidbody2D.velocity = Vector3.SmoothDamp(
-					_rigidbody2D.velocity,
-					targetVelocity,
-					ref _Velocity,
-					smoothingModifier
-				);
-
-
+				
 				if ((moveInput > 0 && !FacingRight && !armed) || (moveInput < 0 && FacingRight && !armed))
 				{
 					Flip();

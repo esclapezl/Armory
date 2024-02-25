@@ -27,12 +27,13 @@ namespace Player
                 GameObject weaponChild = _weaponsTransform.GetChild(i).gameObject;
                 weapons.Add(weaponChild);
                 weaponChild.GetComponent<AmmoDisplay>().SetDisplay();
+                ToggleWeapon(weaponChild);
             }
             if (weapons.Count > 0)
             {
-                ActivateWeapon(weapons[0]);
                 _currentWeapon = 0;
                 weapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
+                ActivateWeapon(weapons[0]);
             }
         }
         void Update()
@@ -70,7 +71,8 @@ namespace Player
             weapon.GetComponent<AmmoDisplay>().HideAmmo();
             if (weaponInfo.IsReloading)
             {
-                StopCoroutine(weaponInfo.ReloadCoroutine);
+                weaponInfo.StopCoroutine(weaponInfo.ReloadCoroutine);
+                weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 weaponInfo.IsReloading = false;
                 weaponInfo.ReloadCoroutine = null;
             }
