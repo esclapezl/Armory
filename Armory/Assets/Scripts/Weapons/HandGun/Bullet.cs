@@ -1,4 +1,5 @@
 using UnityEngine;
+using Player;
 
 namespace weapons.HandGun
 {
@@ -33,7 +34,7 @@ namespace weapons.HandGun
                 Destroy(gameObject);
                 if(collision.gameObject.CompareTag("Player"))
                 {
-                    collision.gameObject.GetComponent<PlayerMovements>().TakeDamage();
+                    collision.gameObject.GetComponent<Player.Player>().TakeDamage();
                 }
             }
             else
