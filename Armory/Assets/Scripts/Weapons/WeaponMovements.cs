@@ -1,3 +1,4 @@
+using System;
 using Player;
 using UnityEngine;
 
@@ -5,40 +6,46 @@ namespace Weapons
 {
     public class WeaponMovements : MonoBehaviour
     {
-        public PlayerMovements controller;
-    
         public bool armed = true;
-        public Transform weaponCenterTransform;
-        public Transform weaponTransform;
+        [NonSerialized] public PlayerMovements PlayerMovements;
+        [NonSerialized] public Transform WeaponCenterTransform;
+        [NonSerialized] public Transform WeaponTransform;
+        
+        private void Awake()
+        {
+            PlayerMovements = GetComponent<PlayerMovements>();
+            WeaponCenterTransform = transform.Find("Inventory");
+            WeaponTransform = WeaponCenterTransform.Find("Weapons");
+        }
         private void FixedUpdate()
         {
             //weapon rotation
             Vector3 mouseWorld = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
             Vector3 rotation = mouseWorld - transform.position;
             float newRotation = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-            weaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
+            WeaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
         
-            float zRotation = weaponCenterTransform.rotation.eulerAngles.z;
+            float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
             if (
-                (zRotation >= 90 && zRotation < 270 && controller.FacingRight)
-                || ((zRotation < 90 || zRotation >= 270) && !controller.FacingRight)
+                (zRotation >= 90 && zRotation < 270 && PlayerMovements.FacingRight)
+                || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.FacingRight)
             ) {
                 if (armed) {
-                    controller.Flip();
+                    PlayerMovements.Flip();
                 }
                 FlipWeapon();
             }
         }
 
         private void FlipWeapon() {
-            Vector3 theScale = weaponTransform.localScale;
+            Vector3 theScale = WeaponTransform.localScale;
             theScale.y *= -1;
-            weaponTransform.localScale = theScale;
+            WeaponTransform.localScale = theScale;
 
             // Invert the angle of the weapon
-            float currentRotation = weaponTransform.localEulerAngles.z;
+            float currentRotation = WeaponTransform.localEulerAngles.z;
             float newRotation = -currentRotation;
-            weaponTransform.localEulerAngles = new Vector3(0, 0, newRotation);
+            WeaponTransform.localEulerAngles = new Vector3(0, 0, newRotation);
         }
 
     

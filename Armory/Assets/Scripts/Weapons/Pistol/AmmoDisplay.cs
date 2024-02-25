@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using weapons;
 
-namespace weapons.HandGun
+namespace Weapons.Pistol
 {
     public class AmmoDisplay : MonoBehaviour
     {
@@ -11,37 +11,34 @@ namespace weapons.HandGun
         [SerializeField] [Range(0, 1)] public float maxBulletSize;
         [SerializeField] [Range(0, 1)] public float minDisplayGap;
         [System.NonSerialized] private List<GameObject> _ammoDisplay;
+        [System.NonSerialized] private Transform _displayTransform;
 
-        private HandGun _handGun;
+        private Weapon _weapon;
         // Start is called before the first frame update
         private void Awake()
         {
-            _handGun = GetComponent<HandGun>();
+            _weapon = GetComponent<Weapon>();
         }
 
-        private void Start()
+        public void SetDisplay()
         {
             _ammoDisplay = new List<GameObject>();
-            DisplayAmmo();
-        }
-    
-        private void DisplayAmmo()
-        {
-            float displayLenght = _handGun.PlayerTransform.localScale.x;
+            float displayLenght = _weapon.PlayerTransform.localScale.x;
             float bulletSize = Mathf.Max(
-                (displayLenght + minDisplayGap) / _handGun.magazineSize - displayLenght,
+                (displayLenght + minDisplayGap) / _weapon.magazineSize - displayLenght,
                 maxBulletSize
             );
         
-            float uidSize = bulletSize * 0.2f * _handGun.magazineSize + minDisplayGap * (_handGun.magazineSize - 1);
+            float uidSize = bulletSize * 0.2f * _weapon.magazineSize + minDisplayGap * (_weapon.magazineSize - 1);
         
             GameObject magazineUid = new GameObject("magazineUID");
-            magazineUid.transform.parent = _handGun.PlayerTransform;
-            for (int i = 0; i < _handGun.magazineSize; i++)
+            magazineUid.transform.parent = _weapon.PlayerTransform;
+            _displayTransform = magazineUid.transform;
+            for (int i = 0; i < _weapon.magazineSize; i++)
             {
-                var position = _handGun.PlayerTransform.position;
+                var position = _weapon.PlayerTransform.position;
                 Vector3 bulletposition = new Vector3(
-                    - uidSize / _handGun.magazineSize * i,
+                    - uidSize / _weapon.magazineSize * i,
                     + 1,
                     0
                 );
@@ -55,8 +52,27 @@ namespace weapons.HandGun
                 uidBullet.transform.localScale = new Vector3(bulletSize, bulletSize, 1);
                 uidBullet.transform.Rotate(0, 0, 90);
                 _ammoDisplay.Add(uidBullet);
+                if (_weapon.CurrentAmmo < _weapon.magazineSize - i)
+                {
+                    ToggleUidBullet(i);
+                }
             }
             magazineUid.transform.localPosition = new Vector3(uidSize/2 - bulletSize * 0.2f/2, 0, -2);
+            
+            HideAmmo();
+        }
+    
+        public void DisplayAmmo()
+        {
+            for (int i = 0; i < _weapon.magazineSize; i++)
+            {
+                Transform child = _displayTransform.GetChild(i);
+                child.GetComponent<SpriteRenderer>().color = new Color(1,1,1,1);
+                if(i >= _weapon.CurrentAmmo)
+                {
+                    ToggleUidBullet(i);
+                }
+            }
         }
 
         public void ToggleUidBullet(int i)
@@ -67,12 +83,22 @@ namespace weapons.HandGun
             sp.color = color;
         }
     
+        // ReSharper disable Unity.PerformanceAnalysis
         public void EnableBullet(int i)
         {
             SpriteRenderer sp = _ammoDisplay[i].GetComponent<SpriteRenderer>();
             Color color = Color.white;
             color.a = 1f;
             sp.color = color;
+        }
+        
+        public void HideAmmo()
+        {
+            for (int i = 0; i < _weapon.magazineSize; i++)
+            {
+                Transform child = _displayTransform.GetChild(i);
+                child.GetComponent<SpriteRenderer>().color = new Color(1,1,1,0);
+            }
         }
     }
 }

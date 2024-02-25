@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using Player;
 using UnityEngine;
-using weapons.HandGun;
+using Weapons.Pistol;
 
 namespace weapons
 {
@@ -23,7 +23,7 @@ namespace weapons
         [Header("Bullet Settings")]
         [SerializeField] public GameObject bulletPrefab;
         [SerializeField] [Range(0, 100)] public int magazineSize;
-        [NonSerialized] public int CurrentAmmo;
+        [SerializeField] public int CurrentAmmo;
         [SerializeField] public int TotalAmmo;
         [SerializeField] [Range(0, 10)] public float reloadTime;
         [NonSerialized] public bool IsReloading;
@@ -35,11 +35,11 @@ namespace weapons
     
         protected Coroutine PlayerKnockBackCoroutine;
         protected Coroutine GunKnockBackCoroutine;
-        protected Coroutine ReloadCoroutine;
+        public Coroutine ReloadCoroutine;
 
         private void Awake()
         {
-            PlayerTransform = transform.parent.parent;
+            PlayerTransform = transform.parent.parent.parent;
             PlayerMovements = PlayerTransform.GetComponent<PlayerMovements>();
             CannonTransform = transform.GetChild(0);
             AmmoDisplay = GetComponent<AmmoDisplay>();
@@ -47,19 +47,19 @@ namespace weapons
 
         private void Start()
         {
-            OriginalPosition = transform.localPosition;
             transform.localPosition = new Vector3(
                 PlayerTransform.localScale.x,
                 transform.localPosition.y,
                 0
             );
+            OriginalPosition = transform.localPosition;
             NextFireTime = 0f;
-            CurrentAmmo = magazineSize;
+            CurrentAmmo = Mathf.Min(magazineSize, TotalAmmo);
         }
     
         void Update()
         {
-            if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && CurrentAmmo > 0 && !IsReloading) {
+            if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && CurrentAmmo > 0 && !IsReloading && active) {
                 Shoot();
             }
 

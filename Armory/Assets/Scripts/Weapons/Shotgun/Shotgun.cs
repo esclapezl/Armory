@@ -1,17 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
+using weapons;
+using Weapons.Pistol;
 
-namespace weapons.HandGun
+namespace Weapons.Shotgun
 {
-    public class HandGun : Weapon
+    public class Shotgun : Weapon
     {
         protected override void Shoot()
         {
             Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f);
             if (hitCollider == null)
             {
-                Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector3 bulletRotation = transform.rotation.eulerAngles;
+                    bulletRotation.z += Random.Range(-10, 10);
+                    GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, Quaternion.Euler(bulletRotation));
+                    Bullet bullet = bulletObject.GetComponent<Bullet>();
+                    bullet.SetSpeed(Random.Range(5, 10));
+                }
+                
             }
             NextFireTime = fireRate;
             AmmoDisplay.ToggleUidBullet(magazineSize-CurrentAmmo);
@@ -33,9 +43,9 @@ namespace weapons.HandGun
             }
             
             //refill mag
-            for (int i = Mathf.Min(TotalAmmo, magazineSize - CurrentAmmo); i > 0; i--)
+            for (int i = CurrentAmmo; i < Mathf.Min(TotalAmmo + CurrentAmmo, magazineSize); i++)
             {
-                AmmoDisplay.EnableBullet(i-1);
+                AmmoDisplay.EnableBullet(magazineSize-i-1);
                 CurrentAmmo++;
                 TotalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);

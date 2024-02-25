@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,11 +7,17 @@ namespace Player
 {
     public class Player : MonoBehaviour
     {
-        public SpriteRenderer playerSprite;
-        public SpriteRenderer playerFilterSprite;
-        public int health = 3;
+        [NonSerialized] public SpriteRenderer PlayerSprite;
+        [NonSerialized] public SpriteRenderer PlayerFilterSprite;
+        [SerializeField] public int health = 3;
         private Coroutine _damageCoroutine;
-    
+
+        private void Awake()
+        {
+            PlayerSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+            PlayerFilterSprite = transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();
+        }
+
         public void TakeDamage()
         {
             if (_damageCoroutine != null)
@@ -23,11 +30,11 @@ namespace Player
         private IEnumerator TakeDamageCoroutine()
         {
             Color targetColor = new Color(1, 0, 0);
-            playerFilterSprite.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
+            PlayerFilterSprite.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
             _damageCoroutine = null;
-            while(playerFilterSprite.color.a > 0)
+            while(PlayerFilterSprite.color.a > 0)
             {
-                playerFilterSprite.color = Color.Lerp(playerFilterSprite.color, new Color(targetColor.r, targetColor.g, targetColor.b, 0f), Time.deltaTime * 10);
+                PlayerFilterSprite.color = Color.Lerp(PlayerFilterSprite.color, new Color(targetColor.r, targetColor.g, targetColor.b, 0f), Time.deltaTime * 10);
                 yield return null;
             }
         }

@@ -1,13 +1,12 @@
 using UnityEngine;
-using Player;
 
-namespace weapons.HandGun
+namespace Weapons.Pistol
 {
     public class Bullet : MonoBehaviour
     {
-        public float speed = 20f;
         public float lifetime = 2f;
         private int _bouces = 2;
+        private float speed = 10f;
 
         private Rigidbody2D _rb;
 
@@ -15,8 +14,14 @@ namespace weapons.HandGun
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _rb.velocity = transform.right * speed; 
             Destroy(gameObject, lifetime);
+            _rb.velocity = transform.right * speed; 
+        }
+
+        public void SetSpeed(float newSpeed)
+        {
+            speed = newSpeed;
+            _rb.velocity = transform.right * newSpeed; 
         }
     
         void OnCollisionEnter2D(Collision2D collision)
