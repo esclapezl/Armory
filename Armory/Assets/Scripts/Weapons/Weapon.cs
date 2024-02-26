@@ -69,8 +69,8 @@ namespace weapons
                 if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && currentAmmo > 0) {
                     Shoot();
                 }
-
-                if (currentAmmo == 0 || Input.GetButtonDown("Reload") 
+                
+                if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
                     && totalAmmo > 0 
                     && PlayerMovements.grounded)
@@ -95,7 +95,6 @@ namespace weapons
         public void KnockBack()
         {
             PlayerKnockBack();
-        
             if (GunKnockBackCoroutine != null)
             {
                 StopCoroutine(GunKnockBackCoroutine);
@@ -105,13 +104,24 @@ namespace weapons
     
         private void PlayerKnockBack()
         {
-            Vector2 knockbackDirection = -CannonTransform.right;
+            Vector3 knockbackDirection = -CannonTransform.right;
             Rigidbody2D playerRigidbody = PlayerTransform.GetComponent<Rigidbody2D>();
             
-            float currentRecoil = playerRecoilForce;
+            PlayerMovements.KnockBackDirection = 0;
+            float cannonAngle = CannonTransform.eulerAngles.z;
+            
             playerRigidbody.velocity = Vector2.zero;
+            if (cannonAngle >= 270 || cannonAngle < 90)
+            {
+                PlayerMovements.KnockBackDirection = -1;
+            }
+            else if (cannonAngle < 270 && cannonAngle >= 90)
+            {
+                PlayerMovements.KnockBackDirection = 1;
+            }
+            
+            float currentRecoil = playerRecoilForce;
             playerRigidbody.AddForce(knockbackDirection * currentRecoil, ForceMode2D.Impulse);
-            PlayerMovements.shotFired = true;
         }
     
         private IEnumerator GunKnockBack()

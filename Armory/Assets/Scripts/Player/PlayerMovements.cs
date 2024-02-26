@@ -15,29 +15,33 @@ namespace Player
 		[NonSerialized] public bool grounded;        
 		const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
 		private Rigidbody2D _rigidbody2D;
-		[NonSerialized]public bool FacingRight = true;  // For determining which way the player is currently facing.
+		[NonSerialized] public bool FacingRight = true;  // For determining which way the player is currently facing.
 		private Vector3 _Velocity = Vector3.zero;
 		private bool _armed = true;
 	
+		[FormerlySerializedAs("_runSpeed")]
 		[Header("Movement Settings")]
-		[SerializeField] private float _runSpeed;
-		[Range(0, .3f)] [SerializeField] private float _EnterMovementSmoothing;
-		[Range(0, .3f)] [SerializeField] private float _ExitMovementSmoothing;
-		private float _horizontalMove;
+		[SerializeField] private float runSpeed;
+		[Range(0, .3f)] [SerializeField] private float enterMovementSmoothing;
+		[Range(0, .3f)] [SerializeField] private float exitMovementSmoothing;
+		[NonSerialized] public int HorizontalMove;
+		private int _previousHorizontalMove = 0;
 
+		[FormerlySerializedAs("_JumpForce")]
 		[Header("Jump Settings")]
-		[SerializeField] private float _JumpForce;
+		[SerializeField] private float jumpForce;
 		[SerializeField] public bool canAirControl;   
-		[SerializeField] public bool shotFired; 
+		[NonSerialized] public int KnockBackDirection = 0; 
 		[SerializeField] public float airControl; //for moving in the air
-		[Range(0, .1f)] [SerializeField] private float _coyoteTimeDuration;
+		[Range(0, .1f)] [SerializeField] private float coyoteTimeDuration;
 		private float _coyoteTime;
-		[Range(0, .3f)] [SerializeField] private float _jumpBufferDuration;
+		[Range(0, .3f)] [SerializeField] private float jumpBufferDuration;
 		private float _jumpBuffer;
 		private bool _jumpInput;
 
+		[FormerlySerializedAs("_CrouchSpeed")]
 		[Header("Crouch Settings")]
-		[Range(0, 1)] [SerializeField] private float _CrouchSpeed;          
+		[Range(0, 1)] [SerializeField] private float crouchSpeed;          
 		private bool _crouching;
 		private bool _crouchInput;
 		private void Awake()
@@ -50,11 +54,12 @@ namespace Player
 
 		private void Update()
 		{
-			_horizontalMove = Input.GetAxisRaw("Horizontal") * _runSpeed;
-			if (shotFired && _horizontalMove != 0)
+			HorizontalMove = (int)(Input.GetAxisRaw("Horizontal") * runSpeed);
+			if (HorizontalMove != 0 && HorizontalMove != _previousHorizontalMove) //va dans la direction opposée de sa valocité knockback
 			{
-				shotFired = false;
+				KnockBackDirection = 0;
 			}
+			_previousHorizontalMove = HorizontalMove != 0 ? HorizontalMove : _previousHorizontalMove;
 			if (Input.GetButtonDown("Crouch"))
 			{
 				_crouchInput = true;
@@ -67,7 +72,7 @@ namespace Player
 
 		private void FixedUpdate()
 		{
-			MoveControl(_horizontalMove * Time.fixedDeltaTime, _armed);
+			MoveControl(HorizontalMove * Time.fixedDeltaTime, _armed);
 			CrouchControl(_crouchInput);
 			_crouchInput = false;
 			JumpControl(_jumpInput);
@@ -81,7 +86,8 @@ namespace Player
 				if (colliders[i].gameObject != gameObject)
 				{
 					grounded = true;
-					shotFired = false;
+					KnockBackDirection = 0;
+					_previousHorizontalMove = 0;
 				}
 			}
 		}
@@ -95,7 +101,7 @@ namespace Player
 				if (_crouching)
 				{
 					// Reduce the speed by the crouchSpeed multiplier
-					moveInput *= _CrouchSpeed;
+					moveInput *= crouchSpeed;
 			
 					// Disable one of the colliders when crouching
 					if (m_CrouchDisableCollider != null)
@@ -112,17 +118,19 @@ namespace Player
 				}
 
 				// Move the character by finding the target velocity
-				if (!shotFired)
-				{
+				if (grounded
+				    || (!(KnockBackDirection == -1 && _previousHorizontalMove <= 0) 
+				    && !(KnockBackDirection == 1 && _previousHorizontalMove >= 0))) //au sol ou pas dans la direction du knockback
+				{ 
 					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
 					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
 					{
-						smoothingModifier *= _ExitMovementSmoothing;
+						smoothingModifier *= exitMovementSmoothing;
 					}
 					else
 					{
-						smoothingModifier *= _EnterMovementSmoothing;
+						smoothingModifier *= enterMovementSmoothing;
 					}
 					_rigidbody2D.velocity = Vector3.SmoothDamp(
 						_rigidbody2D.velocity,
@@ -161,7 +169,7 @@ namespace Player
 				}
 				else
 				{
-					_jumpBuffer = _jumpBufferDuration;
+					_jumpBuffer = jumpBufferDuration;
 				}
 			}
 			else if (grounded)
@@ -180,7 +188,7 @@ namespace Player
 				}
 				else if(_coyoteTime < 0) //leaves ground
 				{
-					_coyoteTime = _coyoteTimeDuration;
+					_coyoteTime = coyoteTimeDuration;
 				}
 			
 				if(_jumpBuffer > 0)
@@ -194,7 +202,7 @@ namespace Player
 		{
 			grounded = false;
 			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
-			_rigidbody2D.AddForce(new Vector2(0f, _JumpForce));
+			_rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 			_coyoteTime = 0;
 			_jumpBuffer = 0;
 		}
