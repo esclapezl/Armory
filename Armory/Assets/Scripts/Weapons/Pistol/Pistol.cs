@@ -8,7 +8,7 @@ namespace Weapons.Pistol
     {
         protected override void Shoot()
         {
-            Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f);
+            Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f, PlayerMovements.whatIsGround);
             if (hitCollider == null)
             {
                 GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);

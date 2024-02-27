@@ -6,44 +6,49 @@ namespace Player
 {
 	public class PlayerMovements : MonoBehaviour
 	{
-		[SerializeField] private LayerMask whatIsGround;							// A mask determining what is ground to the character
-		[NonSerialized] private Transform _groundCheck;							// A position marking where to check if the player is grounded.
-		[NonSerialized] private Transform _ceilingCheck;							// A position marking where to check for ceilings
-		[SerializeField] private Collider2D m_CrouchDisableCollider;				// A collider that will be disabled when crouching
+		[Header("Ground Settings")]
+		[SerializeField] public LayerMask whatIsGround;
+		[NonSerialized] private Transform _groundCheck;
+		[NonSerialized] private Transform _ceilingCheck;
+		const float GroundedRadius = .2f;
+		[NonSerialized] public bool Grounded;
+		const float CeilingRadius = .2f;
+
+		[Header("Crouch Settings")]
+		[SerializeField] private Collider2D crouchDisableCollider;
+		[Range(0, 1)] [SerializeField] private float crouchSpeed;
+		private bool _crouching;
+		private bool _crouchInput;
+
+		[Header("Player Settings")]
 		[NonSerialized] private GameObject _playerObject;
-		const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
-		[NonSerialized] public bool grounded;        
-		const float k_CeilingRadius = .2f; // Radius of the overlap circle to determine if the player can stand up
-		private Rigidbody2D _rigidbody2D;
-		[NonSerialized] public bool FacingRight = true;  // For determining which way the player is currently facing.
-		private Vector3 _Velocity = Vector3.zero;
+		[NonSerialized] public bool FacingRight = true;
 		private bool _armed = true;
-	
-		[FormerlySerializedAs("_runSpeed")]
+
 		[Header("Movement Settings")]
-		[SerializeField] private float runSpeed;
+		[FormerlySerializedAs("_runSpeed")]
+		[SerializeField] private int runSpeed;
 		[Range(0, .3f)] [SerializeField] private float enterMovementSmoothing;
 		[Range(0, .3f)] [SerializeField] private float exitMovementSmoothing;
+		[NonSerialized] public int HorizontalInput;
 		[NonSerialized] public int HorizontalMove;
-		private int _previousHorizontalMove = 0;
+		[NonSerialized] public int PreviousHorizontalInput = 0;
 
-		[FormerlySerializedAs("_JumpForce")]
 		[Header("Jump Settings")]
+		[FormerlySerializedAs("_JumpForce")]
 		[SerializeField] private float jumpForce;
-		[SerializeField] public bool canAirControl;   
-		[NonSerialized] public int KnockBackDirection = 0; 
-		[SerializeField] public float airControl; //for moving in the air
+		[NonSerialized] public bool RecentlyJumped = false;
+		[SerializeField] public bool canAirControl;
+		[NonSerialized] public string KnockBackDirection = "none";
+		[SerializeField] public float airControl;
 		[Range(0, .1f)] [SerializeField] private float coyoteTimeDuration;
 		private float _coyoteTime;
 		[Range(0, .3f)] [SerializeField] private float jumpBufferDuration;
 		private float _jumpBuffer;
 		private bool _jumpInput;
 
-		[FormerlySerializedAs("_CrouchSpeed")]
-		[Header("Crouch Settings")]
-		[Range(0, 1)] [SerializeField] private float crouchSpeed;          
-		private bool _crouching;
-		private bool _crouchInput;
+		private Rigidbody2D _rigidbody2D;
+		private Vector3 _velocity = Vector3.zero;
 		private void Awake()
 		{
 			_playerObject = transform.Find("PlayerObject").gameObject;
@@ -54,15 +59,22 @@ namespace Player
 
 		private void Update()
 		{
-			HorizontalMove = (int)(Input.GetAxisRaw("Horizontal") * runSpeed);
-			if (HorizontalMove != 0 && HorizontalMove != _previousHorizontalMove) //va dans la direction opposée de sa valocité knockback
+			HorizontalInput = (int) Input.GetAxisRaw("Horizontal");
+			HorizontalMove = (HorizontalInput * runSpeed);
+			if (HorizontalMove != 0 && HorizontalMove != PreviousHorizontalInput) 
 			{
-				KnockBackDirection = 0;
+				KnockBackDirection = "none";
 			}
-			_previousHorizontalMove = HorizontalMove != 0 ? HorizontalMove : _previousHorizontalMove;
+			PreviousHorizontalInput = HorizontalMove != 0 ? HorizontalMove : PreviousHorizontalInput;
 			if (Input.GetButtonDown("Crouch"))
 			{
 				_crouchInput = true;
+			}
+			
+			if (_rigidbody2D.velocity.y < 1 && _rigidbody2D.velocity.y < 3 && RecentlyJumped)
+			{
+				//A CHANGER EN COROUTINE
+				RecentlyJumped = false;
 			}
 			if (Input.GetButtonDown("Jump"))
 			{
@@ -77,17 +89,17 @@ namespace Player
 			_crouchInput = false;
 			JumpControl(_jumpInput);
 			_jumpInput = false;
-			grounded = false;
+			Grounded = false;
 			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-			Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, k_GroundedRadius, whatIsGround);
+			Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
 			for (int i = 0; i < colliders.Length; i++)
 			{
 				if (colliders[i].gameObject != gameObject)
 				{
-					grounded = true;
-					KnockBackDirection = 0;
-					_previousHorizontalMove = 0;
+					Grounded = true;
+					KnockBackDirection = "none";
+					PreviousHorizontalInput = 0;
 				}
 			}
 		}
@@ -95,7 +107,7 @@ namespace Player
 		public void MoveControl(float moveInput, bool armed)
 		{
 			//only control the player if grounded or airControl is turned on
-			if (grounded || canAirControl)
+			if (Grounded || canAirControl)
 			{
 				// If crouching
 				if (_crouching)
@@ -104,25 +116,25 @@ namespace Player
 					moveInput *= crouchSpeed;
 			
 					// Disable one of the colliders when crouching
-					if (m_CrouchDisableCollider != null)
+					if (crouchDisableCollider != null)
 					{
-						m_CrouchDisableCollider.enabled = false;
+						crouchDisableCollider.enabled = false;
 					}
 				} else
 				{
 					// Enable the collider when not crouching
-					if (m_CrouchDisableCollider != null)
+					if (crouchDisableCollider != null)
 					{
-						m_CrouchDisableCollider.enabled = true;
+						crouchDisableCollider.enabled = true;
 					}
 				}
 
 				// Move the character by finding the target velocity
-				if (grounded
-				    || (!(KnockBackDirection == -1 && _previousHorizontalMove <= 0) 
-				    && !(KnockBackDirection == 1 && _previousHorizontalMove >= 0))) //au sol ou pas dans la direction du knockback
+				if (Grounded
+				    || (!(KnockBackDirection == "left" && PreviousHorizontalInput == 1) 
+				    && !(KnockBackDirection == "right" && PreviousHorizontalInput == -1))) //au sol ou pas dans la direction du knockback
 				{ 
-					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
+					float smoothingModifier = Grounded ? 1 : airControl; // CONTROL IN AIR
 					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
 					{
@@ -135,7 +147,7 @@ namespace Player
 					_rigidbody2D.velocity = Vector3.SmoothDamp(
 						_rigidbody2D.velocity,
 						targetVelocity,
-						ref _Velocity,
+						ref _velocity,
 						smoothingModifier
 					);
 				}
@@ -163,7 +175,7 @@ namespace Player
 		{
 			if (jumpInput)
 			{
-				if (grounded || _coyoteTime > 0) //check for ground or remaining coyote time
+				if (Grounded || _coyoteTime > 0) //check for ground or remaining coyote time
 				{
 					Jump();
 				}
@@ -172,7 +184,7 @@ namespace Player
 					_jumpBuffer = jumpBufferDuration;
 				}
 			}
-			else if (grounded)
+			else if (Grounded)
 			{
 				_coyoteTime = -1f;
 				if (_jumpBuffer > 0) //check for remaining jump buffer
@@ -200,7 +212,8 @@ namespace Player
 	
 		private void Jump()
 		{
-			grounded = false;
+			Grounded = false;
+			RecentlyJumped = true;
 			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
 			_rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 			_coyoteTime = 0;
@@ -213,7 +226,7 @@ namespace Player
 			if (!crouchInput)
 			{
 				// If the character has a ceiling preventing them from standing up, keep them crouching
-				if (Physics2D.OverlapCircle(_ceilingCheck.position, k_CeilingRadius, whatIsGround))
+				if (Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround))
 				{
 					_crouching = true;
 				}

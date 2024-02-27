@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DefaultNamespace;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,11 +15,11 @@ namespace weapons
         [NonSerialized] public Transform PlayerTransform;
         [NonSerialized] protected PlayerMovements PlayerMovements;
         [NonSerialized] protected Transform CannonTransform;
-
-        [FormerlySerializedAs("recoil")]
+        
         [Header("Recoil Settings")]
         [SerializeField] [Range(0, 2)] public float gunRecoil;
         [SerializeField] [Range(0, 100)] public float playerRecoilForce;
+        [SerializeField] [Range(1, 10)] public float playerRecoilBoostWhileEmbracingRecoil;
         [SerializeField] [Range(0, 100)] public float playerRecoilDuration;
         protected Vector3 OriginalPosition;
         protected Vector3 RecoilPosition;
@@ -73,7 +74,7 @@ namespace weapons
                 if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
                     && totalAmmo > 0 
-                    && PlayerMovements.grounded)
+                    && PlayerMovements.Grounded)
                 {
                     if (ReloadCoroutine != null)
                     {
@@ -104,24 +105,39 @@ namespace weapons
     
         private void PlayerKnockBack()
         {
-            Vector3 knockbackDirection = -CannonTransform.right;
+            Vector3 knockbackVector = -CannonTransform.right;
             Rigidbody2D playerRigidbody = PlayerTransform.GetComponent<Rigidbody2D>();
-            
-            PlayerMovements.KnockBackDirection = 0;
-            float cannonAngle = CannonTransform.eulerAngles.z;
-            
+            float appliedForce = playerRecoilForce;
+
             playerRigidbody.velocity = Vector2.zero;
-            if (cannonAngle >= 270 || cannonAngle < 90)
+            string direction = (Utils.AngleToDirection(CannonTransform.eulerAngles.z, 45));
+            Debug.Log(direction);
+            PlayerMovements.KnockBackDirection = direction;
+            if (PlayerMovements.HorizontalInput == 0)
             {
-                PlayerMovements.KnockBackDirection = -1;
+                PlayerMovements.PreviousHorizontalInput = 0;
             }
-            else if (cannonAngle < 270 && cannonAngle >= 90)
+            else if((direction == "left" && PlayerMovements.HorizontalInput == 1) 
+                    || (direction == "right" && PlayerMovements.HorizontalInput == -1))
+                //octroie un boost horizontal dans le knockback si le joueur va dans la direction de sa vélocité knockback
             {
-                PlayerMovements.KnockBackDirection = 1;
+                Debug.Log("boost run");
+                knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
+                    knockbackVector.y,
+                    knockbackVector.z);
             }
             
-            float currentRecoil = playerRecoilForce;
-            playerRigidbody.AddForce(knockbackDirection * currentRecoil, ForceMode2D.Impulse);
+            if (direction == "down" && PlayerMovements.RecentlyJumped)
+                //octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
+            {
+                Debug.Log("boost jump");
+                knockbackVector = new Vector3(knockbackVector.x,
+                    knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
+                    knockbackVector.z);
+            }
+
+            PlayerMovements.RecentlyJumped = false;
+            playerRigidbody.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
         }
     
         private IEnumerator GunKnockBack()
