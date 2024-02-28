@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -11,7 +12,7 @@ namespace Player
 		[NonSerialized] private Transform _groundCheck;
 		[NonSerialized] private Transform _ceilingCheck;
 		const float GroundedRadius = .2f;
-		[NonSerialized] public bool Grounded;
+		[SerializeField] public bool Grounded;
 		const float CeilingRadius = .2f;
 
 		[Header("Crouch Settings")]
@@ -21,7 +22,8 @@ namespace Player
 		private bool _crouchInput;
 
 		[Header("Player Settings")]
-		[NonSerialized] private GameObject _playerObject;
+		[NonSerialized] private Transform _playerTransform;
+		[NonSerialized] private Transform _inventoryTransform;
 		[NonSerialized] public bool FacingRight = true;
 		private bool _armed = true;
 
@@ -37,9 +39,10 @@ namespace Player
 		[Header("Jump Settings")]
 		[FormerlySerializedAs("_JumpForce")]
 		[SerializeField] private float jumpForce;
-		[NonSerialized] public bool RecentlyJumped = false;
+		[NonSerialized] private bool _recentlyJumped = false;
+		[NonSerialized] public bool CanJumpBoost = false;
 		[SerializeField] public bool canAirControl;
-		[NonSerialized] public string KnockBackDirection = "none";
+		[NonSerialized] public string ShotDirection = "none";
 		[SerializeField] public float airControl;
 		[Range(0, .1f)] [SerializeField] private float coyoteTimeDuration;
 		private float _coyoteTime;
@@ -48,10 +51,11 @@ namespace Player
 		private bool _jumpInput;
 
 		private Rigidbody2D _rigidbody2D;
-		private Vector3 _velocity = Vector3.zero;
+		private Vector3 _velocity;
 		private void Awake()
 		{
-			_playerObject = transform.Find("PlayerObject").gameObject;
+			_playerTransform = transform.Find("PlayerObject");
+			_inventoryTransform = transform.Find("Inventory");
 			_groundCheck = transform.Find("GroundCheck");
 			_ceilingCheck = transform.Find("CeilingCheck");
 			_rigidbody2D = GetComponent<Rigidbody2D>();
@@ -61,27 +65,22 @@ namespace Player
 		{
 			HorizontalInput = (int) Input.GetAxisRaw("Horizontal");
 			HorizontalMove = (HorizontalInput * runSpeed);
-			if (HorizontalMove != 0 && HorizontalMove != PreviousHorizontalInput) 
+			if (HorizontalInput != 0 && HorizontalInput != PreviousHorizontalInput) 
 			{
-				KnockBackDirection = "none";
+				ShotDirection = "none";
 			}
-			PreviousHorizontalInput = HorizontalMove != 0 ? HorizontalMove : PreviousHorizontalInput;
-			if (Input.GetButtonDown("Crouch"))
+			PreviousHorizontalInput = HorizontalInput != 0 ? HorizontalInput : PreviousHorizontalInput;
+			if (Input.GetButton("Crouch"))
 			{
 				_crouchInput = true;
 			}
 			
-			if (_rigidbody2D.velocity.y < 1 && _rigidbody2D.velocity.y < 3 && RecentlyJumped)
-			{
-				//A CHANGER EN COROUTINE
-				RecentlyJumped = false;
-			}
 			if (Input.GetButtonDown("Jump"))
 			{
 				_jumpInput = true;
 			}
 		}
-
+		
 		private void FixedUpdate()
 		{
 			MoveControl(HorizontalMove * Time.fixedDeltaTime, _armed);
@@ -90,15 +89,18 @@ namespace Player
 			JumpControl(_jumpInput);
 			_jumpInput = false;
 			Grounded = false;
+			_groundCheck.GetComponent<SpriteRenderer>().color = Color.red;
 			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
+			
 			for (int i = 0; i < colliders.Length; i++)
 			{
-				if (colliders[i].gameObject != gameObject)
+				if (colliders[i].gameObject != gameObject && !_recentlyJumped)
 				{
+					_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
 					Grounded = true;
-					KnockBackDirection = "none";
+					ShotDirection = "none";
 					PreviousHorizontalInput = 0;
 				}
 			}
@@ -128,12 +130,18 @@ namespace Player
 						crouchDisableCollider.enabled = true;
 					}
 				}
-
+				
 				// Move the character by finding the target velocity
 				if (Grounded
-				    || (!(KnockBackDirection == "left" && PreviousHorizontalInput == 1) 
-				    && !(KnockBackDirection == "right" && PreviousHorizontalInput == -1))) //au sol ou pas dans la direction du knockback
+				    || 
+				    ShotDirection == "none"
+				    ||
+				    (!(ShotDirection == "left" && PreviousHorizontalInput == 1) 
+				    && !(ShotDirection == "right" && PreviousHorizontalInput == -1)
+				    && HorizontalInput != 0)
+				    ) //au sol ou pas dans la direction du knockback
 				{ 
+					_playerTransform.GetComponent<SpriteRenderer>().color = Color.black;
 					float smoothingModifier = Grounded ? 1 : airControl; // CONTROL IN AIR
 					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
@@ -151,6 +159,10 @@ namespace Player
 						smoothingModifier
 					);
 				}
+				else
+				{
+					_playerTransform.GetComponent<SpriteRenderer>().color = Color.white;
+				}
 				
 				if ((moveInput > 0 && !FacingRight && !armed) || (moveInput < 0 && FacingRight && !armed))
 				{
@@ -166,9 +178,9 @@ namespace Player
 			FacingRight = !FacingRight;
 
 			// Multiply the player's x local scale by -1.
-			Vector3 theScale = _playerObject.transform.localScale;
+			Vector3 theScale = _playerTransform.localScale;
 			theScale.x *= -1;
-			_playerObject.transform.localScale = theScale;
+			_playerTransform.localScale = theScale;
 		}
 
 		public void JumpControl(bool jumpInput)
@@ -213,34 +225,50 @@ namespace Player
 		private void Jump()
 		{
 			Grounded = false;
-			RecentlyJumped = true;
+			_recentlyJumped = true;
+			CanJumpBoost = true;
 			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
 			_rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 			_coyoteTime = 0;
 			_jumpBuffer = 0;
+			StartCoroutine(JumpCoroutine());
+		}
+
+		private IEnumerator JumpCoroutine()
+		{
+			yield return new WaitForSeconds(0.1f);
+			_recentlyJumped = false;
+			CanJumpBoost = false;
 		}
 
 		public void CrouchControl(bool crouchInput)
 		{
-			_crouching = crouchInput;
-			if (!crouchInput)
+			bool blocked = Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround);
+			if (crouchInput && !_crouching)
 			{
-				// If the character has a ceiling preventing them from standing up, keep them crouching
-				if (Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround))
-				{
-					_crouching = true;
-				}
+				Crouch();
+			}
+			else if(!crouchInput && _crouching && !blocked)
+			{
+				StandUp();
 			}
 		}
 
 		private void Crouch()
 		{
-		
+			_crouching = true;
+			float squishFactor = 0.6f;
+			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, squishFactor, 1);
+			_playerTransform.localPosition = new Vector3(0, (-1+squishFactor)/2, 0);
+			_inventoryTransform.localPosition = new Vector3(0, -squishFactor/2, 0);
 		}
 
 		private void StandUp()
 		{
-		
+			_crouching = false;
+			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, 1, 1);
+			_playerTransform.localPosition = new Vector3(0, 0, 0);
+			_inventoryTransform.localPosition = new Vector3(0, 0, 0);
 		}
 	}
 }

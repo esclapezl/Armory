@@ -111,8 +111,7 @@ namespace weapons
 
             playerRigidbody.velocity = Vector2.zero;
             string direction = (Utils.AngleToDirection(CannonTransform.eulerAngles.z, 45));
-            Debug.Log(direction);
-            PlayerMovements.KnockBackDirection = direction;
+            PlayerMovements.ShotDirection = direction;
             if (PlayerMovements.HorizontalInput == 0)
             {
                 PlayerMovements.PreviousHorizontalInput = 0;
@@ -121,22 +120,20 @@ namespace weapons
                     || (direction == "right" && PlayerMovements.HorizontalInput == -1))
                 //octroie un boost horizontal dans le knockback si le joueur va dans la direction de sa vélocité knockback
             {
-                Debug.Log("boost run");
                 knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
                     knockbackVector.y,
                     knockbackVector.z);
             }
             
-            if (direction == "down" && PlayerMovements.RecentlyJumped)
+            if (direction == "down" && PlayerMovements.CanJumpBoost)
                 //octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
             {
-                Debug.Log("boost jump");
                 knockbackVector = new Vector3(knockbackVector.x,
                     knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
                     knockbackVector.z);
             }
 
-            PlayerMovements.RecentlyJumped = false;
+            PlayerMovements.CanJumpBoost = false;
             playerRigidbody.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
         }
     
