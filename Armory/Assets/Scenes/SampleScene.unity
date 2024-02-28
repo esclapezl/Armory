@@ -348,7 +348,7 @@ MonoBehaviour:
   active: 0
   gunRecoil: 1
   playerRecoilForce: 12
-  playerRecoilBoostWhileEmbracingRecoil: 2
+  playerRecoilBoostWhileEmbracingRecoil: 1.2
   playerRecoilDuration: 0.1
   bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
   magazineSize: 5
@@ -576,6 +576,7 @@ MonoBehaviour:
   runSpeed: 30
   enterMovementSmoothing: 0.05
   exitMovementSmoothing: 0.05
+  boostParticlePrefab: {fileID: 6367582770296335435, guid: 28aa8251c00b25f4fb52e3eb4b3a6467, type: 3}
   jumpForce: 500
   canAirControl: 1
   airControl: 1.8

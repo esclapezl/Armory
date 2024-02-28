@@ -108,6 +108,10 @@ namespace weapons
             Vector3 knockbackVector = -CannonTransform.right;
             Rigidbody2D playerRigidbody = PlayerTransform.GetComponent<Rigidbody2D>();
             float appliedForce = playerRecoilForce;
+            if (PlayerMovements.Crouching)
+            {
+                appliedForce *= 0.75f;
+            }
 
             playerRigidbody.velocity = Vector2.zero;
             string direction = (Utils.AngleToDirection(CannonTransform.eulerAngles.z, 45));
@@ -123,6 +127,7 @@ namespace weapons
                 knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
                     knockbackVector.y,
                     knockbackVector.z);
+                StartCoroutine(PlayerMovements.BoostTrail(5));
             }
             
             if (direction == "down" && PlayerMovements.CanJumpBoost)
@@ -131,6 +136,7 @@ namespace weapons
                 knockbackVector = new Vector3(knockbackVector.x,
                     knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
                     knockbackVector.z);
+                StartCoroutine(PlayerMovements.BoostTrail(5));
             }
 
             PlayerMovements.CanJumpBoost = false;

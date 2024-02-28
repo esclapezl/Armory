@@ -18,7 +18,7 @@ namespace Player
 		[Header("Crouch Settings")]
 		[SerializeField] private Collider2D crouchDisableCollider;
 		[Range(0, 1)] [SerializeField] private float crouchSpeed;
-		private bool _crouching;
+		[NonSerialized] public bool Crouching;
 		private bool _crouchInput;
 
 		[Header("Player Settings")]
@@ -35,6 +35,7 @@ namespace Player
 		[NonSerialized] public int HorizontalInput;
 		[NonSerialized] public int HorizontalMove;
 		[NonSerialized] public int PreviousHorizontalInput = 0;
+		[SerializeField] private GameObject boostParticlePrefab;
 
 		[Header("Jump Settings")]
 		[FormerlySerializedAs("_JumpForce")]
@@ -112,7 +113,7 @@ namespace Player
 			if (Grounded || canAirControl)
 			{
 				// If crouching
-				if (_crouching)
+				if (Crouching)
 				{
 					// Reduce the speed by the crouchSpeed multiplier
 					moveInput *= crouchSpeed;
@@ -244,11 +245,11 @@ namespace Player
 		public void CrouchControl(bool crouchInput)
 		{
 			bool blocked = Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround);
-			if (crouchInput && !_crouching)
+			if (crouchInput && !Crouching)
 			{
 				Crouch();
 			}
-			else if(!crouchInput && _crouching && !blocked)
+			else if(!crouchInput && Crouching && !blocked)
 			{
 				StandUp();
 			}
@@ -256,7 +257,7 @@ namespace Player
 
 		private void Crouch()
 		{
-			_crouching = true;
+			Crouching = true;
 			float squishFactor = 0.6f;
 			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, squishFactor, 1);
 			_playerTransform.localPosition = new Vector3(0, (-1+squishFactor)/2, 0);
@@ -265,10 +266,24 @@ namespace Player
 
 		private void StandUp()
 		{
-			_crouching = false;
+			Crouching = false;
 			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, 1, 1);
 			_playerTransform.localPosition = new Vector3(0, 0, 0);
 			_inventoryTransform.localPosition = new Vector3(0, 0, 0);
+		}
+
+		public IEnumerator BoostTrail(int particles)
+		{
+			Sprite playerSprite = _playerTransform.GetComponent<SpriteRenderer>().sprite;
+			for (int i = 0; i < particles; i++)
+			{
+				GameObject particle = Instantiate(boostParticlePrefab, _playerTransform.position, Quaternion.identity);
+				particle.transform.localScale = new Vector3(_playerTransform.localScale.x * 0.75f,
+					_playerTransform.localScale.y * 0.75f,
+					1);
+				particle.GetComponent<SpriteMask>().sprite = playerSprite;
+				yield return new WaitForSeconds(0.05f);
+			}
 		}
 	}
 }
