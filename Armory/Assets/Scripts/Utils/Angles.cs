@@ -1,8 +1,6 @@
-using UnityEngine;
-
-namespace DefaultNamespace
+namespace Utils
 {
-    public class Utils
+    public class Angles
     {
         public static string AngleToDirection(float angle, float angleTolerance)
         {
@@ -32,28 +30,6 @@ namespace DefaultNamespace
             }
             
             return "none";
-        }
-        
-        public static Transform FindChild(Transform parent, string name)
-        {
-            foreach (Transform child in parent)
-            {
-                if (child.name == name)
-                {
-                    return child;
-                }
-                
-                if(child.childCount > 0)
-                {
-                    Transform result = FindChild(child, name);
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-                
-            }
-            return null;
         }
     }
 }

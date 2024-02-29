@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
+using ObjectSearch = Utils.ObjectSearch;
 
 namespace Player
 {

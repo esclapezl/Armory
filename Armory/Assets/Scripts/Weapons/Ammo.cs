@@ -1,5 +1,5 @@
-using DefaultNamespace;
 using UnityEngine;
+using Utils;
 using weapons;
 
 namespace Weapons
@@ -12,7 +12,7 @@ namespace Weapons
         {
             if(other.gameObject.CompareTag("Player"))
             {
-                Weapon weapon = Utils.FindChild(other.transform, ammoType).GetComponent<Weapon>();
+                Weapon weapon = ObjectSearch.FindChild(other.transform, ammoType).GetComponent<Weapon>();
                 PickUp(weapon);
             }
         }

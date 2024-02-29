@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using weapons;
 using Weapons.Pistol;
+using ObjectSearch = Utils.ObjectSearch;
 
 namespace Player
 {

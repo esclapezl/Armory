@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
-using DefaultNamespace;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Weapons.Pistol;
+using Angles = Utils.Angles;
+using UnityEngine_Transform = UnityEngine.Transform;
 
 namespace weapons
 {
@@ -12,7 +13,7 @@ namespace weapons
     {
         [SerializeField] public bool active = false;
 
-        [NonSerialized] public Transform playerTransform;
+        [NonSerialized] public UnityEngine_Transform playerTransform;
         [NonSerialized] protected PlayerMovements playerMovements;
         [NonSerialized] protected Transform cannonTransform;
         
@@ -114,7 +115,7 @@ namespace weapons
             }
 
             playerRigidbody.velocity = Vector2.zero;
-            string direction = (Utils.AngleToDirection(cannonTransform.eulerAngles.z, 45));
+            string direction = (Angles.AngleToDirection(cannonTransform.eulerAngles.z, 45));
             playerMovements.ShotDirection = direction;
             if (playerMovements.HorizontalInput == 0)
             {
