@@ -215,7 +215,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6.18
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -680,7 +680,7 @@ GameObject:
   - component: {fileID: 770175577}
   m_Layer: 3
   m_Name: PlayerFilter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -953,7 +953,7 @@ MonoBehaviour:
   active: 0
   gunRecoil: 2
   playerRecoilForce: 17
-  playerRecoilBoostWhileEmbracingRecoil: 0
+  playerRecoilBoostWhileEmbracingRecoil: 1.2
   playerRecoilDuration: 0.2
   bulletPrefab: {fileID: 1932262067096333803, guid: 7db461ab9bfd6a34f9b36676f1c336e0, type: 3}
   magazineSize: 1
@@ -1499,6 +1499,63 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &3036388421946647401
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 220096772690197946, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2563943327339026340, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
+      propertyPath: m_Name
+      value: ShotgunAmmo
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 083e327a29733e34b8189ceb26cde8db, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1508,3 +1565,4 @@ SceneRoots:
   - {fileID: 1360447449}
   - {fileID: 1283726208}
   - {fileID: 717775820}
+  - {fileID: 3036388421946647401}

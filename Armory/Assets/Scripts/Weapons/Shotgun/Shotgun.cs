@@ -10,29 +10,29 @@ namespace Weapons.Shotgun
     {
         protected override void Shoot()
         {
-            Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f);
+            Collider2D hitCollider = Physics2D.OverlapCircle(cannonTransform.position, 0.1f);
             if (hitCollider == null)
             {
                 for (int i = 0; i < 5; i++)
                 {
                     Vector3 bulletRotation = transform.rotation.eulerAngles;
                     bulletRotation.z += Random.Range(-10, 10);
-                    GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, Quaternion.Euler(bulletRotation));
+                    GameObject bulletObject = Instantiate(bulletPrefab, cannonTransform.position, Quaternion.Euler(bulletRotation));
                     Bullet bullet = bulletObject.GetComponent<Bullet>();
                     bulletObject.transform.localScale = new Vector3(2.5f, 2.5f, 1);
                     bullet.SetSpeed(Random.Range(bulletSpeed-5, bulletSpeed));
                 }
                 
             }
-            NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
+            nextFireTime = fireRate;
+            ammoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
             currentAmmo--;
 
             KnockBack();
         }
         protected override IEnumerator Reload()
         {
-            IsReloading = true;
+            isReloading = true;
             Quaternion originalRotation = transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(0, 0, 90 * transform.localScale.y);
 
@@ -46,7 +46,7 @@ namespace Weapons.Shotgun
             //refill mag
             for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
-                AmmoDisplay.EnableBullet(magazineSize-i-1);
+                ammoDisplay.EnableBullet(magazineSize-i-1);
                 currentAmmo++;
                 totalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);
@@ -59,8 +59,8 @@ namespace Weapons.Shotgun
                 yield return null;
             }
             transform.localRotation = originalRotation;
-            IsReloading = false;
-            ReloadCoroutine = null;
+            isReloading = false;
+            reloadCoroutine = null;
         }
     }
 }

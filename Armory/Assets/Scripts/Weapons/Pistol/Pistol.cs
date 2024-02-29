@@ -8,22 +8,22 @@ namespace Weapons.Pistol
     {
         protected override void Shoot()
         {
-            Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f, PlayerMovements.whatIsGround);
+            Collider2D hitCollider = Physics2D.OverlapCircle(cannonTransform.position, 0.1f, playerMovements.whatIsGround);
             if (hitCollider == null)
             {
-                GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
+                GameObject bulletObject = Instantiate(bulletPrefab, cannonTransform.position, transform.rotation);
                 Bullet bullet = bulletObject.GetComponent<Bullet>();
                 bullet.SetSpeed(bulletSpeed);
             }
-            NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
+            nextFireTime = fireRate;
+            ammoDisplay.ToggleUidBullet(magazineSize-currentAmmo);
             currentAmmo--;
 
             KnockBack();
         }
         protected override IEnumerator Reload()
         {
-            IsReloading = true;
+            isReloading = true;
             Quaternion originalRotation = transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(0, 0, 90 * transform.localScale.y);
 
@@ -37,7 +37,7 @@ namespace Weapons.Pistol
             //refill mag
             for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
-                AmmoDisplay.EnableBullet(magazineSize-i-1);
+                ammoDisplay.EnableBullet(magazineSize-i-1);
                 currentAmmo++;
                 totalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);
@@ -50,8 +50,8 @@ namespace Weapons.Pistol
                 yield return null;
             }
             transform.localRotation = originalRotation;
-            IsReloading = false;
-            ReloadCoroutine = null;
+            isReloading = false;
+            reloadCoroutine = null;
         }
     }
 }

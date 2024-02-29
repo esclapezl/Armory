@@ -69,12 +69,12 @@ namespace Player
             weaponInfo.active = false;
             weapon.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
             weapon.GetComponent<AmmoDisplay>().HideAmmo();
-            if (weaponInfo.IsReloading)
+            if (weaponInfo.isReloading)
             {
-                weaponInfo.StopCoroutine(weaponInfo.ReloadCoroutine);
+                weaponInfo.StopCoroutine(weaponInfo.reloadCoroutine);
                 weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                weaponInfo.IsReloading = false;
-                weaponInfo.ReloadCoroutine = null;
+                weaponInfo.isReloading = false;
+                weaponInfo.reloadCoroutine = null;
             }
         }
     
