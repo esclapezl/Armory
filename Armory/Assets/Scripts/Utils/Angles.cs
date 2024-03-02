@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Utils
 {
     public class Angles
@@ -30,6 +32,30 @@ namespace Utils
             }
             
             return "none";
+        }
+        
+        public static bool AngleIsInAGivenRange(float angle, float range, float direction)
+        {
+            if (angle < 0)
+            {
+                angle += 360;
+            }
+
+            float start = direction - range/2;
+            float end = direction + range/2;
+            if(end > 360 || start < 0)
+            {
+                if(end > 360)
+                {
+                    end -= 360;
+                }
+                else
+                {
+                    start += 360;
+                }
+                return (angle > start || angle < end);
+            }
+            return (angle > start && angle < end);
         }
     }
 }

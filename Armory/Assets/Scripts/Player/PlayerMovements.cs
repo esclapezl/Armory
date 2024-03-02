@@ -12,8 +12,8 @@ namespace Player
 		[SerializeField] public LayerMask whatIsGround;
 		[NonSerialized] private Transform _groundCheck;
 		[NonSerialized] private Transform _ceilingCheck;
-		const float GroundedRadius = .2f;
-		[SerializeField] public bool Grounded;
+		const float GroundedRadius = .05f;
+		[SerializeField] public bool grounded;
 		const float CeilingRadius = .2f;
 
 		[Header("Crouch Settings")]
@@ -90,20 +90,22 @@ namespace Player
 			_crouchInput = false;
 			JumpControl(_jumpInput);
 			_jumpInput = false;
-			Grounded = false;
+			grounded = false;
 			_groundCheck.GetComponent<SpriteRenderer>().color = Color.red;
 			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-			Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
-			
-			for (int i = 0; i < colliders.Length; i++)
+			if (!_recentlyJumped)
 			{
-				if (colliders[i].gameObject != gameObject && !_recentlyJumped)
+				Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
+				for (int i = 0; i < colliders.Length; i++)
 				{
-					_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
-					Grounded = true;
-					ShotDirection = "none";
-					PreviousHorizontalInput = 0;
+					if (colliders[i].gameObject != gameObject)
+					{
+						_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
+						grounded = true;
+						ShotDirection = "none";
+						PreviousHorizontalInput = 0;
+					}
 				}
 			}
 		}
@@ -111,7 +113,7 @@ namespace Player
 		public void MoveControl(float moveInput, bool armed)
 		{
 			//only control the player if grounded or airControl is turned on
-			if (Grounded || canAirControl)
+			if (grounded || canAirControl)
 			{
 				// If crouching
 				if (Crouching)
@@ -134,7 +136,7 @@ namespace Player
 				}
 				
 				// Move the character by finding the target velocity
-				if (Grounded
+				if ((grounded && ShotDirection != "down")
 				    || 
 				    ShotDirection == "none"
 				    ||
@@ -144,7 +146,7 @@ namespace Player
 				    ) //au sol ou pas dans la direction du knockback
 				{ 
 					_playerTransform.GetComponent<SpriteRenderer>().color = Color.black;
-					float smoothingModifier = Grounded ? 1 : airControl; // CONTROL IN AIR
+					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
 					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
 					{
@@ -189,7 +191,7 @@ namespace Player
 		{
 			if (jumpInput)
 			{
-				if (Grounded || _coyoteTime > 0) //check for ground or remaining coyote time
+				if (grounded || _coyoteTime > 0) //check for ground or remaining coyote time
 				{
 					Jump();
 				}
@@ -198,7 +200,7 @@ namespace Player
 					_jumpBuffer = jumpBufferDuration;
 				}
 			}
-			else if (Grounded)
+			else if (grounded)
 			{
 				_coyoteTime = -1f;
 				if (_jumpBuffer > 0) //check for remaining jump buffer
@@ -226,7 +228,7 @@ namespace Player
 	
 		private void Jump()
 		{
-			Grounded = false;
+			grounded = false;
 			_recentlyJumped = true;
 			CanJumpBoost = true;
 			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
@@ -241,6 +243,21 @@ namespace Player
 			yield return new WaitForSeconds(0.1f);
 			_recentlyJumped = false;
 			CanJumpBoost = false;
+		}
+		
+		public void BulletJump()
+		{
+			grounded = false;
+			_recentlyJumped = true;
+			ShotDirection = "down";
+			
+			StartCoroutine(BulletJumpCoroutine());
+		}
+		
+		private IEnumerator BulletJumpCoroutine()
+		{
+			yield return new WaitForSeconds(0.1f);
+			_recentlyJumped = false;
 		}
 
 		public void CrouchControl(bool crouchInput)

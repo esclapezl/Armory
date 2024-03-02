@@ -75,7 +75,7 @@ namespace weapons
                 if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
                     && totalAmmo > 0 
-                    && playerMovements.Grounded)
+                    && playerMovements.grounded)
                 {
                     if (reloadCoroutine != null)
                     {
@@ -113,6 +113,11 @@ namespace weapons
             {
                 appliedForce *= 0.75f;
             }
+            
+            if (Angles.AngleIsInAGivenRange(cannonTransform.eulerAngles.z, 160, 270))
+            { //si le joueur tire dans un rayon de 180° en dessous de lui, il n'aura pas de friction horizontale
+                playerMovements.BulletJump();
+            }
 
             playerRigidbody.velocity = Vector2.zero;
             string direction = (Angles.AngleToDirection(cannonTransform.eulerAngles.z, 45));
@@ -138,9 +143,9 @@ namespace weapons
                     knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
                     knockbackVector.z);
                 StartCoroutine(playerMovements.BoostTrail(5));
+                playerMovements.CanJumpBoost = false;
             }
-
-            playerMovements.CanJumpBoost = false;
+            
             playerRigidbody.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
         }
     
