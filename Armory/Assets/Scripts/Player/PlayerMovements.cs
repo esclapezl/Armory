@@ -249,8 +249,6 @@ namespace Player
 		{
 			grounded = false;
 			_recentlyJumped = true;
-			ShotDirection = "down";
-			
 			StartCoroutine(BulletJumpCoroutine());
 		}
 		

@@ -10,13 +10,16 @@ using Utils;
 
 public class GameManager : MonoBehaviour
 {
-    [NonSerialized] private Transform _levelFolder;
+    [Header("Level Selection")]
+    [NonSerialized] public Transform LevelFolder;
     [SerializeField] public int currentLevelNumber;
     [NonSerialized] public Level CurrentLevel;
+    [NonSerialized] private CameraMovements _cameraMovements;
 
     void Awake()
     {
-        _levelFolder = ObjectSearch.FindChild(transform,"Levels");
+        _cameraMovements = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraMovements>();
+        LevelFolder = ObjectSearch.FindChild(transform,"Levels");
         SetUpLevels();
     }
     private void Update()
@@ -24,34 +27,40 @@ public class GameManager : MonoBehaviour
         //PLAYTEST USAGE---
         if (CurrentLevel == null || currentLevelNumber != CurrentLevel.LevelNumber)
         {
-            if(currentLevelNumber > _levelFolder.childCount)
+            if(currentLevelNumber > LevelFolder.childCount)
             {
-                currentLevelNumber = _levelFolder.childCount;
+                currentLevelNumber = LevelFolder.childCount;
             }
-            CurrentLevel = ObjectSearch.FindChild(_levelFolder, currentLevelNumber+"_.*").GetComponent<Level>();
-            StartLevel(CurrentLevel);
+            else if (currentLevelNumber == 0)
+            {
+                currentLevelNumber = 1;
+            }
+            StartLevel(currentLevelNumber);
         }
         //-----------------
     }
 
     private void SetUpLevels()
     {
-        for(int i = 0; i < _levelFolder.childCount; i++)
+        for(int i = 0; i < LevelFolder.childCount; i++)
         {
-            Transform child = _levelFolder.GetChild(i);
+            Transform child = LevelFolder.GetChild(i);
             child.name = (i+1) + "_" + child.name;
             Level childLevel = child.GetComponent<Level>();
             childLevel.LevelNumber = i+1;
         }
     }
 
-    private void StartLevel(Level level)
+    public void StartLevel(int level)
     {
-        level.StartLevel();
+        currentLevelNumber = level;
+        CurrentLevel = ObjectSearch.FindChild(LevelFolder, currentLevelNumber+"_.*").GetComponent<Level>();
+        CurrentLevel.StartLevel();
+        _cameraMovements.SetDelimiters(CurrentLevel);
     }
 
-    private void ExitLevel()
+    private void ExitLevel(Level level)
     {
-        
+        level.ExitLevel();
     }
 }

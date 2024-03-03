@@ -61,5 +61,38 @@ namespace Utils
             }
             return children;
         }
+        
+        public static Transform FindParent(Transform child, string pattern)
+        {
+            Regex regex = new Regex(pattern);
+            Transform parent = child.parent;
+
+            while (parent != null)
+            {
+                if (regex.Match(parent.name).Success)
+                {
+                    return parent;
+                }
+                parent = parent.parent;
+            }
+            return null;
+        }
+
+        public static List<Transform> FindParents(Transform child, string pattern)
+        {
+            List<Transform> parents = new List<Transform>();
+            Regex regex = new Regex(pattern);
+            Transform parent = child.parent;
+
+            while (parent != null)
+            {
+                if (regex.Match(parent.name).Success)
+                {
+                    parents.Add(parent);
+                }
+                parent = parent.parent;
+            }
+            return parents;
+        }
     }
 }
