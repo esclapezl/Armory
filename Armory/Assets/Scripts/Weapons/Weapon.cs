@@ -106,47 +106,9 @@ namespace weapons
     
         private void PlayerKnockBack()
         {
-            Vector3 knockbackVector = -cannonTransform.right;
-            Rigidbody2D playerRigidbody = playerTransform.GetComponent<Rigidbody2D>();
+            
             float appliedForce = playerRecoilForce;
-            if (playerMovements.Crouching)
-            {
-                appliedForce *= 0.75f;
-            }
-            
-            if (Angles.AngleIsInAGivenRange(cannonTransform.eulerAngles.z, 160, 270))
-            { //si le joueur tire dans un rayon de 180° en dessous de lui, il n'aura pas de friction horizontale
-                playerMovements.BulletJump();
-            }
-
-            playerRigidbody.velocity = Vector2.zero;
-            string direction = (Angles.AngleToDirection(cannonTransform.eulerAngles.z, 45));
-            playerMovements.ShotDirection = direction;
-            if (playerMovements.HorizontalInput == 0)
-            {
-                playerMovements.PreviousHorizontalInput = 0;
-            }
-            else if((direction == "left" && playerMovements.HorizontalInput == 1) 
-                    || (direction == "right" && playerMovements.HorizontalInput == -1))
-                //octroie un boost horizontal dans le knockback si le joueur va dans la direction de sa vélocité knockback
-            {
-                knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
-                    knockbackVector.y,
-                    knockbackVector.z);
-                StartCoroutine(playerMovements.BoostTrail(5));
-            }
-            
-            if (direction == "down" && playerMovements.CanJumpBoost)
-                //octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
-            {
-                knockbackVector = new Vector3(knockbackVector.x,
-                    knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
-                    knockbackVector.z);
-                StartCoroutine(playerMovements.BoostTrail(5));
-                playerMovements.CanJumpBoost = false;
-            }
-            
-            playerRigidbody.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
+            playerMovements.PlayerKnockBack(cannonTransform, appliedForce, playerRecoilBoostWhileEmbracingRecoil);
         }
     
         private IEnumerator GunKnockBack()

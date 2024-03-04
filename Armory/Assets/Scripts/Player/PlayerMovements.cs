@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utils;
 using ObjectSearch = Utils.ObjectSearch;
 
 namespace Player
@@ -300,6 +301,50 @@ namespace Player
 				particle.GetComponent<SpriteMask>().sprite = playerSprite;
 				yield return new WaitForSeconds(0.05f);
 			}
+		}
+
+		public void PlayerKnockBack(Transform weaponTransform, float appliedForce, float playerRecoilBoostWhileEmbracingRecoil = 1f)
+		{
+			Vector3 knockbackVector = -weaponTransform.right;
+			float shotAngle = weaponTransform.eulerAngles.z;
+			if (Crouching)
+			{
+				appliedForce *= 0.75f;
+			}
+
+			if (Angles.AngleIsInAGivenRange(shotAngle, 160, 270))
+			{ //si le joueur tire dans un rayon de 180° en dessous de lui, il n'aura pas de friction horizontale
+				BulletJump();
+			}
+
+			//AFAIR ICI
+			_rigidbody2D.velocity = Vector2.zero;
+			string direction = (Angles.AngleToDirection(shotAngle, 45));
+			ShotDirection = direction;
+			if (HorizontalInput == 0)
+			{
+				PreviousHorizontalInput = 0;
+			}
+			else if((direction == "left" && HorizontalInput == 1) 
+			        || (direction == "right" && HorizontalInput == -1))
+				//octroie un boost horizontal dans le knockback si le joueur va dans la direction de sa vélocité knockback
+			{
+				knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
+					knockbackVector.y,
+					knockbackVector.z);
+				StartCoroutine(BoostTrail(5));
+			}
+			
+			if (direction == "down" && CanJumpBoost)
+				//octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
+			{
+				knockbackVector = new Vector3(knockbackVector.x,
+					knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
+					knockbackVector.z);
+				StartCoroutine(BoostTrail(5));
+				CanJumpBoost = false;
+			}
+			_rigidbody2D.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
 		}
 	}
 }
