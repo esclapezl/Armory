@@ -28,7 +28,7 @@ public class CameraMovements : MonoBehaviour
         _topRightDelimiter = level.TopRightDelimiter;
     }
     
-    private Vector3 CalculateCameraPosition()
+    private void CalculateCameraPosition()
     {
         var cam = Camera.main;
         float camWidth = cam.orthographicSize * 2.0f * cam.aspect;

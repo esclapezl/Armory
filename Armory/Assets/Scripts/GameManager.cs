@@ -21,22 +21,13 @@ public class GameManager : MonoBehaviour
         _cameraMovements = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraMovements>();
         LevelFolder = ObjectSearch.FindChild(transform,"Levels");
         SetUpLevels();
+
+        UpdateLevel();
     }
     private void Update()
     {
         //PLAYTEST USAGE---
-        if (CurrentLevel == null || currentLevelNumber != CurrentLevel.LevelNumber)
-        {
-            if(currentLevelNumber > LevelFolder.childCount)
-            {
-                currentLevelNumber = LevelFolder.childCount;
-            }
-            else if (currentLevelNumber == 0)
-            {
-                currentLevelNumber = 1;
-            }
-            StartLevel(currentLevelNumber);
-        }
+        UpdateLevel();
         //-----------------
     }
 
@@ -48,6 +39,22 @@ public class GameManager : MonoBehaviour
             child.name = (i+1) + "_" + child.name;
             Level childLevel = child.GetComponent<Level>();
             childLevel.LevelNumber = i+1;
+        }
+    }
+    
+    private void UpdateLevel()
+    {
+        if (CurrentLevel == null || currentLevelNumber != CurrentLevel.LevelNumber)
+        {
+            if(currentLevelNumber > LevelFolder.childCount)
+            {
+                currentLevelNumber = LevelFolder.childCount;
+            }
+            else if (currentLevelNumber == 0)
+            {
+                currentLevelNumber = 1;
+            }
+            StartLevel(currentLevelNumber);
         }
     }
 
