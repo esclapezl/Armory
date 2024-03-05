@@ -27,8 +27,8 @@ namespace Weapons
         
             float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
             if (
-                (zRotation >= 90 && zRotation < 270 && PlayerMovements.FacingRight)
-                || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.FacingRight)
+                (zRotation >= 90 && zRotation < 270 && PlayerMovements.facingRight)
+                || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.facingRight)
             ) {
                 if (armed) {
                     PlayerMovements.Flip();

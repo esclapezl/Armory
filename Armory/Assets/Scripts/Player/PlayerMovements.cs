@@ -20,13 +20,13 @@ namespace Player
 		[Header("Crouch Settings")]
 		[SerializeField] private Collider2D crouchDisableCollider;
 		[Range(0, 1)] [SerializeField] private float crouchSpeed;
-		[NonSerialized] public bool Crouching;
+		[NonSerialized] public bool crouching;
 		private bool _crouchInput;
 
 		[Header("Player Settings")]
 		[NonSerialized] private Transform _playerTransform;
 		[NonSerialized] private Transform _inventoryTransform;
-		[NonSerialized] public bool FacingRight = true;
+		[NonSerialized] public bool facingRight = true;
 		private bool _armed = true;
 
 		[Header("Movement Settings")]
@@ -34,18 +34,19 @@ namespace Player
 		[SerializeField] private int runSpeed;
 		[Range(0, .3f)] [SerializeField] private float enterMovementSmoothing;
 		[Range(0, .3f)] [SerializeField] private float exitMovementSmoothing;
-		[NonSerialized] public int HorizontalInput;
-		[NonSerialized] public int HorizontalMove;
-		[NonSerialized] public int PreviousHorizontalInput = 0;
+		[NonSerialized] public int horizontalInput;
+		[NonSerialized] public int horizontalMove;
+		[NonSerialized] public int previousHorizontalInput = 0;
 		[SerializeField] private GameObject boostParticlePrefab;
 
 		[Header("Jump Settings")]
 		[FormerlySerializedAs("_JumpForce")]
 		[SerializeField] private float jumpForce;
 		[NonSerialized] private bool _recentlyJumped = false;
-		[NonSerialized] public bool CanJumpBoost = false;
+		[NonSerialized] public bool canJumpBoost = false;
 		[SerializeField] public bool canAirControl;
-		[NonSerialized] public string ShotDirection = "none";
+		[NonSerialized] public string shotDirection = "none";
+		[NonSerialized] private float _previousAngle;
 		[SerializeField] public float airControl;
 		[Range(0, .1f)] [SerializeField] private float coyoteTimeDuration;
 		private float _coyoteTime;
@@ -66,13 +67,13 @@ namespace Player
 
 		private void Update()
 		{
-			HorizontalInput = (int) Input.GetAxisRaw("Horizontal");
-			HorizontalMove = (HorizontalInput * runSpeed);
-			if (HorizontalInput != 0 && HorizontalInput != PreviousHorizontalInput) 
+			horizontalInput = (int) Input.GetAxisRaw("Horizontal");
+			horizontalMove = (horizontalInput * runSpeed);
+			if (horizontalInput != 0 && horizontalInput != previousHorizontalInput) 
 			{
-				ShotDirection = "none";
+				shotDirection = "none";
 			}
-			PreviousHorizontalInput = HorizontalInput != 0 ? HorizontalInput : PreviousHorizontalInput;
+			previousHorizontalInput = horizontalInput != 0 ? horizontalInput : previousHorizontalInput;
 			if (Input.GetButton("Crouch"))
 			{
 				_crouchInput = true;
@@ -86,7 +87,7 @@ namespace Player
 		
 		private void FixedUpdate()
 		{
-			MoveControl(HorizontalMove * Time.fixedDeltaTime, _armed);
+			MoveControl(horizontalMove * Time.fixedDeltaTime, _armed);
 			CrouchControl(_crouchInput);
 			_crouchInput = false;
 			JumpControl(_jumpInput);
@@ -104,8 +105,8 @@ namespace Player
 					{
 						_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
 						grounded = true;
-						ShotDirection = "none";
-						PreviousHorizontalInput = 0;
+						shotDirection = "none";
+						previousHorizontalInput = 0;
 					}
 				}
 			}
@@ -117,7 +118,7 @@ namespace Player
 			if (grounded || canAirControl)
 			{
 				// If crouching
-				if (Crouching)
+				if (crouching)
 				{
 					// Reduce the speed by the crouchSpeed multiplier
 					moveInput *= crouchSpeed;
@@ -137,13 +138,13 @@ namespace Player
 				}
 				
 				// Move the character by finding the target velocity
-				if ((grounded && ShotDirection != "down")
+				if ((grounded && shotDirection != "down")
 				    || 
-				    ShotDirection == "none"
+				    shotDirection == "none"
 				    ||
-				    (!(ShotDirection == "left" && PreviousHorizontalInput == 1) 
-				    && !(ShotDirection == "right" && PreviousHorizontalInput == -1)
-				    && HorizontalInput != 0)
+				    (!(shotDirection == "left" && previousHorizontalInput == 1) 
+				    && !(shotDirection == "right" && previousHorizontalInput == -1)
+				    && horizontalInput != 0)
 				    ) //au sol ou pas dans la direction du knockback
 				{ 
 					_playerTransform.GetComponent<SpriteRenderer>().color = Color.black;
@@ -169,7 +170,7 @@ namespace Player
 					_playerTransform.GetComponent<SpriteRenderer>().color = Color.white;
 				}
 				
-				if ((moveInput > 0 && !FacingRight && !armed) || (moveInput < 0 && FacingRight && !armed))
+				if ((moveInput > 0 && !facingRight && !armed) || (moveInput < 0 && facingRight && !armed))
 				{
 					Flip();
 				}
@@ -180,7 +181,7 @@ namespace Player
 		public void Flip()
 		{
 			// Switch the way the player is labelled as facing.
-			FacingRight = !FacingRight;
+			facingRight = !facingRight;
 
 			// Multiply the player's x local scale by -1.
 			Vector3 theScale = _playerTransform.localScale;
@@ -231,7 +232,7 @@ namespace Player
 		{
 			grounded = false;
 			_recentlyJumped = true;
-			CanJumpBoost = true;
+			canJumpBoost = true;
 			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
 			_rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 			_coyoteTime = 0;
@@ -243,7 +244,7 @@ namespace Player
 		{
 			yield return new WaitForSeconds(0.1f);
 			_recentlyJumped = false;
-			CanJumpBoost = false;
+			canJumpBoost = false;
 		}
 		
 		public void BulletJump()
@@ -262,11 +263,11 @@ namespace Player
 		public void CrouchControl(bool crouchInput)
 		{
 			bool blocked = Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround);
-			if (crouchInput && !Crouching)
+			if (crouchInput && !crouching)
 			{
 				Crouch();
 			}
-			else if(!crouchInput && Crouching && !blocked)
+			else if(!crouchInput && crouching && !blocked)
 			{
 				StandUp();
 			}
@@ -274,7 +275,7 @@ namespace Player
 
 		private void Crouch()
 		{
-			Crouching = true;
+			crouching = true;
 			float squishFactor = 0.6f;
 			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, squishFactor, 1);
 			_playerTransform.localPosition = new Vector3(0, (-1+squishFactor)/2, 0);
@@ -283,7 +284,7 @@ namespace Player
 
 		private void StandUp()
 		{
-			Crouching = false;
+			crouching = false;
 			_playerTransform.localScale = new Vector3(_playerTransform.localScale.x, 1, 1);
 			_playerTransform.localPosition = new Vector3(0, 0, 0);
 			_inventoryTransform.localPosition = new Vector3(0, 0, 0);
@@ -307,7 +308,7 @@ namespace Player
 		{
 			Vector3 knockbackVector = -weaponTransform.right;
 			float shotAngle = weaponTransform.eulerAngles.z;
-			if (Crouching)
+			if (crouching)
 			{
 				appliedForce *= 0.75f;
 			}
@@ -316,17 +317,20 @@ namespace Player
 			{ //si le joueur tire dans un rayon de 180° en dessous de lui, il n'aura pas de friction horizontale
 				BulletJump();
 			}
-
-			//AFAIR ICI
-			_rigidbody2D.velocity = Vector2.zero;
-			string direction = (Angles.AngleToDirection(shotAngle, 45));
-			ShotDirection = direction;
-			if (HorizontalInput == 0)
+			
+			if (grounded || !Angles.AngleIsInAGivenRange(shotAngle, 90, _previousAngle))
 			{
-				PreviousHorizontalInput = 0;
+				_rigidbody2D.velocity = Vector2.zero;
 			}
-			else if((direction == "left" && HorizontalInput == 1) 
-			        || (direction == "right" && HorizontalInput == -1))
+			
+			string direction = (Angles.AngleToDirection(shotAngle, 45));
+			shotDirection = direction;
+			if (horizontalInput == 0)
+			{
+				previousHorizontalInput = 0;
+			}
+			else if((direction == "left" && horizontalInput == 1) 
+			        || (direction == "right" && horizontalInput == -1))
 				//octroie un boost horizontal dans le knockback si le joueur va dans la direction de sa vélocité knockback
 			{
 				knockbackVector = new Vector3(knockbackVector.x * playerRecoilBoostWhileEmbracingRecoil,
@@ -335,15 +339,17 @@ namespace Player
 				StartCoroutine(BoostTrail(5));
 			}
 			
-			if (direction == "down" && CanJumpBoost)
+			if (direction == "down" && canJumpBoost)
 				//octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
 			{
 				knockbackVector = new Vector3(knockbackVector.x,
 					knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
 					knockbackVector.z);
 				StartCoroutine(BoostTrail(5));
-				CanJumpBoost = false;
+				canJumpBoost = false;
 			}
+			
+			_previousAngle = shotAngle;
 			_rigidbody2D.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
 		}
 	}
