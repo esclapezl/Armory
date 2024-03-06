@@ -238,7 +238,7 @@ namespace Player
 			_coyoteTime = 0;
 			_jumpBuffer = 0;
 			StartCoroutine(JumpCoroutine());
-		}
+		}	
 
 		private IEnumerator JumpCoroutine()
 		{
