@@ -21,9 +21,13 @@ public class GameManager : MonoBehaviour
         _cameraMovements = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraMovements>();
         LevelFolder = ObjectSearch.FindChild(transform,"Levels");
         SetUpLevels();
+    }
 
+    private void Start()
+    {
         UpdateLevel();
     }
+
     private void Update()
     {
         //PLAYTEST USAGE---

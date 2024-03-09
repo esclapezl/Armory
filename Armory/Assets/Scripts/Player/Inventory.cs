@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using weapons;
 using Weapons.Pistol;
 using ObjectSearch = Utils.ObjectSearch;
@@ -9,34 +10,24 @@ namespace Player
 {
     public class Inventory : MonoBehaviour
     {
-        public List<GameObject> weapons = new List<GameObject>();
-        private PlayerMovements _playerMovements;
+        public List<GameObject> activeWeapons = new List<GameObject>();
+        public List<GameObject> availableWeapons = new List<GameObject>();
+        
         private int _currentWeapon;
         private float _switchWeapon;
         private Transform _weaponsTransform;
 
         private void Awake()
         {
-            _weaponsTransform = transform.GetChild(0);
-            _playerMovements = GetComponent<PlayerMovements>();
-        }
-
-        void Start()
-        {
+            _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
             for (int i = 0; i < _weaponsTransform.childCount; i++)
             {
                 GameObject weaponChild = _weaponsTransform.GetChild(i).gameObject;
-                weapons.Add(weaponChild);
+                availableWeapons.Add(weaponChild);
                 weaponChild.GetComponent<AmmoDisplay>().SetDisplay();
-                ToggleWeapon(weaponChild);
-            }
-            if (weapons.Count > 0)
-            {
-                _currentWeapon = 0;
-                weapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
-                ActivateWeapon(weapons[0]);
             }
         }
+        
         void Update()
         {
             _switchWeapon = Input.GetButtonDown("SwitchWeaponUp") ? 1 : _switchWeapon;
@@ -45,11 +36,11 @@ namespace Player
 
         private void FixedUpdate()
         {
-            if (_switchWeapon != 0)
+            if (activeWeapons.Count > 0 && _switchWeapon != 0)
             {
                 int targetWeapon = _currentWeapon + (int) _switchWeapon;
-                targetWeapon %= weapons.Count; 
-                targetWeapon = targetWeapon < 0 ? weapons.Count - 1 : targetWeapon;
+                targetWeapon %= activeWeapons.Count; 
+                targetWeapon = targetWeapon < 0 ? activeWeapons.Count - 1 : targetWeapon;
                 ChangeWeapon(targetWeapon);
             }
             _switchWeapon = 0;
@@ -57,8 +48,8 @@ namespace Player
 
         private void ChangeWeapon(int index)
         {
-            GameObject currentWeapon = weapons[_currentWeapon];
-            GameObject targetWeapon = weapons[index];
+            GameObject currentWeapon = activeWeapons[_currentWeapon];
+            GameObject targetWeapon = activeWeapons[index];
             ToggleWeapon(currentWeapon);
             ActivateWeapon(targetWeapon);
             _currentWeapon = index;
@@ -89,8 +80,45 @@ namespace Player
     
         private void PickUpWeapon(GameObject weapon)
         {
-            weapons.Add(weapon);
+            activeWeapons.Add(weapon);
             weapon.SetActive(false);
+        }
+
+        public void Clear()
+        {
+            foreach (GameObject weapon in availableWeapons)
+            {
+                weapon.GetComponent<AmmoDisplay>().HideAmmo();
+                ToggleWeapon(weapon);
+                weapon.SetActive(false);
+            }
+            activeWeapons.Clear();
+        }
+        
+        public void AddWeapon(GameObject weapon, int ammo)
+        {
+            activeWeapons.Add(weapon);
+            weapon.SetActive(true);
+            ToggleWeapon(weapon);
+            
+            Weapon weaponInfo = weapon.GetComponent<Weapon>();
+            weaponInfo.currentAmmo = Mathf.Min(weaponInfo.magazineSize, ammo);
+            weaponInfo.totalAmmo = ammo - weaponInfo.currentAmmo;
+        }
+        
+        public void SetUpInventory()
+        {
+            foreach (GameObject weapon in activeWeapons)
+            {
+                weapon.SetActive(true);
+                ToggleWeapon(weapon);
+            }
+            if (activeWeapons.Count > 0)
+            {
+                _currentWeapon = 0;
+                activeWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
+                ActivateWeapon(activeWeapons[0]);
+            }
         }
     }
 }

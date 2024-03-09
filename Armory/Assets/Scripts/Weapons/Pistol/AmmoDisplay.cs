@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 using weapons;
 
 namespace Weapons.Pistol
@@ -32,7 +33,7 @@ namespace Weapons.Pistol
             float uidSize = bulletSize * 0.2f * _weapon.magazineSize + minDisplayGap * (_weapon.magazineSize - 1);
         
             GameObject magazineUid = new GameObject(_weapon.name+"MagazineUID");
-            magazineUid.transform.parent = _weapon.playerTransform;
+            magazineUid.transform.parent = ObjectSearch.FindChild(_weapon.playerTransform, "AmmoDisplayers");
             _displayTransform = magazineUid.transform;
             for (int i = 0; i < _weapon.magazineSize; i++)
             {
@@ -92,10 +93,13 @@ namespace Weapons.Pistol
         
         public void HideAmmo()
         {
-            for (int i = 0; i < _weapon.magazineSize; i++)
+            if (_displayTransform != null)
             {
-                Transform child = _displayTransform.GetChild(i);
-                child.GetComponent<SpriteRenderer>().color = new Color(1,1,1,0);
+                for (int i = 0; i < _weapon.magazineSize; i++)
+                {
+                    Transform child = _displayTransform.GetChild(i);
+                    child.GetComponent<SpriteRenderer>().color = new Color(1,1,1,0);
+                }
             }
         }
     }

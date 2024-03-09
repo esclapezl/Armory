@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using weapons;
 
 namespace Player
 {
@@ -11,18 +12,23 @@ namespace Player
         [NonSerialized] private PlayerMovements _playerMovements;
         [NonSerialized] private Rigidbody2D _rigidbody2D;
         [NonSerialized] private GameManager _gameManager;
-        [NonSerialized] public SpriteRenderer PlayerSprite;
-        [NonSerialized] public SpriteRenderer PlayerFilterSprite;
+        
+        [NonSerialized] public Transform PlayerSprite;
+        [NonSerialized] public SpriteRenderer PlayerSpriteRenderer;
+        [NonSerialized] public SpriteRenderer PlayerFilterSpriteRenderer;
         [SerializeField] public int health = 3;
-        private Coroutine _damageCoroutine;
+        [NonSerialized] public bool respawn = false;
+        [NonSerialized] private Coroutine _damageCoroutine;
 
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _playerMovements = GetComponent<PlayerMovements>();
+            _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
             
-            PlayerSprite = ObjectSearch.FindChild(transform, "PlayerObject").GetComponent<SpriteRenderer>();
-            PlayerFilterSprite = ObjectSearch.FindChild(transform, "PlayerFilter").GetComponent<SpriteRenderer>();
+            PlayerSprite = ObjectSearch.FindChild(transform, "PlayerObject");
+            PlayerSpriteRenderer = PlayerSprite.GetComponent<SpriteRenderer>();
+            PlayerFilterSpriteRenderer = ObjectSearch.FindChild(transform, "PlayerFilter").GetComponent<SpriteRenderer>();
         }
         
         void OnTriggerEnter2D(Collider2D other)
@@ -36,18 +42,33 @@ namespace Player
         private void Die()
         {
             _playerMovements.dead = true;
+            respawn = false;
             GetComponent<BoxCollider2D>().enabled = false;
             
-            PlayerSprite.transform.position = new Vector3(0,0, -10);
-            _rigidbody2D.AddForce(new Vector2(0, 500)); 
-            _rigidbody2D.AddTorque(500);
-            
+            PlayerSpriteRenderer.transform.localPosition = new Vector3(0,0, -5);
+            StartCoroutine(DieRotation(_playerMovements.Rigidbody2D.velocity.x * 100));
+            _rigidbody2D.AddForce(new Vector2(0, 500));
             StartCoroutine(RespawnCoroutine());
+        }
+        
+        private IEnumerator DieRotation(float rotationSpeed)
+        {
+            float absSpeed = Mathf.Abs(rotationSpeed);
+            while (absSpeed > 0 && !respawn)
+            {
+                PlayerSpriteRenderer.transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+                absSpeed -= Time.deltaTime;
+                yield return null;
+            }
         }
 
         private void Respawn()
         {
-            PlayerSprite.transform.position = new Vector3(0,0, 0);
+            respawn = true;
+            StopCoroutine(DieRotation(0));
+            PlayerSpriteRenderer.transform.rotation = Quaternion.identity;
+            PlayerSpriteRenderer.transform.localPosition = new Vector3(0,0, 0);
+            _playerMovements.Rigidbody2D.velocity = Vector2.zero;
             _gameManager.CurrentLevel.StartLevel();
             GetComponent<BoxCollider2D>().enabled = true;
             _playerMovements.dead = false;
@@ -71,11 +92,11 @@ namespace Player
         private IEnumerator TakeDamageCoroutine()
         {
             Color targetColor = new Color(1, 0, 0);
-            PlayerFilterSprite.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
+            PlayerFilterSpriteRenderer.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
             _damageCoroutine = null;
-            while(PlayerFilterSprite.color.a > 0)
+            while(PlayerFilterSpriteRenderer.color.a > 0)
             {
-                PlayerFilterSprite.color = Color.Lerp(PlayerFilterSprite.color, new Color(targetColor.r, targetColor.g, targetColor.b, 0f), Time.deltaTime * 10);
+                PlayerFilterSpriteRenderer.color = Color.Lerp(PlayerFilterSpriteRenderer.color, new Color(targetColor.r, targetColor.g, targetColor.b, 0f), Time.deltaTime * 10);
                 yield return null;
             }
         }

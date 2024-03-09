@@ -21,6 +21,22 @@ namespace Utils
             }
             return null;
         }
+        
+        public static List<Transform> FindAllRoots(string pattern)
+        {
+            Regex regex = new Regex(pattern);
+            GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            List<Transform> matchingTransforms = new List<Transform>();
+
+            foreach (GameObject obj in rootObjects)
+            {
+                if (regex.Match(obj.name).Success)
+                {
+                    matchingTransforms.Add(obj.transform);
+                }
+            }
+            return matchingTransforms;
+        }
         public static Transform FindChild(Transform parent, string pattern)
         {
             Regex regex = new Regex(pattern);

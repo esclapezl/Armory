@@ -61,12 +61,11 @@ namespace weapons
             );
             originalPosition = transform.localPosition;
             nextFireTime = 0f;
-            currentAmmo = Mathf.Min(magazineSize, totalAmmo);
         }
     
         void Update()
         {
-            if (active && !isReloading)
+            if (!playerMovements.dead && active && !isReloading)
             {
                 if (Input.GetButtonDown("Fire") && nextFireTime <= 0 && currentAmmo > 0) {
                     Shoot();
@@ -131,6 +130,18 @@ namespace weapons
         protected virtual IEnumerator Reload()
         {
             throw new NotImplementedException();
+        }
+
+        public void Enable()
+        {
+            ammoDisplay.DisplayAmmo();
+            gameObject.SetActive(true);
+        }
+        
+        public void Disable()
+        {
+            ammoDisplay.HideAmmo();
+            gameObject.SetActive(false);
         }
     }
 }

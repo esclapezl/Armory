@@ -42,12 +42,11 @@ namespace Player
 		[SerializeField] private GameObject boostParticlePrefab;
 
 		[Header("Jump Settings")]
-		[FormerlySerializedAs("_JumpForce")]
 		[SerializeField] private float jumpForce;
 		[NonSerialized] private bool _recentlyJumped = false;
-		[NonSerialized] public bool canJumpBoost = false;
+		[NonSerialized] public bool CanJumpBoost = false;
 		[SerializeField] public bool canAirControl;
-		[NonSerialized] public string shotDirection = "none";
+		[NonSerialized] public string ShotDirection = "none";
 		[NonSerialized] private float _previousAngle;
 		[SerializeField] public float airControl;
 		[Range(0, .1f)] [SerializeField] private float coyoteTimeDuration;
@@ -56,15 +55,15 @@ namespace Player
 		private float _jumpBuffer;
 		private bool _jumpInput;
 
-		private Rigidbody2D _rigidbody2D;
-		private Vector3 _velocity;
+		[NonSerialized] public Rigidbody2D Rigidbody2D;
+		[NonSerialized] private Vector3 _velocity;
 		private void Awake()
 		{
 			_playerTransform = transform.Find("PlayerObject");
 			_inventoryTransform = transform.Find("Inventory");
-			_groundCheck = transform.Find("GroundCheck");
-			_ceilingCheck = transform.Find("CeilingCheck");
-			_rigidbody2D = GetComponent<Rigidbody2D>();
+			_groundCheck = ObjectSearch.FindChild(transform, "GroundCheck");
+			_ceilingCheck = ObjectSearch.FindChild(transform, "CeilingCheck");
+			Rigidbody2D = GetComponent<Rigidbody2D>();
 		}
 
 		private void Update()
@@ -75,7 +74,7 @@ namespace Player
 				horizontalMove = (horizontalInput * runSpeed);
 				if (horizontalInput != 0 && horizontalInput != previousHorizontalInput) 
 				{
-					shotDirection = "none";
+					ShotDirection = "none";
 				}
 				previousHorizontalInput = horizontalInput != 0 ? horizontalInput : previousHorizontalInput;
 				if (Input.GetButton("Crouch"))
@@ -112,7 +111,7 @@ namespace Player
 						{
 							_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
 							grounded = true;
-							shotDirection = "none";
+							ShotDirection = "none";
 							previousHorizontalInput = 0;
 						}
 					}
@@ -146,18 +145,18 @@ namespace Player
 				}
 				
 				// Move the character by finding the target velocity
-				if ((grounded && shotDirection != "down")
+				if ((grounded && ShotDirection != "down")
 				    || 
-				    shotDirection == "none"
+				    ShotDirection == "none"
 				    ||
-				    (!(shotDirection == "left" && previousHorizontalInput == 1) 
-				    && !(shotDirection == "right" && previousHorizontalInput == -1)
+				    (!(ShotDirection == "left" && previousHorizontalInput == 1) 
+				    && !(ShotDirection == "right" && previousHorizontalInput == -1)
 				    && horizontalInput != 0)
 				    ) //au sol ou pas dans la direction du knockback
 				{ 
 					_playerTransform.GetComponent<SpriteRenderer>().color = Color.black;
 					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
-					Vector3 targetVelocity = new Vector2(moveInput * 10f, _rigidbody2D.velocity.y);
+					Vector3 targetVelocity = new Vector2(moveInput * 10f, Rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
 					{
 						smoothingModifier *= exitMovementSmoothing;
@@ -166,8 +165,8 @@ namespace Player
 					{
 						smoothingModifier *= enterMovementSmoothing;
 					}
-					_rigidbody2D.velocity = Vector3.SmoothDamp(
-						_rigidbody2D.velocity,
+					Rigidbody2D.velocity = Vector3.SmoothDamp(
+						Rigidbody2D.velocity,
 						targetVelocity,
 						ref _velocity,
 						smoothingModifier
@@ -240,9 +239,9 @@ namespace Player
 		{
 			grounded = false;
 			_recentlyJumped = true;
-			canJumpBoost = true;
-			_rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x,0f);
-			_rigidbody2D.AddForce(new Vector2(0f, jumpForce));
+			CanJumpBoost = true;
+			Rigidbody2D.velocity = new Vector2(Rigidbody2D.velocity.x,0f);
+			Rigidbody2D.AddForce(new Vector2(0f, jumpForce));
 			_coyoteTime = 0;
 			_jumpBuffer = 0;
 			StartCoroutine(JumpCoroutine());
@@ -252,7 +251,7 @@ namespace Player
 		{
 			yield return new WaitForSeconds(0.1f);
 			_recentlyJumped = false;
-			canJumpBoost = false;
+			CanJumpBoost = false;
 		}
 		
 		public void BulletJump()
@@ -328,11 +327,11 @@ namespace Player
 			
 			if (grounded || !Angles.AngleIsInAGivenRange(shotAngle, 90, _previousAngle))
 			{ //si le joueur tire plus ou moins dans la même direction ds les airs, la vélo est maintenue
-				_rigidbody2D.velocity = Vector2.zero;
+				Rigidbody2D.velocity = Vector2.zero;
 			}
 			
 			string direction = (Angles.AngleToDirection(shotAngle, 45));
-			shotDirection = direction;
+			ShotDirection = direction;
 			if (horizontalInput == 0)
 			{
 				previousHorizontalInput = 0;
@@ -347,18 +346,18 @@ namespace Player
 				StartCoroutine(BoostTrail(5));
 			}
 			
-			if (direction == "down" && canJumpBoost)
+			if (direction == "down" && CanJumpBoost)
 				//octroie un boost vertical dans le knockback si le joueur saute et tire vers le bas
 			{
 				knockbackVector = new Vector3(knockbackVector.x,
 					knockbackVector.y * playerRecoilBoostWhileEmbracingRecoil,
 					knockbackVector.z);
 				StartCoroutine(BoostTrail(5));
-				canJumpBoost = false;
+				CanJumpBoost = false;
 			}
 			
 			_previousAngle = shotAngle;
-			_rigidbody2D.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
+			Rigidbody2D.AddForce(knockbackVector * appliedForce, ForceMode2D.Impulse);
 		}
 	}
 }
