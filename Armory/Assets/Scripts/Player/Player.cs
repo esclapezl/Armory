@@ -46,7 +46,7 @@ namespace Player
             GetComponent<BoxCollider2D>().enabled = false;
             
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0,0, -5);
-            StartCoroutine(DieRotation(_playerMovements.Rigidbody2D.velocity.x * 100));
+            StartCoroutine(DieRotation(-_playerMovements.Rigidbody2D.velocity.x * 100));
             _rigidbody2D.AddForce(new Vector2(0, 500));
             StartCoroutine(RespawnCoroutine());
         }
@@ -56,7 +56,7 @@ namespace Player
             float absSpeed = Mathf.Abs(rotationSpeed);
             while (absSpeed > 0 && !respawn)
             {
-                PlayerSpriteRenderer.transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+                PlayerSpriteRenderer.transform.Rotate(0, 0, (rotationSpeed+100) * Time.deltaTime);
                 absSpeed -= Time.deltaTime;
                 yield return null;
             }

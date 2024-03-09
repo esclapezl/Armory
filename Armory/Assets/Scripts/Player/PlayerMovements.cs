@@ -325,9 +325,14 @@ namespace Player
 				BulletJump();
 			}
 			
+			
 			if (grounded || !Angles.AngleIsInAGivenRange(shotAngle, 90, _previousAngle))
 			{ //si le joueur tire plus ou moins dans la même direction ds les airs, la vélo est maintenue
 				Rigidbody2D.velocity = Vector2.zero;
+			}
+			else
+			{
+				Rigidbody2D.velocity = new Vector2(Rigidbody2D.velocity.x, 0);
 			}
 			
 			string direction = (Angles.AngleToDirection(shotAngle, 45));

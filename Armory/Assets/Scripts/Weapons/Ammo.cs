@@ -22,7 +22,10 @@ namespace Weapons
             if (weapon.currentAmmo < weapon.magazineSize)
             {
                 weapon.currentAmmo++;
-                weapon.ammoDisplay.DisplayAmmo();
+                if (weapon.active)
+                {
+                    weapon.ammoDisplay.DisplayAmmo();
+                }
             }
             else
             {
