@@ -9,6 +9,8 @@ namespace Player
 {
 	public class PlayerMovements : MonoBehaviour
 	{
+		[SerializeField] public bool dead;
+		
 		[Header("Ground Settings")]
 		[SerializeField] public LayerMask whatIsGround;
 		[NonSerialized] private Transform _groundCheck;
@@ -67,46 +69,52 @@ namespace Player
 
 		private void Update()
 		{
-			horizontalInput = (int) Input.GetAxisRaw("Horizontal");
-			horizontalMove = (horizontalInput * runSpeed);
-			if (horizontalInput != 0 && horizontalInput != previousHorizontalInput) 
+			if (!dead)
 			{
-				shotDirection = "none";
-			}
-			previousHorizontalInput = horizontalInput != 0 ? horizontalInput : previousHorizontalInput;
-			if (Input.GetButton("Crouch"))
-			{
-				_crouchInput = true;
-			}
+				horizontalInput = (int) Input.GetAxisRaw("Horizontal");
+				horizontalMove = (horizontalInput * runSpeed);
+				if (horizontalInput != 0 && horizontalInput != previousHorizontalInput) 
+				{
+					shotDirection = "none";
+				}
+				previousHorizontalInput = horizontalInput != 0 ? horizontalInput : previousHorizontalInput;
+				if (Input.GetButton("Crouch"))
+				{
+					_crouchInput = true;
+				}
 			
-			if (Input.GetButtonDown("Jump"))
-			{
-				_jumpInput = true;
+				if (Input.GetButtonDown("Jump"))
+				{
+					_jumpInput = true;
+				}
 			}
 		}
 		
 		private void FixedUpdate()
 		{
-			MoveControl(horizontalMove * Time.fixedDeltaTime, _armed);
-			CrouchControl(_crouchInput);
-			_crouchInput = false;
-			JumpControl(_jumpInput);
-			_jumpInput = false;
-			grounded = false;
-			_groundCheck.GetComponent<SpriteRenderer>().color = Color.red;
-			// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
-			// This can be done using layers instead but Sample Assets will not overwrite your project settings.
-			if (!_recentlyJumped)
+			if (!dead)
 			{
-				Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
-				for (int i = 0; i < colliders.Length; i++)
+				MoveControl(horizontalMove * Time.fixedDeltaTime, _armed);
+				CrouchControl(_crouchInput);
+				_crouchInput = false;
+				JumpControl(_jumpInput);
+				_jumpInput = false;
+				grounded = false;
+				_groundCheck.GetComponent<SpriteRenderer>().color = Color.red;
+				// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
+				// This can be done using layers instead but Sample Assets will not overwrite your project settings.
+				if (!_recentlyJumped)
 				{
-					if (colliders[i].gameObject != gameObject)
+					Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
+					for (int i = 0; i < colliders.Length; i++)
 					{
-						_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
-						grounded = true;
-						shotDirection = "none";
-						previousHorizontalInput = 0;
+						if (colliders[i].gameObject != gameObject)
+						{
+							_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
+							grounded = true;
+							shotDirection = "none";
+							previousHorizontalInput = 0;
+						}
 					}
 				}
 			}

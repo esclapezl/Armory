@@ -41,6 +41,7 @@ namespace Levels
             if (direction != -1)
             {
                 BoxCollider2D bc2 = transform.AddComponent<BoxCollider2D>();
+                bc2.isTrigger = true;
                 bc2.size = new Vector2(0.2f, 0.9f);
                 bc2.offset = new Vector2(0.25f, 0);
            
@@ -51,6 +52,7 @@ namespace Levels
                 sp.sprite = flatSpike;
             }
             BoxCollider2D bc1 = transform.AddComponent<BoxCollider2D>();
+            bc1.isTrigger = true;
             bc1.size = new Vector2(0.9f, 0.2f);
             bc1.offset = new Vector2(0, -0.25f);
             
