@@ -15,8 +15,8 @@ namespace Player
 		[SerializeField] public LayerMask whatIsGround;
 		[NonSerialized] private Transform _groundCheck;
 		[NonSerialized] private Transform _ceilingCheck;
-		const float GroundedRadius = .05f;
 		[SerializeField] public bool grounded;
+		[NonSerialized] private Vector2 _groundCheckSize;
 		const float CeilingRadius = .2f;
 
 		[Header("Crouch Settings")]
@@ -29,7 +29,7 @@ namespace Player
 		[NonSerialized] private Transform _playerTransform;
 		[NonSerialized] private Transform _inventoryTransform;
 		[NonSerialized] public bool facingRight = true;
-		private bool _armed = true;
+		[NonSerialized] public bool Armed = true;
 
 		[Header("Movement Settings")]
 		[FormerlySerializedAs("_runSpeed")]
@@ -59,6 +59,7 @@ namespace Player
 		[NonSerialized] private Vector3 _velocity;
 		private void Awake()
 		{
+			_groundCheckSize = new Vector2(0.1f, GetComponent<BoxCollider2D>().size.x);
 			_playerTransform = transform.Find("PlayerObject");
 			_inventoryTransform = transform.Find("Inventory");
 			_groundCheck = ObjectSearch.FindChild(transform, "GroundCheck");
@@ -93,23 +94,21 @@ namespace Player
 		{
 			if (!dead)
 			{
-				MoveControl(horizontalMove * Time.fixedDeltaTime, _armed);
+				MoveControl(horizontalMove * Time.fixedDeltaTime, Armed);
 				CrouchControl(_crouchInput);
 				_crouchInput = false;
 				JumpControl(_jumpInput);
 				_jumpInput = false;
 				grounded = false;
-				_groundCheck.GetComponent<SpriteRenderer>().color = Color.red;
 				// The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
 				// This can be done using layers instead but Sample Assets will not overwrite your project settings.
 				if (!_recentlyJumped)
 				{
-					Collider2D[] colliders = Physics2D.OverlapCircleAll(_groundCheck.position, GroundedRadius, whatIsGround);
+					Collider2D[] colliders = Physics2D.OverlapBoxAll(_groundCheck.position, _groundCheckSize, whatIsGround);
 					for (int i = 0; i < colliders.Length; i++)
 					{
 						if (colliders[i].gameObject != gameObject)
 						{
-							_groundCheck.GetComponent<SpriteRenderer>().color = Color.green;
 							grounded = true;
 							ShotDirection = "none";
 							previousHorizontalInput = 0;
@@ -154,7 +153,6 @@ namespace Player
 				    && horizontalInput != 0)
 				    ) //au sol ou pas dans la direction du knockback
 				{ 
-					_playerTransform.GetComponent<SpriteRenderer>().color = Color.black;
 					float smoothingModifier = grounded ? 1 : airControl; // CONTROL IN AIR
 					Vector3 targetVelocity = new Vector2(moveInput * 10f, Rigidbody2D.velocity.y);
 					if (moveInput == 0) //checks if player stopped pressing
@@ -171,10 +169,6 @@ namespace Player
 						ref _velocity,
 						smoothingModifier
 					);
-				}
-				else
-				{
-					_playerTransform.GetComponent<SpriteRenderer>().color = Color.white;
 				}
 				
 				if ((moveInput > 0 && !facingRight && !armed) || (moveInput < 0 && facingRight && !armed))
@@ -269,7 +263,15 @@ namespace Player
 
 		public void CrouchControl(bool crouchInput)
 		{
-			bool blocked = Physics2D.OverlapCircle(_ceilingCheck.position, CeilingRadius, whatIsGround);
+			bool blocked = false;
+			Collider2D[] colliders = Physics2D.OverlapBoxAll(_ceilingCheck.position, _groundCheckSize, whatIsGround);
+			for (int i = 0; i < colliders.Length; i++)
+			{
+				if (colliders[i].gameObject != gameObject)
+				{
+					blocked = true;
+				}
+			}
 			if (crouchInput && !crouching)
 			{
 				Crouch();

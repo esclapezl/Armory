@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3369946280934803782}
   - component: {fileID: 2013587189055734476}
   - component: {fileID: 5339738943986024187}
+  - component: {fileID: 8308874888212851910}
   m_Layer: 0
   m_Name: ShotgunAmmo
   m_TagString: Untagged
@@ -172,3 +173,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammoType: Shotgun
+--- !u!114 &8308874888212851910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2563943327339026340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afda8db21962ed84a8516905751a9458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

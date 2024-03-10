@@ -6,7 +6,6 @@ namespace Weapons
 {
     public class WeaponMovements : MonoBehaviour
     {
-        public bool armed = true;
         [NonSerialized] public PlayerMovements PlayerMovements;
         [NonSerialized] public Transform WeaponCenterTransform;
         [NonSerialized] public Transform WeaponTransform;
@@ -19,21 +18,24 @@ namespace Weapons
         }
         private void FixedUpdate()
         {
-            //weapon rotation
-            Vector3 mouseWorld = UnityEngine.Camera.main!.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 rotation = mouseWorld - transform.position;
-            float newRotation = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-            WeaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
+            if (!PlayerMovements.dead && PlayerMovements.Armed)
+            {
+                //weapon rotation
+                Vector3 mouseWorld = UnityEngine.Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 rotation = mouseWorld - transform.position;
+                float newRotation = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
+                WeaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
         
-            float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
-            if (
-                (zRotation >= 90 && zRotation < 270 && PlayerMovements.facingRight)
-                || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.facingRight)
-            ) {
-                if (armed) {
-                    PlayerMovements.Flip();
+                float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
+                if (
+                    (zRotation >= 90 && zRotation < 270 && PlayerMovements.facingRight)
+                    || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.facingRight)
+                ) {
+                    if (PlayerMovements.Armed) {
+                        PlayerMovements.Flip();
+                    }
+                    FlipWeapon();
                 }
-                FlipWeapon();
             }
         }
 

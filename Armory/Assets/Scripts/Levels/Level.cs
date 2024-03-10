@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Levels.Restartables;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -71,6 +72,7 @@ namespace Levels
             ObjectSearch.FindAllRoots("bullet.*").ForEach(bullet => Destroy(bullet.gameObject));
             
             //restart elemnts
+            ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Restart());
             
             //Prepare the inventory
             _inventory.Clear();
@@ -104,6 +106,7 @@ namespace Levels
 
         public void ExitLevel()
         {
+            ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Exit());
             _active = false;
             throw new Exception("No menu yet");
         }

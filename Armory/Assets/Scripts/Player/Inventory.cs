@@ -16,9 +16,11 @@ namespace Player
         private int _currentWeapon;
         private float _switchWeapon;
         private Transform _weaponsTransform;
+        private PlayerMovements _playerMovements;
 
         private void Awake()
         {
+            _playerMovements = ObjectSearch.FindParentWithScript<PlayerMovements>(transform);
             _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
             for (int i = 0; i < _weaponsTransform.childCount; i++)
             {
@@ -118,6 +120,11 @@ namespace Player
                 _currentWeapon = 0;
                 activeWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
                 ActivateWeapon(activeWeapons[0]);
+                _playerMovements.Armed = true;
+            }
+            else
+            {
+                _playerMovements.Armed = false;
             }
         }
     }

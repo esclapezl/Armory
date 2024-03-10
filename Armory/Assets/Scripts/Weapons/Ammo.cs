@@ -31,7 +31,8 @@ namespace Weapons
             {
                 weapon.totalAmmo++;
             }
-            Destroy(gameObject);
+            Destroy(GetComponent<BoxCollider2D>());
+            GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 }

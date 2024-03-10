@@ -78,6 +78,19 @@ namespace Utils
             return children;
         }
         
+        public static List<T> FindChildrenWithScript<T>(Transform parent) where T : Component
+        {
+            List<T> childrenWithScript = new List<T>();
+            T[] components = parent.GetComponentsInChildren<T>();
+
+            foreach (T component in components)
+            {
+                childrenWithScript.Add(component);
+            }
+
+            return childrenWithScript;
+        }
+        
         public static Transform FindParent(Transform child, string pattern)
         {
             Regex regex = new Regex(pattern);
@@ -109,6 +122,23 @@ namespace Utils
                 parent = parent.parent;
             }
             return parents;
+        }
+        
+        public static T FindParentWithScript<T>(Transform child) where T : Component
+        {
+            Transform parent = child.parent;
+
+            while (parent != null)
+            {
+                T component = parent.GetComponent<T>();
+                if (component != null)
+                {
+                    return component;
+                }
+                parent = parent.parent;
+            }
+
+            return null;
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils;
 
 namespace Levels
 {
@@ -8,7 +9,7 @@ namespace Levels
 
         private void Awake()
         {
-            _level = transform.parent.GetComponent<Level>();
+            _level = ObjectSearch.FindParentWithScript<Level>(transform);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
