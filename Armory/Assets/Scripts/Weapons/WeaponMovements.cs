@@ -20,7 +20,7 @@ namespace Weapons
         private void FixedUpdate()
         {
             //weapon rotation
-            Vector3 mouseWorld = Camera.main!.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mouseWorld = UnityEngine.Camera.main!.ScreenToWorldPoint(Input.mousePosition);
             Vector3 rotation = mouseWorld - transform.position;
             float newRotation = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
             WeaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
