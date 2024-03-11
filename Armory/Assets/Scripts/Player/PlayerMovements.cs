@@ -120,13 +120,10 @@ namespace Player
 
 		public void MoveControl(float moveInput, bool armed)
 		{
-			//only control the player if grounded or airControl is turned on
 			if (grounded || canAirControl)
 			{
-				// If crouching
 				if (crouching)
 				{
-					// Reduce the speed by the crouchSpeed multiplier
 					moveInput *= crouchSpeed;
 			
 					// Disable one of the colliders when crouching
