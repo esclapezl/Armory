@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,6 +10,7 @@ public class PlaneParts : MonoBehaviour
 {
     [NonSerialized] private List<Transform> _planePartsTransforms;
     [NonSerialized] private List<Sprite> _planePartsSprites;
+    [NonSerialized] private float _planePartWidth;
     [SerializeField] private int theme = 0;
 
     [Serializable]
@@ -24,9 +26,15 @@ public class PlaneParts : MonoBehaviour
     {
         _camera = UnityEngine.Camera.main;
         _planePartsTransforms = new List<Transform>();
-        _planePartsTransforms.Add(transform);
         _planePartsSprites = new List<Sprite>();
-        _planePartsSprites.Add(GetComponent<SpriteRenderer>().sprite);
+
+        Sprite sprite = spriteThemes[theme].sprites[0];
+        _planePartWidth = sprite.rect.width / sprite.pixelsPerUnit;
+    }
+
+    private void Start()
+    {
+        SetUpPlaneParts();
     }
 
     private void FixedUpdate()
@@ -34,72 +42,52 @@ public class PlaneParts : MonoBehaviour
         CalculatePlaneParts();
     }
 
-    private void CalculatePlaneParts()
+    private void SetUpPlaneParts()
     {
         float cameraWidth = _camera.orthographicSize * 2.0f * _camera.aspect;
-        float cameraLeftBorderX = _camera.transform.position.x - _camera.orthographicSize * _camera.aspect;
-        float cameraRightBorderX = _camera.transform.position.x + _camera.orthographicSize * _camera.aspect;
-        Transform leftmostTransform = _planePartsTransforms.OrderBy(t => t.position.x).FirstOrDefault();
-        Transform rightmostTransform = _planePartsTransforms.OrderBy(t => t.position.x).LastOrDefault();
+
+        if (_planePartsSprites.Count == 0)
+        {
+            AddPart();
+        }
+
         float partsWidth = _planePartsSprites.Sum(sprite => sprite.rect.width);
         float spritePixelsPerUnit = _planePartsSprites[0].pixelsPerUnit;
         float partsWidthInWorldUnits = partsWidth / spritePixelsPerUnit;
-
-        Debug.Log(partsWidthInWorldUnits + " " + cameraWidth);
-        int i = 0;
-        while (partsWidthInWorldUnits < cameraWidth && i < 10)
+        while (partsWidthInWorldUnits < cameraWidth + _planePartWidth)
         {
-            AddPart(cameraLeftBorderX, leftmostTransform, rightmostTransform);
-            partsWidth = _planePartsSprites.Sum(sprite => sprite.rect.width);
-            i++;
-        }
-        
-        if(leftmostTransform.position.x - (leftmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2 > cameraRightBorderX)
-        {
-            rightmostTransform.position = new Vector3(
-                leftmostTransform.position.x - (leftmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2 - (rightmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2,
-                rightmostTransform.position.y,
-                rightmostTransform.position.z);
-        }
-        else if(rightmostTransform.position.x + (rightmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2 < cameraLeftBorderX)
-        {
-            leftmostTransform.position = new Vector3(
-                rightmostTransform.position.x + (rightmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2 + (leftmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2,
-                leftmostTransform.position.y,
-                leftmostTransform.position.z);
+            AddPart();
+            partsWidthInWorldUnits = _planePartsSprites.Sum(sprite => sprite.rect.width) / spritePixelsPerUnit;
         }
     }
 
-    private void AddPart(float cameraLeftBorderX, Transform leftmostTransform, Transform rightmostTransform)
+    private void CalculatePlaneParts()
+    {
+        float cameraLeftBorderX = _camera.transform.position.x - _camera.orthographicSize * _camera.aspect;
+        float cameraRightBorderX = _camera.transform.position.x + _camera.orthographicSize * _camera.aspect;
+
+        Transform leftmostTransform = _planePartsTransforms.OrderBy(t => t.position.x).FirstOrDefault();
+        Transform rightmostTransform = _planePartsTransforms.OrderBy(t => t.position.x).LastOrDefault();
+
+        if (leftmostTransform.position.x - _planePartWidth / 2 > cameraLeftBorderX)
+        {
+            rightmostTransform.localPosition = new Vector3(leftmostTransform.localPosition.x - _planePartWidth, 0, 0);
+        }
+        else if (rightmostTransform.position.x + _planePartWidth / 2 < cameraRightBorderX)
+        {
+            leftmostTransform.localPosition = new Vector3(rightmostTransform.localPosition.x + _planePartWidth, 0, 0);
+        }
+    }
+
+    private void AddPart()
     {
         GameObject planePart = new GameObject("part" + _planePartsTransforms.Count);
         planePart.transform.parent = transform;
+        planePart.transform.localPosition = new Vector3(_planePartsTransforms.Count * _planePartWidth, 0, 0);
         SpriteRenderer spriteRenderer = planePart.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = spriteThemes[theme]
-            .sprites[UnityEngine.Random.Range(0, spriteThemes[theme].sprites.Length)];
+        spriteRenderer.sprite =
+            spriteThemes[theme].sprites[UnityEngine.Random.Range(0, spriteThemes[theme].sprites.Length)];
         _planePartsTransforms.Add(planePart.transform);
         _planePartsSprites.Add(spriteRenderer.sprite);
-        
-        if (leftmostTransform.position.x -
-            (leftmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width) / 2 > cameraLeftBorderX)
-        {
-            planePart.transform.position =
-                new Vector3(
-                    leftmostTransform.position.x -
-                    (leftmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width)/2 -
-                    (spriteRenderer.sprite.rect.width)/2,
-                    leftmostTransform.position.y,
-                    leftmostTransform.position.z);
-        }
-        else
-        {
-            planePart.transform.position =
-                new Vector3(
-                    rightmostTransform.position.x +
-                    (rightmostTransform.GetComponent<SpriteRenderer>().sprite.rect.width)/2 +
-                    (spriteRenderer.sprite.rect.width)/2,
-                    rightmostTransform.position.y,
-                    rightmostTransform.position.z);
-        }
     }
 }
