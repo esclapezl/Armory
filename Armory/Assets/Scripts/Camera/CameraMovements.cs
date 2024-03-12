@@ -11,23 +11,23 @@ namespace Camera
         [NonSerialized] private Transform _bottomLeftDelimiter;
         [NonSerialized] private Transform _topRightDelimiter;
         [SerializeField] public float smoothing = 5f;
-    
+
         private void Awake()
         {
             _playerTransform = ObjectSearch.FindRoot("Player");
         }
-    
+
         private void FixedUpdate()
         {
             CalculateCameraPosition();
         }
-    
+
         public void SetDelimiters(Level level)
         {
             _bottomLeftDelimiter = level.BottomLeftDelimiter;
             _topRightDelimiter = level.TopRightDelimiter;
         }
-    
+
         private void CalculateCameraPosition()
         {
             UnityEngine.Camera cam = ObjectSearch.FindRoot("Main Camera").GetComponent<UnityEngine.Camera>();

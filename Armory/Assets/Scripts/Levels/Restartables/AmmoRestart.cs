@@ -9,6 +9,7 @@ namespace Levels.Restartables
         private BoxCollider2D _boxCollider;
         private Rigidbody2D _rigidbody2D;
         private Vector2 _boxColliderSize;
+
         private void Awake()
         {
             _spriteRender = GetComponent<SpriteRenderer>();
@@ -26,13 +27,14 @@ namespace Levels.Restartables
                 _boxCollider.size = _boxColliderSize;
                 _boxCollider.isTrigger = true;
             }
-            if(_rigidbody2D == null)
+
+            if (_rigidbody2D == null)
             {
                 _rigidbody2D = gameObject.AddComponent<Rigidbody2D>();
                 _rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
             }
         }
-        
+
         public override void Exit()
         {
             if (_boxCollider != null)

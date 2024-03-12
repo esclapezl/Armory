@@ -12,29 +12,33 @@ namespace Levels
     public class Level : MonoBehaviour
     {
         [NonSerialized] private bool _active = false;
-        
+
         [NonSerialized] private GameManager _gameManager;
-        
+
         [NonSerialized] private Transform _startPosition;
         [NonSerialized] private Transform _playerTransform;
         [NonSerialized] private Player.Player _player;
         [NonSerialized] public Transform BottomLeftDelimiter;
         [NonSerialized] public Transform TopRightDelimiter;
-        
+
         [NonSerialized] public bool LevelCompleted = false;
         [NonSerialized] public int LevelNumber;
-        
+
         // [Pistol, Shotgun]
-        [Header("Weapons Settings")]
-        [SerializeField] private bool hasPistol;
+        [Header("Weapons Settings")] [SerializeField]
+        private bool hasPistol;
+
         [SerializeField] private int pistolAmmo;
-        [Space(10)]
-        [SerializeField] private bool hasShotgun;
+        [Space(10)] [SerializeField] private bool hasShotgun;
         [SerializeField] private int shotgunAmmo;
-        [NonSerialized] public Dictionary<string, int> StartingBullets; // Si vous voulez juste stocker le nombre de balles
+
+        [NonSerialized]
+        public Dictionary<string, int> StartingBullets; // Si vous voulez juste stocker le nombre de balles
+
         [NonSerialized] private Inventory _inventory;
 
-        [Serializable] public enum LevelType
+        [Serializable]
+        public enum LevelType
         {
             Normal,
             Boss
@@ -45,21 +49,20 @@ namespace Levels
             StartingBullets = new Dictionary<string, int>();
             StartingBullets.Add("Pistol", pistolAmmo);
             StartingBullets.Add("Shotgun", shotgunAmmo);
-            
+
             _player = ObjectSearch.FindRoot("Player").GetComponent<Player.Player>();
             _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
-            _startPosition = ObjectSearch.FindChild(transform,"StartPosition");
+            _startPosition = ObjectSearch.FindChild(transform, "StartPosition");
             _playerTransform = ObjectSearch.FindRoot("Player");
             _inventory = ObjectSearch.FindChild(_playerTransform, "Inventory").GetComponent<Inventory>();
-            BottomLeftDelimiter = ObjectSearch.FindChild(transform,"BottomLeftDelimiter");
-            TopRightDelimiter = ObjectSearch.FindChild(transform,"TopRightDelimiter");
+            BottomLeftDelimiter = ObjectSearch.FindChild(transform, "BottomLeftDelimiter");
+            TopRightDelimiter = ObjectSearch.FindChild(transform, "TopRightDelimiter");
         }
 
         private void Update()
         {
             if (_active)
             {
-                
             }
         }
 
@@ -67,18 +70,18 @@ namespace Levels
         {
             _active = true;
             _playerTransform.position = _startPosition.position;
-            
+
             //clean the scene
             ObjectSearch.FindAllRoots("bullet.*").ForEach(bullet => Destroy(bullet.gameObject));
-            
+
             //restart elemnts
             ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Restart());
-            
+
             //Prepare the inventory
             _inventory.Clear();
             foreach (GameObject weaponGameObject in _inventory.availableWeapons)
             {
-                if(weaponGameObject.name == "Pistol" && hasPistol)
+                if (weaponGameObject.name == "Pistol" && hasPistol)
                 {
                     _inventory.AddWeapon(weaponGameObject, pistolAmmo);
                 }
@@ -87,6 +90,7 @@ namespace Levels
                     _inventory.AddWeapon(weaponGameObject, shotgunAmmo);
                 }
             }
+
             _inventory.SetUpInventory();
         }
 
@@ -96,7 +100,7 @@ namespace Levels
             LevelCompleted = true;
             if (_gameManager.LevelFolder.childCount < LevelNumber)
             {
-                _gameManager.StartLevel(_gameManager.currentLevelNumber+1);
+                _gameManager.StartLevel(_gameManager.currentLevelNumber + 1);
             }
             else
             {

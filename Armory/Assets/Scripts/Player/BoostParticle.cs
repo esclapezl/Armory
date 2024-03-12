@@ -18,7 +18,7 @@ namespace Player
             while (Mathf.Abs(transform.localScale.x) > 0.01f && Mathf.Abs(transform.localScale.y) > 0.01f)
             {
                 transform.localScale *= 0.995f;
-        
+
                 float opacity = Mathf.Abs(transform.localScale.x);
                 Color color = _spriteRenderer.color;
                 color.a = opacity;
@@ -26,6 +26,7 @@ namespace Player
 
                 yield return null;
             }
+
             Destroy(gameObject);
         }
     }

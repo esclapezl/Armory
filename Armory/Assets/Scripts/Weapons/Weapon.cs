@@ -16,17 +16,19 @@ namespace weapons
         [NonSerialized] public UnityEngine_Transform playerTransform;
         [NonSerialized] protected PlayerMovements playerMovements;
         [NonSerialized] protected Transform cannonTransform;
-        
-        [Header("Recoil Settings")]
-        [SerializeField] [Range(0, 2)] public float gunRecoil;
+
+        [Header("Recoil Settings")] [SerializeField] [Range(0, 2)]
+        public float gunRecoil;
+
         [SerializeField] [Range(0, 100)] public float playerRecoilForce;
         [SerializeField] [Range(1, 10)] public float playerRecoilBoostWhileEmbracingRecoil;
         [SerializeField] [Range(0, 100)] public float playerRecoilDuration;
         protected Vector3 originalPosition;
         protected Vector3 recoilPosition;
-    
-        [Header("Bullet Settings")]
-        [SerializeField] public GameObject bulletPrefab;
+
+        [Header("Bullet Settings")] [SerializeField]
+        public GameObject bulletPrefab;
+
         [SerializeField] [Range(0, 100)] public int magazineSize;
         [SerializeField] public int currentAmmo;
         [SerializeField] public int totalAmmo;
@@ -35,10 +37,11 @@ namespace weapons
         [NonSerialized] public bool isReloading;
         [NonSerialized] public AmmoDisplay ammoDisplay;
 
-        [Header("Fire Rate Settings")]
-        [SerializeField] [Range(0, 1)] public float fireRate;
+        [Header("Fire Rate Settings")] [SerializeField] [Range(0, 1)]
+        public float fireRate;
+
         [NonSerialized] protected float nextFireTime;
-        
+
         protected Coroutine gunKnockBackCoroutine;
         public Coroutine reloadCoroutine;
 
@@ -62,29 +65,31 @@ namespace weapons
             originalPosition = transform.localPosition;
             nextFireTime = 0f;
         }
-    
+
         void Update()
         {
             if (!playerMovements.dead && active && !isReloading)
             {
-                if (Input.GetButtonDown("Fire") && nextFireTime <= 0 && currentAmmo > 0) {
+                if (Input.GetButtonDown("Fire") && nextFireTime <= 0 && currentAmmo > 0)
+                {
                     Shoot();
                 }
-                
+
                 if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
-                    && totalAmmo > 0 
+                    && totalAmmo > 0
                     && playerMovements.grounded)
                 {
                     if (reloadCoroutine != null)
                     {
                         StopCoroutine(reloadCoroutine);
                     }
+
                     reloadCoroutine = StartCoroutine(Reload());
                 }
             }
         }
-    
+
         private void FixedUpdate()
         {
             if (nextFireTime > 0)
@@ -100,16 +105,16 @@ namespace weapons
             {
                 StopCoroutine(gunKnockBackCoroutine);
             }
+
             gunKnockBackCoroutine = StartCoroutine(GunKnockBack());
         }
-    
+
         private void PlayerKnockBack()
         {
-            
             float appliedForce = playerRecoilForce;
             playerMovements.PlayerKnockBack(cannonTransform, appliedForce, playerRecoilBoostWhileEmbracingRecoil);
         }
-    
+
         private IEnumerator GunKnockBack()
         {
             recoilPosition = new Vector3(originalPosition.x - gunRecoil, originalPosition.y, originalPosition.z);
@@ -119,6 +124,7 @@ namespace weapons
                 transform.localPosition = Vector3.Lerp(transform.localPosition, originalPosition, Time.deltaTime * 5);
                 yield return null;
             }
+
             gunKnockBackCoroutine = null;
         }
 
@@ -137,7 +143,7 @@ namespace weapons
             ammoDisplay.DisplayAmmo();
             gameObject.SetActive(true);
         }
-        
+
         public void Disable()
         {
             ammoDisplay.HideAmmo();

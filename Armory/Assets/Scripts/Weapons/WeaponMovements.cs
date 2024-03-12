@@ -9,13 +9,14 @@ namespace Weapons
         [NonSerialized] public PlayerMovements PlayerMovements;
         [NonSerialized] public Transform WeaponCenterTransform;
         [NonSerialized] public Transform WeaponTransform;
-        
+
         private void Awake()
         {
             PlayerMovements = GetComponent<PlayerMovements>();
             WeaponCenterTransform = transform.Find("Inventory");
             WeaponTransform = WeaponCenterTransform.Find("Weapons");
         }
+
         private void FixedUpdate()
         {
             if (!PlayerMovements.dead && PlayerMovements.Armed)
@@ -25,21 +26,25 @@ namespace Weapons
                 Vector3 rotation = mouseWorld - transform.position;
                 float newRotation = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
                 WeaponCenterTransform.rotation = Quaternion.Euler(0, 0, newRotation);
-        
+
                 float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
                 if (
                     (zRotation >= 90 && zRotation < 270 && PlayerMovements.facingRight)
                     || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.facingRight)
-                ) {
-                    if (PlayerMovements.Armed) {
+                )
+                {
+                    if (PlayerMovements.Armed)
+                    {
                         PlayerMovements.Flip();
                     }
+
                     FlipWeapon();
                 }
             }
         }
 
-        private void FlipWeapon() {
+        private void FlipWeapon()
+        {
             Vector3 theScale = WeaponTransform.localScale;
             theScale.y *= -1;
             WeaponTransform.localScale = theScale;
@@ -49,7 +54,5 @@ namespace Weapons
             float newRotation = -currentRotation;
             WeaponTransform.localEulerAngles = new Vector3(0, 0, newRotation);
         }
-
-    
     }
 }

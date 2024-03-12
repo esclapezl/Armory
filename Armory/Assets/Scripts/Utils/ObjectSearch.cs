@@ -19,9 +19,10 @@ namespace Utils
                     return obj.transform;
                 }
             }
+
             return null;
         }
-        
+
         public static List<Transform> FindAllRoots(string pattern)
         {
             Regex regex = new Regex(pattern);
@@ -35,8 +36,10 @@ namespace Utils
                     matchingTransforms.Add(obj.transform);
                 }
             }
+
             return matchingTransforms;
         }
+
         public static Transform FindChild(Transform parent, string pattern)
         {
             Regex regex = new Regex(pattern);
@@ -46,8 +49,8 @@ namespace Utils
                 {
                     return child;
                 }
-                
-                if(child.childCount > 0)
+
+                if (child.childCount > 0)
                 {
                     Transform result = FindChild(child, pattern);
                     if (result != null)
@@ -55,11 +58,11 @@ namespace Utils
                         return result;
                     }
                 }
-                
             }
+
             return null;
         }
-        
+
         public static List<Transform> FindChildren(Transform parent, string pattern)
         {
             List<Transform> children = new List<Transform>();
@@ -70,14 +73,16 @@ namespace Utils
                 {
                     children.Add(child);
                 }
-                if(child.childCount > 0)
+
+                if (child.childCount > 0)
                 {
                     children.AddRange(FindChildren(child, pattern));
                 }
             }
+
             return children;
         }
-        
+
         public static List<T> FindChildrenWithScript<T>(Transform parent) where T : Component
         {
             List<T> childrenWithScript = new List<T>();
@@ -90,7 +95,7 @@ namespace Utils
 
             return childrenWithScript;
         }
-        
+
         public static Transform FindParent(Transform child, string pattern)
         {
             Regex regex = new Regex(pattern);
@@ -102,8 +107,10 @@ namespace Utils
                 {
                     return parent;
                 }
+
                 parent = parent.parent;
             }
+
             return null;
         }
 
@@ -119,11 +126,13 @@ namespace Utils
                 {
                     parents.Add(parent);
                 }
+
                 parent = parent.parent;
             }
+
             return parents;
         }
-        
+
         public static T FindParentWithScript<T>(Transform child) where T : Component
         {
             Transform parent = child.parent;
@@ -135,6 +144,7 @@ namespace Utils
                 {
                     return component;
                 }
+
                 parent = parent.parent;
             }
 

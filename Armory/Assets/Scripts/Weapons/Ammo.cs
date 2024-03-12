@@ -7,10 +7,11 @@ namespace Weapons
     public class Ammo : MonoBehaviour
     {
         [SerializeField] private string ammoType;
+
         // Start is called before the first frame update
         void OnTriggerEnter2D(Collider2D other)
         {
-            if(other.gameObject.CompareTag("Player"))
+            if (other.gameObject.CompareTag("Player"))
             {
                 Weapon weapon = ObjectSearch.FindChild(other.transform, ammoType).GetComponent<Weapon>();
                 PickUp(weapon);
@@ -31,6 +32,7 @@ namespace Weapons
             {
                 weapon.totalAmmo++;
             }
+
             Destroy(GetComponent<BoxCollider2D>());
             GetComponent<SpriteRenderer>().enabled = false;
         }
