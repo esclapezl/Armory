@@ -111,7 +111,7 @@ namespace Player
                 if (!_recentlyJumped)
                 {
                     Collider2D[] colliders =
-                        Physics2D.OverlapBoxAll(_groundCheck.position, _groundCheckSize, whatIsGround);
+                        Physics2D.OverlapBoxAll(_groundCheck.position, _groundCheckSize, 0, whatIsGround);
                     for (int i = 0; i < colliders.Length; i++)
                     {
                         if (colliders[i].gameObject != gameObject)
