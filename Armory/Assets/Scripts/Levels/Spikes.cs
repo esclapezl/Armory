@@ -9,8 +9,9 @@ namespace Levels
         [SerializeField] private Sprite flatSpike;
         [SerializeField] private Sprite cornerSpike;
 
-        private void Awake()
+        private void OnRenderObject()
         {
+            Debug.Log("Update");
             Vector3 leftPosition = new Vector3(transform.position.x - 0.5f, transform.position.y);
             Vector3 rightPosition = new Vector3(transform.position.x + 0.5f, transform.position.y);
             Vector3 upPosition = new Vector3(transform.position.x, transform.position.y + 0.5f);
@@ -113,15 +114,6 @@ namespace Levels
             }
 
             return -1;
-        }
-
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
     }
 }

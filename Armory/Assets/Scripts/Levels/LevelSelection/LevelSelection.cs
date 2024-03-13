@@ -22,8 +22,8 @@ namespace Levels.LevelSelection
         {
             for (int i = 1; i < _gameManager.LevelFolder.childCount; i++)
             {
-                GameObject level = Instantiate(levelSelectorPrefab, _gameManager.LevelFolder.GetChild(i), true);
-                level.transform.localPosition = new Vector3(10*i, 0, 0);
+                GameObject level = Instantiate(levelSelectorPrefab, transform, true);
+                level.transform.localPosition = new Vector3(2*i, 0, 0);
                 level.name = (i) + "_" + _gameManager.LevelFolder.GetChild(i).name;
                 _levelTransforms.Add(level.transform);
                 ClearHover(i-1);
@@ -32,7 +32,7 @@ namespace Levels.LevelSelection
 
         private void Update()
         {
-            if (_gameManager.currentLevelNumber == 0)
+            if (_gameManager.currentLevelNumber == 1)
             {
                 if(Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -74,6 +74,7 @@ namespace Levels.LevelSelection
 
         private void StartLevel(int levelIndex)
         {
+            Debug.Log(_selectedLevel);
             _gameManager.StartLevel(_selectedLevel);
         }
     }

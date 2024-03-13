@@ -17,6 +17,7 @@ namespace Levels
 
         [NonSerialized] private Transform _startPosition;
         [NonSerialized] private Transform _playerTransform;
+        [NonSerialized] private Transform _cameraTransform;
         [NonSerialized] private Player.Player _player;
         [NonSerialized] public Transform BottomLeftDelimiter;
         [NonSerialized] public Transform TopRightDelimiter;
@@ -33,7 +34,7 @@ namespace Levels
         [SerializeField] private int shotgunAmmo;
 
         [NonSerialized]
-        public Dictionary<string, int> StartingBullets; // Si vous voulez juste stocker le nombre de balles
+        public Dictionary<string, int> StartingBullets;
 
         [NonSerialized] private Inventory _inventory;
 
@@ -54,6 +55,7 @@ namespace Levels
             _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
             _startPosition = ObjectSearch.FindChild(transform, "StartPosition");
             _playerTransform = ObjectSearch.FindRoot("Player");
+            _cameraTransform = ObjectSearch.FindRoot("Main Camera");
             _inventory = ObjectSearch.FindChild(_playerTransform, "Inventory").GetComponent<Inventory>();
             BottomLeftDelimiter = ObjectSearch.FindChild(transform, "BottomLeftDelimiter");
             TopRightDelimiter = ObjectSearch.FindChild(transform, "TopRightDelimiter");
@@ -70,6 +72,7 @@ namespace Levels
         {
             _active = true;
             _playerTransform.position = _startPosition.position;
+            _cameraTransform.position = new Vector3(_startPosition.position.x, _startPosition.position.y, _cameraTransform.position.z);
 
             //clean the scene
             ObjectSearch.FindAllRoots("bullet.*").ForEach(bullet => Destroy(bullet.gameObject));
@@ -98,7 +101,7 @@ namespace Levels
         {
             _active = false;
             LevelCompleted = true;
-            if (_gameManager.LevelFolder.childCount < LevelNumber)
+            if (_gameManager.LevelFolder.childCount > LevelNumber)
             {
                 _gameManager.StartLevel(_gameManager.currentLevelNumber + 1);
             }
