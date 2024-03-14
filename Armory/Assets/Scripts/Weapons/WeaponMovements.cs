@@ -6,20 +6,20 @@ namespace Weapons
 {
     public class WeaponMovements : MonoBehaviour
     {
-        [NonSerialized] public PlayerMovements PlayerMovements;
+        [NonSerialized] public Player.Player Player;
         [NonSerialized] public Transform WeaponCenterTransform;
         [NonSerialized] public Transform WeaponTransform;
 
         private void Awake()
         {
-            PlayerMovements = GetComponent<PlayerMovements>();
+            Player = GetComponent<Player.Player>();
             WeaponCenterTransform = transform.Find("Inventory");
             WeaponTransform = WeaponCenterTransform.Find("Weapons");
         }
 
         private void FixedUpdate()
         {
-            if (!PlayerMovements.dead && PlayerMovements.Armed)
+            if (!Player.dead && Player.PlayerMovements.Armed)
             {
                 //weapon rotation
                 Vector3 mouseWorld = UnityEngine.Camera.main!.ScreenToWorldPoint(Input.mousePosition);
@@ -29,13 +29,13 @@ namespace Weapons
 
                 float zRotation = WeaponCenterTransform.rotation.eulerAngles.z;
                 if (
-                    (zRotation >= 90 && zRotation < 270 && PlayerMovements.facingRight)
-                    || ((zRotation < 90 || zRotation >= 270) && !PlayerMovements.facingRight)
+                    (zRotation >= 90 && zRotation < 270 && Player.PlayerMovements.FacingRight)
+                    || ((zRotation < 90 || zRotation >= 270) && !Player.PlayerMovements.FacingRight)
                 )
                 {
-                    if (PlayerMovements.Armed)
+                    if (Player.PlayerMovements.Armed)
                     {
-                        PlayerMovements.Flip();
+                        Player.PlayerMovements.Flip();
                     }
 
                     FlipWeapon();

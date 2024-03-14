@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Levels
+namespace Levels.Danger
 {
     [ExecuteInEditMode]
     public class Spikes : MonoBehaviour

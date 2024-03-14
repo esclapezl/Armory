@@ -9,7 +9,11 @@ namespace Player
 {
     public class Player : MonoBehaviour
     {
-        [NonSerialized] private PlayerMovements _playerMovements;
+        [NonSerialized] public PlayerMovements PlayerMovements;
+        [NonSerialized] public PlayerJump PlayerJump;
+        [NonSerialized] public PlayerCrouch PlayerCrouch;
+        [NonSerialized] public PlayerKnockback PlayerKnockback;
+        
         [NonSerialized] private Rigidbody2D _rigidbody2D;
         [NonSerialized] private GameManager _gameManager;
 
@@ -17,13 +21,17 @@ namespace Player
         [NonSerialized] public SpriteRenderer PlayerSpriteRenderer;
         [NonSerialized] public SpriteRenderer PlayerFilterSpriteRenderer;
         [SerializeField] public int health = 3;
-        [NonSerialized] public bool respawn = false;
+        [NonSerialized] public bool dead = false;
         [NonSerialized] private Coroutine _damageCoroutine;
 
         private void Awake()
         {
+            PlayerMovements = GetComponent<PlayerMovements>();
+            PlayerJump = GetComponent<PlayerJump>();
+            PlayerCrouch = GetComponent<PlayerCrouch>();
+            PlayerKnockback = GetComponent<PlayerKnockback>();
+            
             _rigidbody2D = GetComponent<Rigidbody2D>();
-            _playerMovements = GetComponent<PlayerMovements>();
             _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
 
             PlayerSprite = ObjectSearch.FindChild(transform, "PlayerObject");
@@ -42,12 +50,11 @@ namespace Player
 
         private void Die()
         {
-            _playerMovements.dead = true;
-            respawn = false;
+            dead = true;
             GetComponent<BoxCollider2D>().enabled = false;
 
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0, 0, -5);
-            StartCoroutine(DieRotation(-_playerMovements.Rigidbody2D.velocity.x * 100));
+            StartCoroutine(DieRotation(-_rigidbody2D.velocity.x * 100));
             _rigidbody2D.AddForce(new Vector2(0, 500));
             StartCoroutine(RespawnCoroutine());
         }
@@ -55,7 +62,7 @@ namespace Player
         private IEnumerator DieRotation(float rotationSpeed)
         {
             float absSpeed = Mathf.Abs(rotationSpeed);
-            while (absSpeed > 0 && !respawn)
+            while (absSpeed > 0 && dead)
             {
                 PlayerSpriteRenderer.transform.Rotate(0, 0, (rotationSpeed + 100) * Time.deltaTime);
                 absSpeed -= Time.deltaTime;
@@ -65,14 +72,13 @@ namespace Player
 
         private void Respawn()
         {
-            respawn = true;
+            dead = false;
             StopCoroutine(DieRotation(0));
             PlayerSpriteRenderer.transform.rotation = Quaternion.identity;
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0, 0, 0);
-            _playerMovements.Rigidbody2D.velocity = Vector2.zero;
+            _rigidbody2D.velocity = Vector2.zero;
             _gameManager.CurrentLevel.StartLevel();
             GetComponent<BoxCollider2D>().enabled = true;
-            _playerMovements.dead = false;
         }
 
         private IEnumerator RespawnCoroutine()

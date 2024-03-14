@@ -14,7 +14,7 @@ namespace weapons
         [SerializeField] public bool active = false;
 
         [NonSerialized] public UnityEngine_Transform playerTransform;
-        [NonSerialized] protected PlayerMovements playerMovements;
+        [NonSerialized] protected Player.Player player;
         [NonSerialized] protected Transform cannonTransform;
 
         [Header("Recoil Settings")] [SerializeField] [Range(0, 2)]
@@ -48,7 +48,7 @@ namespace weapons
         private void Awake()
         {
             playerTransform = transform.parent.parent.parent;
-            playerMovements = playerTransform.GetComponent<PlayerMovements>();
+            player = playerTransform.GetComponent<Player.Player>();
             cannonTransform = transform.GetChild(0);
             ammoDisplay = GetComponent<AmmoDisplay>();
         }
@@ -68,7 +68,7 @@ namespace weapons
 
         void Update()
         {
-            if (!playerMovements.dead && active && !isReloading)
+            if (!player.dead && active && !isReloading)
             {
                 if (Input.GetButtonDown("Fire") && nextFireTime <= 0 && currentAmmo > 0)
                 {
@@ -78,7 +78,7 @@ namespace weapons
                 if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
                     && totalAmmo > 0
-                    && playerMovements.grounded)
+                    && player.PlayerJump.Grounded)
                 {
                     if (reloadCoroutine != null)
                     {
@@ -112,7 +112,7 @@ namespace weapons
         private void PlayerKnockBack()
         {
             float appliedForce = playerRecoilForce;
-            playerMovements.PlayerKnockBack(cannonTransform, appliedForce, playerRecoilBoostWhileEmbracingRecoil);
+            player.PlayerKnockback.PlayerKnockBack(cannonTransform, appliedForce, playerRecoilBoostWhileEmbracingRecoil);
         }
 
         private IEnumerator GunKnockBack()
