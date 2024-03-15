@@ -62,6 +62,18 @@ namespace Utils
 
             return null;
         }
+        
+        public static T FindChildWithScript<T>(Transform parent) where T : Component
+        {
+            T[] components = parent.GetComponentsInChildren<T>();
+
+            if (components.Length > 0)
+            {
+                return components[0];
+            }
+
+            return null;
+        }
 
         public static List<Transform> FindChildren(Transform parent, string pattern)
         {

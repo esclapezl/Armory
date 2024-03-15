@@ -48,20 +48,8 @@ namespace Weapons
 
         void PickUp(Weapon weapon)
         {
-            if (weapon.currentAmmo < weapon.magazineSize)
-            {
-                weapon.currentAmmo++;
-                if (weapon.active)
-                {
-                    weapon.ammoDisplay.DisplayAmmo();
-                }
-            }
-            else
-            {
-                weapon.totalAmmo++;
-            }
-
-            Destroy(GetComponent<BoxCollider2D>());
+            weapon.PickUpAmmo(ammoType);
+            GetComponent<BoxCollider2D>().enabled = false;
             GetComponent<SpriteRenderer>().enabled = false;
         }
     }

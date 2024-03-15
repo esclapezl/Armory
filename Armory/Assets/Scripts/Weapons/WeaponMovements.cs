@@ -33,17 +33,14 @@ namespace Weapons
                     || ((zRotation < 90 || zRotation >= 270) && !Player.PlayerMovements.FacingRight)
                 )
                 {
-                    if (Player.PlayerMovements.Armed)
-                    {
-                        Player.PlayerMovements.Flip();
-                    }
-
+                    
+                    Player.PlayerMovements.FlipPlayer();
                     FlipWeapon();
                 }
             }
         }
 
-        private void FlipWeapon()
+        public void FlipWeapon()
         {
             Vector3 theScale = WeaponTransform.localScale;
             theScale.y *= -1;

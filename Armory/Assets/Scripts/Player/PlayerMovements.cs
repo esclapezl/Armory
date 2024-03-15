@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utils;
+using Weapons;
 using ObjectSearch = Utils.ObjectSearch;
 
 namespace Player
@@ -13,6 +14,7 @@ namespace Player
         [NonSerialized] private PlayerJump _playerJump;
         [NonSerialized] private PlayerKnockback _playerKnockback;
         [NonSerialized] private Player _player;
+        [NonSerialized] private WeaponMovements _weaponMovements;
         
         [NonSerialized] private Transform _playerTransform;
         [NonSerialized] public bool FacingRight = true;
@@ -34,6 +36,7 @@ namespace Player
             _playerJump = GetComponent<PlayerJump>();
             _playerKnockback = GetComponent<PlayerKnockback>();
             _player = GetComponent<Player>();
+            _weaponMovements = GetComponent<WeaponMovements>();
             
             _playerTransform = transform.Find("PlayerObject");
             _rigidbody2D = GetComponent<Rigidbody2D>();
@@ -99,20 +102,18 @@ namespace Player
                     );
                 }
 
-                if ((moveInput > 0 && !FacingRight && !armed) || (moveInput < 0 && FacingRight && !armed))
+                if (!armed && ((moveInput > 0 && !FacingRight) || (moveInput < 0 && FacingRight)))
                 {
-                    Flip();
+                    FlipPlayer();
+                    _weaponMovements.FlipWeapon();
                 }
             }
         }
 
 
-        public void Flip()
+        public void FlipPlayer()
         {
-            // Switch the way the player is labelled as facing.
             FacingRight = !FacingRight;
-
-            // Multiply the player's x local scale by -1.
             Vector3 theScale = _playerTransform.localScale;
             theScale.x *= -1;
             _playerTransform.localScale = theScale;

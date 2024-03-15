@@ -3,6 +3,7 @@ using System.Collections;
 using Player;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Weapons;
 using Weapons.Pistol;
 using Angles = Utils.Angles;
 using UnityEngine_Transform = UnityEngine.Transform;
@@ -148,6 +149,19 @@ namespace weapons
         {
             ammoDisplay.HideAmmo();
             gameObject.SetActive(false);
+        }
+
+        public void PickUpAmmo(Ammo.AmmoType ammoType)
+        {
+            if (currentAmmo < magazineSize)
+            {
+                currentAmmo++;
+                ammoDisplay.DisplayAmmo();
+            }
+            else
+            {
+                totalAmmo++;
+            }
         }
     }
 }

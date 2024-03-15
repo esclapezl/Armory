@@ -492,10 +492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87177942150205e4983a83778cce0837, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasPistol: 1
-  pistolAmmo: 20
-  hasShotgun: 1
-  shotgunAmmo: 10
+  hasPistol: 0
+  pistolAmmo: 0
+  hasShotgun: 0
+  shotgunAmmo: 0
 --- !u!114 &6425738389301604955
 MonoBehaviour:
   m_ObjectHideFlags: 0

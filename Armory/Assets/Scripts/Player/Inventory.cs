@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using weapons;
+using Weapons;
 using Weapons.Pistol;
 using ObjectSearch = Utils.ObjectSearch;
 
@@ -81,10 +83,11 @@ namespace Player
             weapon.GetComponent<AmmoDisplay>().DisplayAmmo();
         }
 
-        private void PickUpWeapon(GameObject weapon)
+        public void PickUpWeapon(WeaponPickUp.WeaponType weaponPickup)
         {
+            GameObject weapon = ObjectSearch.FindChild(_weaponsTransform, weaponPickup.ToString()).gameObject;
             activeWeapons.Add(weapon);
-            weapon.SetActive(false);
+            RefreshInentory();
         }
 
         public void Clear()
@@ -110,7 +113,7 @@ namespace Player
             weaponInfo.totalAmmo = ammo - weaponInfo.currentAmmo;
         }
 
-        public void SetUpInventory()
+        public void RefreshInentory()
         {
             foreach (GameObject weapon in activeWeapons)
             {

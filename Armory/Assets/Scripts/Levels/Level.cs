@@ -94,7 +94,7 @@ namespace Levels
                 }
             }
 
-            _inventory.SetUpInventory();
+            _inventory.RefreshInentory();
         }
 
         public void EndLevel()
