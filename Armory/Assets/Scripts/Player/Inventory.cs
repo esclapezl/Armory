@@ -23,7 +23,8 @@ namespace Player
 
         private void Awake()
         {
-            _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID").GetComponent<InventoryUid>();
+            _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID")
+                .GetComponent<InventoryUid>();
             _playerMovements = ObjectSearch.FindParentWithScript<PlayerMovements>(transform);
             _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
             for (int i = 0; i < _weaponsTransform.childCount; i++)
@@ -136,8 +137,6 @@ namespace Player
             {
                 _playerMovements.Armed = false;
             }
-            
-            
         }
     }
 }

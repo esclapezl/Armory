@@ -36,15 +36,15 @@ namespace Player
         {
             TotalAmmo = totalAmmo;
         }
-    
+
         public void Highlight()
-        { 
+        {
             _highlightSpriteRenderer.color = new Color(1, 1, 1, 1);
             float scaleUp = 1.2f;
             transform.localScale = new Vector3(scaleUp, scaleUp, 1);
-            transform.localPosition = new Vector3(transform.localPosition.x, (1-scaleUp)/2, 0);
+            transform.localPosition = new Vector3(transform.localPosition.x, (1 - scaleUp) / 2, 0);
         }
-    
+
         public void Unhighlight()
         {
             _highlightSpriteRenderer.color = new Color(1, 1, 1, 0);

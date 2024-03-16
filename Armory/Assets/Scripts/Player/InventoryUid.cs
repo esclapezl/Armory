@@ -20,11 +20,14 @@ namespace Player
             _mainCamera = UnityEngine.Camera.main;
             _inventory = ObjectSearch.FindChildWithScript<Inventory>(ObjectSearch.FindRoot("Player"));
             _inventorySlots = new List<InventorySlotUid>();
-            
-            Vector3 margin = new Vector3(uidMargin, uidMargin, 0); // Marge en unités de monde
-            Vector3 marginInPixels = _mainCamera!.WorldToScreenPoint(_mainCamera.transform.position + margin) - _mainCamera.WorldToScreenPoint(_mainCamera.transform.position);
 
-            Vector3 cameraPosition = _mainCamera.ScreenToWorldPoint(new Vector3(marginInPixels.x, marginInPixels.y, _mainCamera.nearClipPlane));
+            Vector3 margin = new Vector3(uidMargin, uidMargin, 0); // Marge en unités de monde
+            Vector3 marginInPixels = _mainCamera!.WorldToScreenPoint(_mainCamera.transform.position + margin) -
+                                     _mainCamera.WorldToScreenPoint(_mainCamera.transform.position);
+
+            Vector3 cameraPosition =
+                _mainCamera.ScreenToWorldPoint(new Vector3(marginInPixels.x, marginInPixels.y,
+                    _mainCamera.nearClipPlane));
             transform.position = new Vector3(cameraPosition.x, cameraPosition.y, transform.position.z);
         }
 
@@ -34,6 +37,7 @@ namespace Player
             {
                 Destroy(slot.gameObject);
             }
+
             _inventorySlots.Clear();
         }
 
@@ -46,7 +50,8 @@ namespace Player
                 GameObject weaponSlot = Instantiate(weaponSlotPrefab, transform);
                 InventorySlotUid inventorySlot = weaponSlot.GetComponent<InventorySlotUid>();
                 inventorySlot.transform.localPosition = new Vector3(index, 0, 0);
-                inventorySlot.SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite, weaponObject.GetComponent<Weapon>().totalAmmo);
+                inventorySlot.SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
+                    weaponObject.GetComponent<Weapon>().totalAmmo);
                 _inventorySlots.Add(inventorySlot);
                 index++;
             }
@@ -68,6 +73,7 @@ namespace Player
             {
                 slot.Unhighlight();
             }
+
             _inventorySlots[index].Highlight();
         }
     }
