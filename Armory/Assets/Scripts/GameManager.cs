@@ -11,8 +11,8 @@ using Utils;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Level Selection")]
-    [NonSerialized] public Transform LevelFolder;
+    [Header("Level Selection")] [NonSerialized]
+    public Transform LevelFolder;
 
     [SerializeField] public int currentLevelNumber;
     [NonSerialized] public Level CurrentLevel;

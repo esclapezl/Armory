@@ -13,7 +13,7 @@ namespace Player
         [NonSerialized] public PlayerJump PlayerJump;
         [NonSerialized] public PlayerCrouch PlayerCrouch;
         [NonSerialized] public PlayerKnockback PlayerKnockback;
-        
+
         [NonSerialized] private Rigidbody2D _rigidbody2D;
         [NonSerialized] private GameManager _gameManager;
 
@@ -30,7 +30,7 @@ namespace Player
             PlayerJump = GetComponent<PlayerJump>();
             PlayerCrouch = GetComponent<PlayerCrouch>();
             PlayerKnockback = GetComponent<PlayerKnockback>();
-            
+
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
 

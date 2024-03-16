@@ -33,7 +33,6 @@ namespace Weapons
                     || ((zRotation < 90 || zRotation >= 270) && !Player.PlayerMovements.FacingRight)
                 )
                 {
-                    
                     Player.PlayerMovements.FlipPlayer();
                     FlipWeapon();
                 }

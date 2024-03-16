@@ -87,7 +87,7 @@ namespace Player
         {
             GameObject weapon = ObjectSearch.FindChild(_weaponsTransform, weaponPickup.ToString()).gameObject;
             activeWeapons.Add(weapon);
-            RefreshInentory();
+            RefreshInventory();
         }
 
         public void Clear()
@@ -113,7 +113,7 @@ namespace Player
             weaponInfo.totalAmmo = ammo - weaponInfo.currentAmmo;
         }
 
-        public void RefreshInentory()
+        public void RefreshInventory()
         {
             foreach (GameObject weapon in activeWeapons)
             {

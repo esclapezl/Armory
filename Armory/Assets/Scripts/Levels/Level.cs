@@ -33,8 +33,7 @@ namespace Levels
         [Space(10)] [SerializeField] private bool hasShotgun;
         [SerializeField] private int shotgunAmmo;
 
-        [NonSerialized]
-        public Dictionary<string, int> StartingBullets;
+        [NonSerialized] public Dictionary<string, int> StartingBullets;
 
         [NonSerialized] private Inventory _inventory;
 
@@ -72,7 +71,8 @@ namespace Levels
         {
             _active = true;
             _playerTransform.position = _startPosition.position;
-            _cameraTransform.position = new Vector3(_startPosition.position.x, _startPosition.position.y, _cameraTransform.position.z);
+            _cameraTransform.position = new Vector3(_startPosition.position.x, _startPosition.position.y,
+                _cameraTransform.position.z);
 
             //clean the scene
             ObjectSearch.FindAllRoots("bullet.*").ForEach(bullet => Destroy(bullet.gameObject));
@@ -94,7 +94,7 @@ namespace Levels
                 }
             }
 
-            _inventory.RefreshInentory();
+            _inventory.RefreshInventory();
         }
 
         public void EndLevel()

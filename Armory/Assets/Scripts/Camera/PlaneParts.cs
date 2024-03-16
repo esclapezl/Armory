@@ -70,11 +70,13 @@ namespace Camera
 
             if (leftmostTransform.position.x - _planePartWidth / 2 > cameraLeftBorderX)
             {
-                rightmostTransform.localPosition = new Vector3(leftmostTransform.localPosition.x - _planePartWidth, 0, 0);
+                rightmostTransform.localPosition =
+                    new Vector3(leftmostTransform.localPosition.x - _planePartWidth, 0, 0);
             }
             else if (rightmostTransform.position.x + _planePartWidth / 2 < cameraRightBorderX)
             {
-                leftmostTransform.localPosition = new Vector3(rightmostTransform.localPosition.x + _planePartWidth, 0, 0);
+                leftmostTransform.localPosition =
+                    new Vector3(rightmostTransform.localPosition.x + _planePartWidth, 0, 0);
             }
         }
 

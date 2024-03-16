@@ -113,7 +113,8 @@ namespace weapons
         private void PlayerKnockBack()
         {
             float appliedForce = playerRecoilForce;
-            player.PlayerKnockback.PlayerKnockBack(cannonTransform, appliedForce, playerRecoilBoostWhileEmbracingRecoil);
+            player.PlayerKnockback.PlayerKnockBack(cannonTransform, appliedForce,
+                playerRecoilBoostWhileEmbracingRecoil);
         }
 
         private IEnumerator GunKnockBack()

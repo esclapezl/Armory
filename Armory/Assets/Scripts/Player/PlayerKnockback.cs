@@ -71,10 +71,9 @@ namespace Player
 
             if (_playerJump.Grounded || !Angles.AngleIsInAGivenRange(shotAngle, 90, _previousAngle))
             {
-                //si le joueur tire plus ou moins dans la même direction ds les airs, la vélo est maintenue
                 Rigidbody2D.velocity = Vector2.zero;
             }
-            else
+            else //si le joueur tire plus ou moins dans la même direction ds les airs, la vélo est maintenue
             {
                 Rigidbody2D.velocity = new Vector2(Rigidbody2D.velocity.x, 0);
             }

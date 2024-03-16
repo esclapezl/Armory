@@ -15,7 +15,7 @@ namespace Player
         [NonSerialized] private PlayerKnockback _playerKnockback;
         [NonSerialized] private Player _player;
         [NonSerialized] private WeaponMovements _weaponMovements;
-        
+
         [NonSerialized] private Transform _playerTransform;
         [NonSerialized] public bool FacingRight = true;
         [NonSerialized] public bool Armed = true;
@@ -37,7 +37,7 @@ namespace Player
             _playerKnockback = GetComponent<PlayerKnockback>();
             _player = GetComponent<Player>();
             _weaponMovements = GetComponent<WeaponMovements>();
-            
+
             _playerTransform = transform.Find("PlayerObject");
             _rigidbody2D = GetComponent<Rigidbody2D>();
         }

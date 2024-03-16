@@ -62,7 +62,7 @@ namespace Utils
 
             return null;
         }
-        
+
         public static T FindChildWithScript<T>(Transform parent) where T : Component
         {
             T[] components = parent.GetComponentsInChildren<T>();

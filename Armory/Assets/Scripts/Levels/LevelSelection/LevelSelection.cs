@@ -23,10 +23,10 @@ namespace Levels.LevelSelection
             for (int i = 1; i < _gameManager.LevelFolder.childCount; i++)
             {
                 GameObject level = Instantiate(levelSelectorPrefab, transform, true);
-                level.transform.localPosition = new Vector3(2*i, 0, 0);
+                level.transform.localPosition = new Vector3(2 * i, 0, 0);
                 level.name = (i) + "_" + _gameManager.LevelFolder.GetChild(i).name;
                 _levelTransforms.Add(level.transform);
-                ClearHover(i-1);
+                ClearHover(i - 1);
             }
         }
 
@@ -34,26 +34,26 @@ namespace Levels.LevelSelection
         {
             if (_gameManager.currentLevelNumber == 1)
             {
-                if(Input.GetKeyDown(KeyCode.LeftArrow))
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
-                    if(_selectedLevel > 0)
+                    if (_selectedLevel > 0)
                     {
                         ClearHover(_selectedLevel);
                         _selectedLevel--;
                         HoverLevel(_selectedLevel);
                     }
                 }
-                else if(Input.GetKeyDown(KeyCode.RightArrow))
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
-                    if(_selectedLevel < _levelTransforms.Count - 1)
+                    if (_selectedLevel < _levelTransforms.Count - 1)
                     {
                         ClearHover(_selectedLevel);
                         _selectedLevel++;
                         HoverLevel(_selectedLevel);
                     }
                 }
-        
-                if(Input.GetKeyDown(KeyCode.Return))
+
+                if (Input.GetKeyDown(KeyCode.Return))
                 {
                     StartLevel(_selectedLevel);
                 }
@@ -65,7 +65,7 @@ namespace Levels.LevelSelection
             SpriteRenderer spriteRenderer = _levelTransforms[levelIndex].GetComponent<SpriteRenderer>();
             spriteRenderer.color = new Color(1f, 0, 0, 1f);
         }
-    
+
         private void ClearHover(int levelIndex)
         {
             SpriteRenderer spriteRenderer = _levelTransforms[levelIndex].GetComponent<SpriteRenderer>();

@@ -18,11 +18,11 @@ namespace Weapons
 
         [System.Serializable]
         public struct WeaponSprite
-        { 
+        {
             public WeaponType weaponType;
             public Sprite sprite;
         }
-    
+
         [SerializeField] private WeaponType weaponType;
         [SerializeField] private WeaponSprite[] ammoSprites;
 
@@ -35,13 +35,13 @@ namespace Weapons
             {
                 _weaponTypeToSprite[ammoSprite.weaponType] = ammoSprite.sprite;
             }
-            
+
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = _weaponTypeToSprite[weaponType];
             BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
             boxCollider.size = spriteRenderer.sprite.bounds.size;
         }
-        
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("Player"))

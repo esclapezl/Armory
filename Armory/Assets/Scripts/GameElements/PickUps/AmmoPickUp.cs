@@ -25,6 +25,7 @@ namespace Weapons
         [SerializeField] private AmmoSprite[] ammoSprites;
 
         private Dictionary<AmmoType, Sprite> _ammoTypeToSprite;
+
         private void OnRenderObject()
         {
             _ammoTypeToSprite = new Dictionary<AmmoType, Sprite>();
@@ -32,11 +33,11 @@ namespace Weapons
             {
                 _ammoTypeToSprite[ammoSprite.ammoType] = ammoSprite.sprite;
             }
-            
+
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = _ammoTypeToSprite[ammoType];
         }
-        
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("Player"))
