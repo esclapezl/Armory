@@ -26,7 +26,7 @@ namespace Weapons.Pistol
         public void SetDisplay()
         {
             _ammoDisplay = new List<GameObject>();
-            float displayLenght = _weapon.playerTransform.localScale.x;
+            float displayLenght = _weapon.PlayerTransform.localScale.x;
             float bulletSize = Mathf.Max(
                 (displayLenght + minDisplayGap) / _weapon.magazineSize - displayLenght,
                 maxBulletSize
@@ -35,11 +35,11 @@ namespace Weapons.Pistol
             float uidSize = bulletSize * 0.2f * _weapon.magazineSize + minDisplayGap * (_weapon.magazineSize - 1);
 
             GameObject magazineUid = new GameObject(_weapon.name + "MagazineUID");
-            magazineUid.transform.parent = ObjectSearch.FindChild(_weapon.playerTransform, "AmmoDisplayers");
+            magazineUid.transform.parent = ObjectSearch.FindChild(_weapon.PlayerTransform, "AmmoDisplayers");
             _displayTransform = magazineUid.transform;
             for (int i = 0; i < _weapon.magazineSize; i++)
             {
-                var position = _weapon.playerTransform.position;
+                var position = _weapon.PlayerTransform.position;
                 Vector3 bulletposition = new Vector3(
                     -uidSize / _weapon.magazineSize * i,
                     +1,

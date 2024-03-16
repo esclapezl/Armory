@@ -70,11 +70,11 @@ namespace Player
             weaponInfo.active = false;
             weapon.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
             weapon.GetComponent<AmmoDisplay>().HideAmmo();
-            if (weaponInfo.isReloading)
+            if (weaponInfo.IsReloading)
             {
                 weaponInfo.StopCoroutine(weaponInfo.reloadCoroutine);
                 weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                weaponInfo.isReloading = false;
+                weaponInfo.IsReloading = false;
                 weaponInfo.reloadCoroutine = null;
             }
         }

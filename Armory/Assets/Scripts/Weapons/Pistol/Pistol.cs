@@ -9,16 +9,16 @@ namespace Weapons.Pistol
         protected override void Shoot()
         {
             Collider2D hitCollider =
-                Physics2D.OverlapCircle(cannonTransform.position, 0.1f, player.PlayerJump.whatIsGround);
+                Physics2D.OverlapCircle(CannonTransform.position, 0.1f, Player.PlayerJump.whatIsGround);
             if (hitCollider == null)
             {
-                GameObject bulletObject = Instantiate(bulletPrefab, cannonTransform.position, transform.rotation);
+                GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
                 Bullet bullet = bulletObject.GetComponent<Bullet>();
                 bullet.SetSpeed(bulletSpeed);
             }
 
-            nextFireTime = fireRate;
-            ammoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
+            NextFireTime = fireRate;
+            AmmoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
             currentAmmo--;
 
             KnockBack();
@@ -26,7 +26,7 @@ namespace Weapons.Pistol
 
         protected override IEnumerator Reload()
         {
-            isReloading = true;
+            IsReloading = true;
             Quaternion originalRotation = transform.localRotation;
             Quaternion targetRotation = Quaternion.Euler(0, 0, 90 * transform.localScale.y);
 
@@ -42,7 +42,7 @@ namespace Weapons.Pistol
             //refill mag
             for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
-                ammoDisplay.EnableBullet(magazineSize - i - 1);
+                AmmoDisplay.EnableBullet(magazineSize - i - 1);
                 currentAmmo++;
                 totalAmmo--;
                 yield return new WaitForSeconds(reloadTime / magazineSize);
@@ -57,7 +57,7 @@ namespace Weapons.Pistol
             }
 
             transform.localRotation = originalRotation;
-            isReloading = false;
+            IsReloading = false;
             reloadCoroutine = null;
         }
     }
