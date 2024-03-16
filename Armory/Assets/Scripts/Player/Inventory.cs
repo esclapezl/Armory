@@ -19,9 +19,11 @@ namespace Player
         private float _switchWeapon;
         private Transform _weaponsTransform;
         private PlayerMovements _playerMovements;
+        private InventoryUid _inventoryUid;
 
         private void Awake()
         {
+            _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID").GetComponent<InventoryUid>();
             _playerMovements = ObjectSearch.FindParentWithScript<PlayerMovements>(transform);
             _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
             for (int i = 0; i < _weaponsTransform.childCount; i++)
@@ -53,6 +55,7 @@ namespace Player
 
         private void ChangeWeapon(int index)
         {
+            _inventoryUid.HighlightSlot(index);
             GameObject currentWeapon = activeWeapons[_currentWeapon];
             GameObject targetWeapon = activeWeapons[index];
             ToggleWeapon(currentWeapon);
@@ -127,11 +130,14 @@ namespace Player
                 activeWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
                 ActivateWeapon(activeWeapons[0]);
                 _playerMovements.Armed = true;
+                _inventoryUid.RefreshInventoryUid();
             }
             else
             {
                 _playerMovements.Armed = false;
             }
+            
+            
         }
     }
 }
