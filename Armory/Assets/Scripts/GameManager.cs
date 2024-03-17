@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [Header("Level Selection")] [NonSerialized]
     public Transform LevelFolder;
 
-    [SerializeField] public int currentLevelNumber;
+    [SerializeField] public static int CurrentLevelNumber;
     [NonSerialized] public Level CurrentLevel;
     [NonSerialized] private CameraMovements _cameraMovements;
 
@@ -50,25 +50,25 @@ public class GameManager : MonoBehaviour
 
     private void UpdateLevel()
     {
-        if (CurrentLevel == null || currentLevelNumber != CurrentLevel.LevelNumber)
+        if (CurrentLevel == null || CurrentLevelNumber != CurrentLevel.LevelNumber)
         {
-            if (currentLevelNumber > LevelFolder.childCount)
+            if (CurrentLevelNumber > LevelFolder.childCount)
             {
-                currentLevelNumber = LevelFolder.childCount;
+                CurrentLevelNumber = LevelFolder.childCount;
             }
-            else if (currentLevelNumber == 0)
+            else if (CurrentLevelNumber == 0)
             {
-                currentLevelNumber = 1;
+                CurrentLevelNumber = 1;
             }
 
-            StartLevel(currentLevelNumber);
+            StartLevel(CurrentLevelNumber);
         }
     }
 
     public void StartLevel(int level)
     {
-        currentLevelNumber = level;
-        CurrentLevel = ObjectSearch.FindChild(LevelFolder, currentLevelNumber + "_.*").GetComponent<Level>();
+        CurrentLevelNumber = level;
+        CurrentLevel = ObjectSearch.FindChild(LevelFolder, CurrentLevelNumber + "_.*").GetComponent<Level>();
         CurrentLevel.StartLevel();
         _cameraMovements.SetDelimiters(CurrentLevel);
     }

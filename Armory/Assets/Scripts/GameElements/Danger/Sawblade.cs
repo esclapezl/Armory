@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Levels.Danger
+namespace GameElements.Danger
 {
     public class Sawblade : MonoBehaviour
     {

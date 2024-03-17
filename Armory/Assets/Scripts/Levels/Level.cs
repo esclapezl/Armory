@@ -97,7 +97,8 @@ namespace Levels
             LevelCompleted = true;
             if (_gameManager.LevelFolder.childCount > LevelNumber)
             {
-                _gameManager.StartLevel(_gameManager.currentLevelNumber + 1);
+                GameManager.CurrentLevelNumber = LevelNumber + 1;
+                _gameManager.StartLevel(GameManager.CurrentLevelNumber);
             }
             else
             {
