@@ -314,7 +314,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theme: 0
-  spriteThemes: []
+  spriteThemes:
+  - sprites:
+    - {fileID: 21300000, guid: 5a2d0e12e5b849c489c03ea1da1777ea, type: 3}
+    - {fileID: 21300000, guid: bba905ea380709f4bafa6219476acb71, type: 3}
+    - {fileID: 21300000, guid: 92f88b314b2b3b14b9ba1699caaa82bc, type: 3}
   _camera: {fileID: 0}
 --- !u!1 &279937348
 GameObject:
@@ -410,7 +414,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theme: 0
-  spriteThemes: []
+  spriteThemes:
+  - sprites:
+    - {fileID: 21300000, guid: f4ee506fdd89df2458a6ce328dc4714c, type: 3}
+    - {fileID: 21300000, guid: 68afc66ec7f41d140bb16acad3e45fad, type: 3}
+    - {fileID: 21300000, guid: 3884306a87f6124449734384f96e6f9f, type: 3}
   _camera: {fileID: 0}
 --- !u!1001 &469722867
 PrefabInstance:
@@ -466,7 +474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: hasPistol
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: pistolAmmo
@@ -486,6 +494,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6067901054387077320, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1195871054}
+    - targetCorrespondingSourceObject: {fileID: 6067901054387077320, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1265450440}
     - targetCorrespondingSourceObject: {fileID: 6067901054387077320, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1278734594}
@@ -5425,6 +5436,79 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6067901054387077320, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
   m_PrefabInstance: {fileID: 469722867}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1234752450
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1226357904}
+    m_Modifications:
+    - target: {fileID: 5401462022641268958, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2ec599051624a074b90b84db2f8ba238, type: 3}
+    - target: {fileID: 5564536841606985975, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: weaponType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6915109293688392700, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_Name
+      value: WeaponPickUp (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7243675590524431772, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_Size.x
+      value: 0.703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 7243675590524431772, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.703125
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.1599998
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
 --- !u!1 &1240873514
 GameObject:
   m_ObjectHideFlags: 0
@@ -5488,6 +5572,11 @@ MonoBehaviour:
   position: 0
   direction: 0
   tooltip: 
+--- !u!4 &1265450440 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}
+  m_PrefabInstance: {fileID: 1234752450}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1277580452
 GameObject:
   m_ObjectHideFlags: 0
@@ -5638,8 +5727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af1874981f375584598068748d7308ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeWeapons: []
-  availableWeapons: []
 --- !u!1 &1552192824
 GameObject:
   m_ObjectHideFlags: 0
@@ -5924,64 +6011,26 @@ Transform:
   m_GameObject: {fileID: 1962071220}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5, y: -5, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 519420032}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1962071222
-SpriteRenderer:
+--- !u!114 &1962071222
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1962071220}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 108344b58692f854cb8930d993379e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponSlotPrefab: {fileID: 6900925208029350878, guid: 687e6b8cb9f4f0b48a41223bd7eaa07c, type: 3}
+  uidMargin: 2
 --- !u!1 &2133435365
 GameObject:
   m_ObjectHideFlags: 0
@@ -6131,11 +6180,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5295306917731726965, guid: 6c487cb589ea8c74587c8e1070a16827, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -16.298767
+      value: -5.048767
       objectReference: {fileID: 0}
     - target: {fileID: 5295306917731726965, guid: 6c487cb589ea8c74587c8e1070a16827, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.341754
+      value: -3.408246
       objectReference: {fileID: 0}
     - target: {fileID: 5295306917731726965, guid: 6c487cb589ea8c74587c8e1070a16827, type: 3}
       propertyPath: m_LocalPosition.z
