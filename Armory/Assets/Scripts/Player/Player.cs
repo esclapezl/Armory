@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Player.Controls;
 using UnityEngine;
 using Utils;
 using weapons;

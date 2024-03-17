@@ -1,12 +1,8 @@
 using System;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Utils;
 using Weapons;
-using ObjectSearch = Utils.ObjectSearch;
 
-namespace Player
+namespace Player.Controls
 {
     public class PlayerMovements : MonoBehaviour
     {

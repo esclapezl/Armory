@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Utils;
 
-namespace Player
+namespace Player.Controls
 {
     public class PlayerKnockback : MonoBehaviour
     {

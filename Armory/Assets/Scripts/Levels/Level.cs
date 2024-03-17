@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Levels.Restartables;
 using Player;
+using Player.Inventory;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utils;
@@ -26,14 +27,11 @@ namespace Levels
         [NonSerialized] public int LevelNumber;
 
         // [Pistol, Shotgun]
-        [Header("Weapons Settings")] [SerializeField]
-        private bool hasPistol;
-
+        [Header("Weapons Settings")] 
+        [SerializeField] private bool hasPistol;
         [SerializeField] private int pistolAmmo;
         [Space(10)] [SerializeField] private bool hasShotgun;
         [SerializeField] private int shotgunAmmo;
-
-        [NonSerialized] public Dictionary<string, int> StartingBullets;
 
         [NonSerialized] private Inventory _inventory;
 
@@ -46,10 +44,6 @@ namespace Levels
 
         private void Awake()
         {
-            StartingBullets = new Dictionary<string, int>();
-            StartingBullets.Add("Pistol", pistolAmmo);
-            StartingBullets.Add("Shotgun", shotgunAmmo);
-
             _player = ObjectSearch.FindRoot("Player").GetComponent<Player.Player>();
             _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
             _startPosition = ObjectSearch.FindChild(transform, "StartPosition");
@@ -77,7 +71,7 @@ namespace Levels
             //clean the scene
             ObjectSearch.FindAllRoots("bullet.*").ForEach(bullet => Destroy(bullet.gameObject));
 
-            //restart elemnts
+            //restart elements
             ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Restart());
 
             //Prepare the inventory

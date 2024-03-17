@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Utils;
 
-namespace Player
+namespace Player.Inventory
 {
     public class InventorySlotUid : MonoBehaviour
     {

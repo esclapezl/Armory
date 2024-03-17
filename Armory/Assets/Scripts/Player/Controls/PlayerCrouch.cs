@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utils;
 
-namespace Player
+namespace Player.Controls
 {
     public class PlayerCrouch : MonoBehaviour
     {

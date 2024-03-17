@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Player.Controls;
 using UnityEngine;
-using UnityEngine.Serialization;
 using weapons;
 using Weapons;
-using Weapons.Pistol;
 using ObjectSearch = Utils.ObjectSearch;
 
-namespace Player
+namespace Player.Inventory
 {
     public class Inventory : MonoBehaviour
     {
-        public List<GameObject> activeWeapons = new List<GameObject>();
-        public List<GameObject> availableWeapons = new List<GameObject>();
+        [NonSerialized] public List<GameObject> activeWeapons = new List<GameObject>();
+        [NonSerialized] public List<GameObject> availableWeapons = new List<GameObject>();
 
-        private int _currentWeapon;
-        private float _switchWeapon;
-        private Transform _weaponsTransform;
-        private PlayerMovements _playerMovements;
-        private InventoryUid _inventoryUid;
+        [NonSerialized] private int _currentWeapon;
+        [NonSerialized] private float _switchWeapon;
+        [NonSerialized] private Transform _weaponsTransform;
+        [NonSerialized] private PlayerMovements _playerMovements;
+        [NonSerialized] private InventoryUid _inventoryUid;
 
         private void Awake()
         {

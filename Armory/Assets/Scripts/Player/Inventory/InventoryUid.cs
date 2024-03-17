@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utils;
 using weapons;
 
-namespace Player
+namespace Player.Inventory
 {
     public class InventoryUid : MonoBehaviour
     {
-        [NonSerialized] private Inventory _inventory;
+        [NonSerialized] private global::Player.Inventory.Inventory _inventory;
         [NonSerialized] private List<InventorySlotUid> _inventorySlots;
         [SerializeField] private GameObject weaponSlotPrefab;
         [NonSerialized] private UnityEngine.Camera _mainCamera;
@@ -18,7 +17,7 @@ namespace Player
         private void Awake()
         {
             _mainCamera = UnityEngine.Camera.main;
-            _inventory = ObjectSearch.FindChildWithScript<Inventory>(ObjectSearch.FindRoot("Player"));
+            _inventory = ObjectSearch.FindChildWithScript<global::Player.Inventory.Inventory>(ObjectSearch.FindRoot("Player"));
             _inventorySlots = new List<InventorySlotUid>();
 
             Vector3 margin = new Vector3(uidMargin, uidMargin, 0); // Marge en unités de monde
@@ -47,24 +46,27 @@ namespace Player
             int index = 0;
             foreach (GameObject weaponObject in _inventory.activeWeapons)
             {
-                GameObject weaponSlot = Instantiate(weaponSlotPrefab, transform);
-                InventorySlotUid inventorySlot = weaponSlot.GetComponent<InventorySlotUid>();
-                inventorySlot.transform.localPosition = new Vector3(index, 0, 0);
-                inventorySlot.SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
+                CreateSlot(index).SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
                     weaponObject.GetComponent<Weapon>().totalAmmo);
-                _inventorySlots.Add(inventorySlot);
                 index++;
             }
 
             if (_inventory.activeWeapons.Count > 0)
             {
                 //creates empty slot
-                GameObject weaponSlot = Instantiate(weaponSlotPrefab, transform);
-                InventorySlotUid inventorySlot = weaponSlot.GetComponent<InventorySlotUid>();
-                inventorySlot.transform.localPosition = new Vector3(index, 0, 0);
-                _inventorySlots.Add(inventorySlot);
+                CreateSlot(index);
                 HighlightSlot(0);
             }
+        }
+
+        private InventorySlotUid CreateSlot(int index)
+        {
+            GameObject weaponSlot = Instantiate(weaponSlotPrefab, transform);
+            weaponSlot.name = index + "_WeaponSlot";
+            InventorySlotUid inventorySlot = weaponSlot.GetComponent<InventorySlotUid>();
+            inventorySlot.transform.localPosition = new Vector3(index, 0, 0);
+            _inventorySlots.Add(inventorySlot);
+            return inventorySlot;
         }
 
         public void HighlightSlot(int index)

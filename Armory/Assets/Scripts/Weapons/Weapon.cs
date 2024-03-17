@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Player;
+using Player.Inventory;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;

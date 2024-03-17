@@ -3,7 +3,7 @@ using UnityEngine;
 using Utils;
 using weapons;
 
-namespace Weapons.Pistol
+namespace Weapons
 {
     public class AmmoDisplay : MonoBehaviour
     {
