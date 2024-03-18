@@ -23,11 +23,12 @@ namespace Levels.LevelSelection
         [NonSerialized] public static LevelInfo[] StaticLevelInfos;
 
         [NonSerialized] private List<Transform> _levelTransforms;
-        [NonSerialized] private int _selectedLevel = 0;
+        [NonSerialized] private int _selectedLevel = -1;
         [SerializeField] private GameObject levelSelectorPrefab;
 
         [Range(0, 5)] [SerializeField] private float verticalGap = 2;
         [Range(0, 5)] [SerializeField] private float horizontalGap = 2;
+        [Range(0, 5)] [SerializeField] private float margin = 2;
 
         private void OnRenderObject()
         {
@@ -70,10 +71,10 @@ namespace Levels.LevelSelection
             float cameraHeight = 2f * mainCamera.orthographicSize; 
             float cameraWidth = cameraHeight * mainCamera.aspect; 
 
-            int levelsPerRow = (int)(cameraWidth / (horizontalGap + levelSelectorSize));
+            int levelsPerRow = (int)((cameraWidth - margin) / (horizontalGap + levelSelectorSize));
             int levelsPerColumn = (int)(cameraHeight / (verticalGap + levelSelectorSize));
             
-            float remaingingWidth = cameraWidth - (levelsPerRow * (levelSelectorSize + horizontalGap));
+            float remaingingWidth = cameraWidth - (levelsPerRow * (levelSelectorSize + horizontalGap)) - margin;
 
             int index = 0;
             foreach (LevelInfo levelInfo in levelInfos)
@@ -82,9 +83,14 @@ namespace Levels.LevelSelection
                 levelInfo.Number = index;
                 levelSelectorTransform.name = levelInfo.Number + "_" + levelInfo.Name;
 
-                float x = (index%levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + horizontalGap/2 + levelSelectorSize/2;
-                float y = (index/levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize;
+                float x = (index%levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + levelSelectorSize/2 + margin/2;
+                float y = (index/levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize/2 + margin/2;
                 levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2 , -y + cameraHeight / 2 , 0);
+                
+                LevelSelector levelSelector = levelSelectorTransform.GetComponent<LevelSelector>();
+                levelSelector.LevelNumber = levelInfo.Number;
+                levelSelector.LevelTitle = levelInfo.Name;
+                levelSelector.Refresh();
                 index++;
             }
         }
@@ -93,21 +99,29 @@ namespace Levels.LevelSelection
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                if (_selectedLevel > 0)
+                if (_selectedLevel == -1)
+                {
+                    _selectedLevel = 0;
+                }
+                else if (_selectedLevel > 0)
                 {
                     ClearHover(_selectedLevel);
                     _selectedLevel--;
-                    HoverLevel(_selectedLevel);
                 }
+                HoverLevel(_selectedLevel);
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                if (_selectedLevel < _levelTransforms.Count - 1)
+                if (_selectedLevel == -1)
+                {
+                    _selectedLevel = 0;
+                }
+                else if (_selectedLevel < _levelTransforms.Count - 1)
                 {
                     ClearHover(_selectedLevel);
                     _selectedLevel++;
-                    HoverLevel(_selectedLevel);
                 }
+                HoverLevel(_selectedLevel);
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
@@ -118,14 +132,12 @@ namespace Levels.LevelSelection
 
         private void HoverLevel(int levelIndex)
         {
-            SpriteRenderer spriteRenderer = _levelTransforms[levelIndex].GetComponent<SpriteRenderer>();
-            spriteRenderer.color = new Color(1f, 0, 0, 1f);
+            _levelTransforms[levelIndex].GetComponent<LevelSelector>().Highlight();
         }
 
         private void ClearHover(int levelIndex)
         {
-            SpriteRenderer spriteRenderer = _levelTransforms[levelIndex].GetComponent<SpriteRenderer>();
-            spriteRenderer.color = new Color(0, 0, 0, 0.5f);
+            _levelTransforms[levelIndex].GetComponent<LevelSelector>().Unhighlight();
         }
 
         private void StartLevel(int levelIndex)
