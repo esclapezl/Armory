@@ -26,8 +26,8 @@ namespace Levels.LevelSelection
         [NonSerialized] private int _selectedLevel = 0;
         [SerializeField] private GameObject levelSelectorPrefab;
 
-        [FormerlySerializedAs("rowGap")] [SerializeField] private int verticalGap = 2;
-        [FormerlySerializedAs("columnGap")] [SerializeField] private int horizontalGap = 2;
+        [Range(0, 5)] [SerializeField] private float verticalGap = 2;
+        [Range(0, 5)] [SerializeField] private float horizontalGap = 2;
 
         private void OnRenderObject()
         {
@@ -65,13 +65,15 @@ namespace Levels.LevelSelection
 
         private void RefreshLevels()
         {
-            UnityEngine.Camera mainCamera = UnityEngine.Camera.main; // Obtenez la caméra principale
-            float cameraHeight = 2f * mainCamera.orthographicSize; // Hauteur du champ de vision
-            float cameraWidth = cameraHeight * mainCamera.aspect; // Largeur du champ de vision
-
             float levelSelectorSize = 1;
+            UnityEngine.Camera mainCamera = UnityEngine.Camera.main; 
+            float cameraHeight = 2f * mainCamera.orthographicSize; 
+            float cameraWidth = cameraHeight * mainCamera.aspect; 
+
             int levelsPerRow = (int)(cameraWidth / (horizontalGap + levelSelectorSize));
             int levelsPerColumn = (int)(cameraHeight / (verticalGap + levelSelectorSize));
+            
+            float remaingingWidth = cameraWidth - (levelsPerRow * (levelSelectorSize + horizontalGap));
 
             int index = 0;
             foreach (LevelInfo levelInfo in levelInfos)
@@ -80,9 +82,9 @@ namespace Levels.LevelSelection
                 levelInfo.Number = index;
                 levelSelectorTransform.name = levelInfo.Number + "_" + levelInfo.Name;
 
-                int x = (int)(index%levelsPerRow * (levelSelectorSize + horizontalGap)) ;
-                int y = (int)(index/levelsPerRow * (levelSelectorSize + verticalGap));
-                levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2 + levelSelectorSize*2, -y + cameraHeight / 2 - levelSelectorSize*2, 0);
+                float x = (index%levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + horizontalGap/2 + levelSelectorSize/2;
+                float y = (index/levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize;
+                levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2 , -y + cameraHeight / 2 , 0);
                 index++;
             }
         }
