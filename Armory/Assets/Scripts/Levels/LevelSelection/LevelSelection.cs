@@ -32,6 +32,8 @@ namespace Levels.LevelSelection
         [Range(0, 5)] [SerializeField] private float verticalMargin;
         [Range(0, 5)] [SerializeField] private float horizontalGap;
         [Range(0, 5)] [SerializeField] private float horizontalMargin;
+        
+        [NonSerialized] private Coroutine _holdCoroutine;
 
         private void OnRenderObject()
         {
@@ -105,19 +107,47 @@ namespace Levels.LevelSelection
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                StartCoroutine(HoldCoroutine("LeftArrow", () => _selectedLevel > 0, -1));
+                if (_holdCoroutine != null)
+                {
+                    StopCoroutine(_holdCoroutine);
+                }
+                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.LeftArrow,
+                    () => _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? _levelsPerRow - 1 : 
+                        _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ?  _levelTransforms.Count % _levelsPerRow  - 1 : 
+                        -1));
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                StartCoroutine(HoldCoroutine("RightArrow", () => _selectedLevel < _levelTransforms.Count - 1, 1));
+                if (_holdCoroutine != null)
+                {
+                    StopCoroutine(_holdCoroutine);
+                }
+                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.RightArrow,
+                    () => (_selectedLevel + 1) % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? -_levelsPerRow + 1 : 
+                        _selectedLevel  == _levelTransforms.Count - 1 ? -(_levelTransforms.Count % _levelsPerRow) + 1 : 
+                        1));
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                StartCoroutine(HoldCoroutine("UpArrow", () => _selectedLevel >= _levelsPerRow, -_levelsPerRow));
+                if (_holdCoroutine != null)
+                {
+                    StopCoroutine(_holdCoroutine);
+                }
+                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.UpArrow,
+                    () => _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow < _levelTransforms.Count%_levelsPerRow ? (_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                        _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? ((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
+                        -_levelsPerRow));
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                StartCoroutine(HoldCoroutine("DownArrow", () => _selectedLevel / _levelsPerRow < _levelTransforms.Count / _levelsPerRow, _levelsPerRow));
+                if (_holdCoroutine != null)
+                {
+                    StopCoroutine(_holdCoroutine);
+                }
+                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.DownArrow,
+                    () => _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ? -(_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                        _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow - 1 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? -((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
+                        _levelsPerRow));
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
@@ -126,32 +156,30 @@ namespace Levels.LevelSelection
             }
         }
 
-        private void UpdateSelectedLevel(bool condition, int increment)
+        private void UpdateSelectedLevel(int increment)
         {
-            if (_selectedLevel == -1)
-            {
-                _selectedLevel = 0;
-            }
-            else if (condition)
-            {
-                ClearHover(_selectedLevel);
-                _selectedLevel += increment;
-            }
-
-            HoverLevel(_selectedLevel);
+            
+                if (_selectedLevel == -1)
+                {
+                    _selectedLevel = 0;
+                    HoverLevel(_selectedLevel);
+                }
+                else
+                {
+                    ClearHover(_selectedLevel);
+                    _selectedLevel += increment;
+                    HoverLevel(_selectedLevel);
+                }
         }
 
-        private IEnumerator HoldCoroutine(string keycode, Func<bool> conditionFunc, int increment)
+        private IEnumerator HoldCoroutine(KeyCode keycode, Func<int> incrementFunc)
         {
             float delay = 0.5f;
-            while (Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), keycode)))
+            while (Input.GetKey(keycode))
             {
-                if (conditionFunc.Invoke())
-                {
-                    UpdateSelectedLevel(true, increment);
-                }
+                UpdateSelectedLevel(incrementFunc.Invoke());
                 yield return new WaitForSeconds(delay);
-                delay = Mathf.Max(delay*0.5f, 0.05f);
+                delay = Mathf.Max(delay * 0.5f, 0.05f);
             }
         }
 
