@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -69,14 +70,15 @@ namespace Levels.LevelSelection
         private void RefreshLevels()
         {
             float levelSelectorSize = 1;
-            UnityEngine.Camera mainCamera = UnityEngine.Camera.main; 
-            float cameraHeight = 2f * mainCamera.orthographicSize; 
-            float cameraWidth = cameraHeight * mainCamera.aspect; 
+            UnityEngine.Camera mainCamera = UnityEngine.Camera.main;
+            float cameraHeight = 2f * mainCamera.orthographicSize;
+            float cameraWidth = cameraHeight * mainCamera.aspect;
 
             _levelsPerRow = (int)((cameraWidth - horizontalMargin) / (horizontalGap + levelSelectorSize));
             int levelsPerColumn = (int)(cameraHeight / (verticalGap + levelSelectorSize));
-            
-            float remaingingWidth = cameraWidth - (_levelsPerRow * (levelSelectorSize + horizontalGap)) - horizontalMargin;
+
+            float remaingingWidth =
+                cameraWidth - (_levelsPerRow * (levelSelectorSize + horizontalGap)) - horizontalMargin;
 
             int index = 0;
             foreach (LevelInfo levelInfo in levelInfos)
@@ -85,10 +87,12 @@ namespace Levels.LevelSelection
                 levelInfo.Number = index;
                 levelSelectorTransform.name = levelInfo.Number + "_" + levelInfo.Name;
 
-                float x = (index%_levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + levelSelectorSize/2 + horizontalMargin/2 + horizontalGap/2;
-                float y = (index/_levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize/2 + verticalMargin/2;
-                levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2 , -y + cameraHeight / 2 , 0);
-                
+                float x = (index % _levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth / 2 +
+                          levelSelectorSize / 2 + horizontalMargin / 2 + horizontalGap / 2;
+                float y = (index / _levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize / 2 +
+                          verticalMargin / 2;
+                levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2, -y + cameraHeight / 2, 0);
+
                 LevelSelector levelSelector = levelSelectorTransform.GetComponent<LevelSelector>();
                 levelSelector.LevelNumber = levelInfo.Number;
                 levelSelector.LevelTitle = levelInfo.Name;
@@ -101,60 +105,53 @@ namespace Levels.LevelSelection
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                if (_selectedLevel == -1)
-                {
-                    _selectedLevel = 0;
-                }
-                else if (_selectedLevel > 0)
-                {
-                    ClearHover(_selectedLevel);
-                    _selectedLevel--;
-                }
-                HoverLevel(_selectedLevel);
+                StartCoroutine(HoldCoroutine("LeftArrow", () => _selectedLevel > 0, -1));
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                if (_selectedLevel == -1)
-                {
-                    _selectedLevel = 0;
-                }
-                else if (_selectedLevel < _levelTransforms.Count - 1)
-                {
-                    ClearHover(_selectedLevel);
-                    _selectedLevel++;
-                }
-                HoverLevel(_selectedLevel);
+                StartCoroutine(HoldCoroutine("RightArrow", () => _selectedLevel < _levelTransforms.Count - 1, 1));
             }
             else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                if (_selectedLevel == -1)
-                {
-                    _selectedLevel = 0;
-                }
-                else if (_selectedLevel >= _levelsPerRow)
-                {
-                    ClearHover(_selectedLevel);
-                    _selectedLevel-=_levelsPerRow;
-                }
-                HoverLevel(_selectedLevel);
+                StartCoroutine(HoldCoroutine("UpArrow", () => _selectedLevel >= _levelsPerRow, -_levelsPerRow));
             }
             else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                if (_selectedLevel == -1)
-                {
-                    _selectedLevel = 0;
-                }
-                else if (_selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow)
-                {
-                    ClearHover(_selectedLevel);
-                    _selectedLevel = Mathf.Min(_levelsPerRow + _selectedLevel, _levelTransforms.Count - 1);
-                }
-                HoverLevel(_selectedLevel);
+                StartCoroutine(HoldCoroutine("DownArrow", () => _selectedLevel / _levelsPerRow < _levelTransforms.Count / _levelsPerRow, _levelsPerRow));
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 StartLevel(_selectedLevel);
+            }
+        }
+
+        private void UpdateSelectedLevel(bool condition, int increment)
+        {
+            if (_selectedLevel == -1)
+            {
+                _selectedLevel = 0;
+            }
+            else if (condition)
+            {
+                ClearHover(_selectedLevel);
+                _selectedLevel += increment;
+            }
+
+            HoverLevel(_selectedLevel);
+        }
+
+        private IEnumerator HoldCoroutine(string keycode, Func<bool> conditionFunc, int increment)
+        {
+            float delay = 0.5f;
+            while (Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), keycode)))
+            {
+                if (conditionFunc.Invoke())
+                {
+                    UpdateSelectedLevel(true, increment);
+                }
+                yield return new WaitForSeconds(delay);
+                delay = Mathf.Max(delay*0.5f, 0.05f);
             }
         }
 

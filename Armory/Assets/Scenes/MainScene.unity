@@ -727,7 +727,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   gunRecoil: 1
-  playerRecoilForce: 12
+  playerRecoilForce: 15
   playerRecoilBoostWhileEmbracingRecoil: 1.4
   playerRecoilDuration: 0.1
   bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
@@ -840,7 +840,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 4
+  m_GravityScale: 4.5
   m_Material: {fileID: 6200000, guid: 555ba5501e999f94898521d5a7c11783, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -5555,7 +5555,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a0793b36d941f7468ac9eef5bb0fe47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLevelNumber: 3
 --- !u!114 &1240873517
 MonoBehaviour:
   m_ObjectHideFlags: 0
