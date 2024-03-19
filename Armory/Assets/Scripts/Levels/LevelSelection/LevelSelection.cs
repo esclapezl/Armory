@@ -24,11 +24,13 @@ namespace Levels.LevelSelection
 
         [NonSerialized] private List<Transform> _levelTransforms;
         [NonSerialized] private int _selectedLevel = -1;
+        [NonSerialized] private int _levelsPerRow;
         [SerializeField] private GameObject levelSelectorPrefab;
 
-        [Range(0, 5)] [SerializeField] private float verticalGap = 2;
-        [Range(0, 5)] [SerializeField] private float horizontalGap = 2;
-        [Range(0, 5)] [SerializeField] private float margin = 2;
+        [Range(0, 5)] [SerializeField] private float verticalGap;
+        [Range(0, 5)] [SerializeField] private float verticalMargin;
+        [Range(0, 5)] [SerializeField] private float horizontalGap;
+        [Range(0, 5)] [SerializeField] private float horizontalMargin;
 
         private void OnRenderObject()
         {
@@ -71,10 +73,10 @@ namespace Levels.LevelSelection
             float cameraHeight = 2f * mainCamera.orthographicSize; 
             float cameraWidth = cameraHeight * mainCamera.aspect; 
 
-            int levelsPerRow = (int)((cameraWidth - margin) / (horizontalGap + levelSelectorSize));
+            _levelsPerRow = (int)((cameraWidth - horizontalMargin) / (horizontalGap + levelSelectorSize));
             int levelsPerColumn = (int)(cameraHeight / (verticalGap + levelSelectorSize));
             
-            float remaingingWidth = cameraWidth - (levelsPerRow * (levelSelectorSize + horizontalGap)) - margin;
+            float remaingingWidth = cameraWidth - (_levelsPerRow * (levelSelectorSize + horizontalGap)) - horizontalMargin;
 
             int index = 0;
             foreach (LevelInfo levelInfo in levelInfos)
@@ -83,8 +85,8 @@ namespace Levels.LevelSelection
                 levelInfo.Number = index;
                 levelSelectorTransform.name = levelInfo.Number + "_" + levelInfo.Name;
 
-                float x = (index%levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + levelSelectorSize/2 + margin/2;
-                float y = (index/levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize/2 + margin/2;
+                float x = (index%_levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth/2 + levelSelectorSize/2 + horizontalMargin/2 + horizontalGap/2;
+                float y = (index/_levelsPerRow * (levelSelectorSize + verticalGap)) + levelSelectorSize/2 + verticalMargin/2;
                 levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2 , -y + cameraHeight / 2 , 0);
                 
                 LevelSelector levelSelector = levelSelectorTransform.GetComponent<LevelSelector>();
@@ -120,6 +122,32 @@ namespace Levels.LevelSelection
                 {
                     ClearHover(_selectedLevel);
                     _selectedLevel++;
+                }
+                HoverLevel(_selectedLevel);
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                if (_selectedLevel == -1)
+                {
+                    _selectedLevel = 0;
+                }
+                else if (_selectedLevel >= _levelsPerRow)
+                {
+                    ClearHover(_selectedLevel);
+                    _selectedLevel-=_levelsPerRow;
+                }
+                HoverLevel(_selectedLevel);
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                if (_selectedLevel == -1)
+                {
+                    _selectedLevel = 0;
+                }
+                else if (_selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow)
+                {
+                    ClearHover(_selectedLevel);
+                    _selectedLevel = Mathf.Min(_levelsPerRow + _selectedLevel, _levelTransforms.Count - 1);
                 }
                 HoverLevel(_selectedLevel);
             }
