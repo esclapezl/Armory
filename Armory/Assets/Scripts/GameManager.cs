@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Camera;
 using Levels;
+using Levels.LevelSelection;
 using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.Serialization;
 using Utils;
 
-
+[ExecuteInEditMode]
 public class GameManager : MonoBehaviour
 {
     [Header("Level Selection")] [NonSerialized]
@@ -16,15 +18,16 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public static int CurrentLevelNumber;
     [NonSerialized] public Level CurrentLevel;
+    [NonSerialized] public LevelSelection.LevelData LevelData;
     [NonSerialized] private CameraMovements _cameraMovements;
 
-    void Awake()
+    private void Awake()
     {
-        _cameraMovements = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraMovements>();
         LevelFolder = ObjectSearch.FindChild(transform, "Levels");
-        SetUpLevels();
+        LevelData = Data.LoadJsonFromFile<LevelSelection.LevelData>(Application.dataPath + "/Data/Levels.json");
+        _cameraMovements = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraMovements>();
+        RefreshLevels();
     }
-
     private void Start()
     {
         UpdateLevel();
@@ -37,14 +40,14 @@ public class GameManager : MonoBehaviour
         //-----------------
     }
 
-    private void SetUpLevels()
+    private void RefreshLevels()
     {
         for (int i = 0; i < LevelFolder.childCount; i++)
         {
             Transform child = LevelFolder.GetChild(i);
-            child.name = (i + 1) + "_" + child.name;
+            child.name =  LevelData.levels.Length > i ? i + "_" + LevelData.levels[i].name : i + "_noData";
             Level childLevel = child.GetComponent<Level>();
-            childLevel.LevelNumber = i + 1;
+            childLevel.LevelNumber = i;
         }
     }
 
@@ -60,7 +63,6 @@ public class GameManager : MonoBehaviour
             {
                 CurrentLevelNumber = 1;
             }
-
             StartLevel(CurrentLevelNumber);
         }
     }
@@ -69,8 +71,8 @@ public class GameManager : MonoBehaviour
     {
         CurrentLevelNumber = level;
         CurrentLevel = ObjectSearch.FindChild(LevelFolder, CurrentLevelNumber + "_.*").GetComponent<Level>();
-        CurrentLevel.StartLevel();
         _cameraMovements.SetDelimiters(CurrentLevel);
+        CurrentLevel.StartLevel();
     }
 
     private void ExitLevel(Level level)

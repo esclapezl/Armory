@@ -10,7 +10,12 @@ namespace Utils
         public static Transform FindRoot(string pattern)
         {
             Regex regex = new Regex(pattern);
-            GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (!activeScene.IsValid())
+            {
+                return null;
+            }
+            GameObject[] rootObjects = activeScene.GetRootGameObjects();
 
             foreach (GameObject obj in rootObjects)
             {

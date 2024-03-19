@@ -15,13 +15,19 @@ namespace Levels.LevelSelection
         [Serializable]
         public class LevelInfo
         {
-            public string Name;
-            public int Number;
-            public bool Completed;
+            public string name;
+            public int number;
+            public bool completed;
         }
+        
+        [Serializable]
+        public class LevelData
+        {
+            public LevelInfo[] levels;
+        }
+        
 
         [SerializeField] private LevelInfo[] levelInfos;
-        [NonSerialized] public static LevelInfo[] StaticLevelInfos;
 
         [NonSerialized] private List<Transform> _levelTransforms;
         [NonSerialized] private int _selectedLevel = -1;
@@ -34,9 +40,10 @@ namespace Levels.LevelSelection
         [Range(0, 5)] [SerializeField] private float horizontalMargin;
         
         [NonSerialized] private Coroutine _holdCoroutine;
-
+        
         private void OnRenderObject()
         {
+            Data.UpdateJsonFile(levelInfos, Application.dataPath + "/Data/Levels.json");
             if (_levelTransforms == null || transform.childCount != _levelTransforms.Count)
             {
                 _levelTransforms = new List<Transform>();
@@ -61,11 +68,11 @@ namespace Levels.LevelSelection
         {
             int index = _levelTransforms.Count;
             LevelInfo levelInfo = levelInfos[index];
-            levelInfo.Number = index;
+            levelInfo.number = index;
             // levelInfo.Completed = à chopper dans le saveFile?;
 
             GameObject levelSelector = Instantiate(levelSelectorPrefab, transform, true);
-            levelSelector.name = levelInfo.Number + "_" + levelInfo.Name;
+            levelSelector.name = levelInfo.number + "_" + levelInfo.name;
             _levelTransforms.Add(levelSelector.transform);
         }
 
@@ -77,7 +84,6 @@ namespace Levels.LevelSelection
             float cameraWidth = cameraHeight * mainCamera.aspect;
 
             _levelsPerRow = (int)((cameraWidth - horizontalMargin) / (horizontalGap + levelSelectorSize));
-            int levelsPerColumn = (int)(cameraHeight / (verticalGap + levelSelectorSize));
 
             float remaingingWidth =
                 cameraWidth - (_levelsPerRow * (levelSelectorSize + horizontalGap)) - horizontalMargin;
@@ -86,8 +92,8 @@ namespace Levels.LevelSelection
             foreach (LevelInfo levelInfo in levelInfos)
             {
                 Transform levelSelectorTransform = _levelTransforms[index];
-                levelInfo.Number = index;
-                levelSelectorTransform.name = levelInfo.Number + "_" + levelInfo.Name;
+                levelInfo.number = index;
+                levelSelectorTransform.name = levelInfo.number + "_" + levelInfo.name;
 
                 float x = (index % _levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth / 2 +
                           levelSelectorSize / 2 + horizontalMargin / 2 + horizontalGap / 2;
@@ -96,63 +102,45 @@ namespace Levels.LevelSelection
                 levelSelectorTransform.localPosition = new Vector3(x - cameraWidth / 2, -y + cameraHeight / 2, 0);
 
                 LevelSelector levelSelector = levelSelectorTransform.GetComponent<LevelSelector>();
-                levelSelector.LevelNumber = levelInfo.Number;
-                levelSelector.LevelTitle = levelInfo.Name;
-                levelSelector.Refresh();
+                levelSelector.SetInfo(levelInfo);
                 index++;
             }
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            Dictionary<KeyCode, Func<int>> keyToFunctionMap = new Dictionary<KeyCode, Func<int>>
             {
-                if (_holdCoroutine != null)
-                {
-                    StopCoroutine(_holdCoroutine);
-                }
-                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.LeftArrow,
-                    () => _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? _levelsPerRow - 1 : 
-                        _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ?  _levelTransforms.Count % _levelsPerRow  - 1 : 
-                        -1));
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
+                { KeyCode.LeftArrow, () => _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? _levelsPerRow - 1 : 
+                    _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ?  _levelTransforms.Count % _levelsPerRow  - 1 : 
+                    -1 },
+                { KeyCode.RightArrow, () => (_selectedLevel + 1) % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? -_levelsPerRow + 1 : 
+                    _selectedLevel  == _levelTransforms.Count - 1 ? -(_levelTransforms.Count % _levelsPerRow) + 1 : 
+                    1 },
+                { KeyCode.UpArrow, () => _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow < _levelTransforms.Count%_levelsPerRow ? (_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                    _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? ((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
+                    -_levelsPerRow },
+                { KeyCode.DownArrow, () => _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ? -(_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                    _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow - 1 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? -((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
+                    _levelsPerRow }
+            };
+
+            foreach (var keyFunctionPair in keyToFunctionMap)
             {
-                if (_holdCoroutine != null)
+                if (Input.GetKeyDown(keyFunctionPair.Key))
                 {
-                    StopCoroutine(_holdCoroutine);
+                    if (_holdCoroutine != null)
+                    {
+                        StopCoroutine(_holdCoroutine);
+                    }
+                    _holdCoroutine = StartCoroutine(HoldCoroutine(keyFunctionPair.Key, keyFunctionPair.Value));
+                    break;
                 }
-                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.RightArrow,
-                    () => (_selectedLevel + 1) % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? -_levelsPerRow + 1 : 
-                        _selectedLevel  == _levelTransforms.Count - 1 ? -(_levelTransforms.Count % _levelsPerRow) + 1 : 
-                        1));
-            }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                if (_holdCoroutine != null)
-                {
-                    StopCoroutine(_holdCoroutine);
-                }
-                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.UpArrow,
-                    () => _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow < _levelTransforms.Count%_levelsPerRow ? (_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
-                        _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? ((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
-                        -_levelsPerRow));
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                if (_holdCoroutine != null)
-                {
-                    StopCoroutine(_holdCoroutine);
-                }
-                _holdCoroutine = StartCoroutine(HoldCoroutine(KeyCode.DownArrow,
-                    () => _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ? -(_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
-                        _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow - 1 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? -((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
-                        _levelsPerRow));
             }
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                StartLevel(_selectedLevel);
+                StartLevel(_selectedLevel+1);
             }
         }
 
@@ -195,7 +183,6 @@ namespace Levels.LevelSelection
 
         private void StartLevel(int levelIndex)
         {
-            StaticLevelInfos = levelInfos;
             GameManager.CurrentLevelNumber = levelIndex;
             SceneManager.LoadScene("MainScene");
         }

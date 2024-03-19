@@ -22,8 +22,7 @@ namespace Levels
         [NonSerialized] private Player.Player _player;
         [NonSerialized] public Transform BottomLeftDelimiter;
         [NonSerialized] public Transform TopRightDelimiter;
-
-        [NonSerialized] public bool LevelCompleted = false;
+        
         [NonSerialized] public int LevelNumber;
 
         // [Pistol, Shotgun]
@@ -94,7 +93,7 @@ namespace Levels
         public void EndLevel()
         {
             _active = false;
-            LevelCompleted = true;
+            SaveCompleteLevel(LevelNumber);
             if (_gameManager.LevelFolder.childCount > LevelNumber)
             {
                 GameManager.CurrentLevelNumber = LevelNumber + 1;
@@ -111,6 +110,17 @@ namespace Levels
             ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Exit());
             _active = false;
             throw new Exception("No menu yet");
+        }
+
+        private void SaveCompleteLevel(int index)
+        {
+            LevelSelection.LevelSelection.LevelData levelData = Data.LoadJsonFromFile<LevelSelection.LevelSelection.LevelData>(Application.dataPath + "/Data/Levels.json");
+            if (levelData.levels.Length <= index)
+            {
+                throw new Exception("No entry for level " + index + " in Levels.json");
+            }
+            levelData.levels[index].completed = true;
+            Data.UpdateJsonFile(levelData, Application.dataPath + "/Data/Levels.json");
         }
     }
 }

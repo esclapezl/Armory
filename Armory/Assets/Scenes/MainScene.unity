@@ -216,7 +216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6554218471368944902, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: m_Name
-      value: How to duck
+      value: 1_Level 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -474,7 +474,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: hasPistol
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
+      propertyPath: hasShotgun
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: pistolAmmo
@@ -486,7 +490,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6554218471368944902, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: m_Name
-      value: Reunion
+      value: 2_noData
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5550,7 +5554,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240873514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a0793b36d941f7468ac9eef5bb0fe47, type: 3}
   m_Name: 
@@ -5674,7 +5678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6554218471368944902, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: m_Name
-      value: First steps !
+      value: 0_Level 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
