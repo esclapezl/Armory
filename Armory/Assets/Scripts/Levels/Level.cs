@@ -14,7 +14,7 @@ namespace Levels
     {
         [NonSerialized] private bool _active = false;
 
-        [NonSerialized] private GameManager _gameManager;
+        [NonSerialized] private LevelManager _levelManager;
 
         [NonSerialized] private Transform _startPosition;
         [NonSerialized] private Transform _playerTransform;
@@ -44,7 +44,7 @@ namespace Levels
         private void Awake()
         {
             _player = ObjectSearch.FindRoot("Player").GetComponent<Player.Player>();
-            _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
+            _levelManager = ObjectSearch.FindRoot("GameManager").GetComponent<LevelManager>();
             _startPosition = ObjectSearch.FindChild(transform, "StartPosition");
             _playerTransform = ObjectSearch.FindRoot("Player");
             _cameraTransform = ObjectSearch.FindRoot("Main Camera");
@@ -75,7 +75,7 @@ namespace Levels
 
             //Prepare the inventory
             _inventory.Clear();
-            foreach (GameObject weaponGameObject in _inventory.availableWeapons)
+            foreach (GameObject weaponGameObject in _inventory.AvailableWeapons)
             {
                 if (weaponGameObject.name == "Pistol" && hasPistol)
                 {
@@ -94,10 +94,10 @@ namespace Levels
         {
             _active = false;
             SaveCompleteLevel(LevelNumber);
-            if (_gameManager.LevelFolder.childCount > LevelNumber)
+            if (_levelManager.LevelFolder.childCount > LevelNumber)
             {
-                GameManager.CurrentLevelNumber = LevelNumber + 1;
-                _gameManager.StartLevel(GameManager.CurrentLevelNumber);
+                LevelManager.CurrentLevelNumber = LevelNumber + 1;
+                _levelManager.StartLevel(LevelManager.CurrentLevelNumber);
             }
             else
             {

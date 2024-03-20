@@ -33,7 +33,7 @@ namespace Camera
             UnityEngine.Camera cam = ObjectSearch.FindRoot("Main Camera").GetComponent<UnityEngine.Camera>();
             float camWidth = cam.orthographicSize * 2.0f * cam.aspect;
             float camHeight = cam.orthographicSize * 2.0f;
-
+            
             float posX = Mathf.Clamp(_playerTransform.position.x,
                 _bottomLeftDelimiter.position.x + camWidth / 2,
                 _topRightDelimiter.position.x - camWidth / 2);

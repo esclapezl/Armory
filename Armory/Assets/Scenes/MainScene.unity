@@ -5523,6 +5523,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1240873515}
   - component: {fileID: 1240873516}
+  - component: {fileID: 1240873518}
   - component: {fileID: 1240873517}
   m_Layer: 0
   m_Name: GameManager
@@ -5554,7 +5555,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240873514}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a0793b36d941f7468ac9eef5bb0fe47, type: 3}
   m_Name: 
@@ -5575,6 +5576,19 @@ MonoBehaviour:
   position: 0
   direction: 0
   tooltip: 
+--- !u!114 &1240873518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240873514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a293310a3fc06b4da6b52903f6f7842, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraMovements: {fileID: 519420033}
 --- !u!4 &1265450440 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8033742699529797344, guid: f7e7e6b8c65c3934eb5f47b52767ed67, type: 3}

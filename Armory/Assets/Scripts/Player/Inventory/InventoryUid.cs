@@ -44,14 +44,14 @@ namespace Player.Inventory
         {
             ClearInventoryUID();
             int index = 0;
-            foreach (GameObject weaponObject in _inventory.activeWeapons)
+            foreach (GameObject weaponObject in _inventory.ActiveWeapons)
             {
                 CreateSlot(index).SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
                     weaponObject.GetComponent<Weapon>().totalAmmo);
                 index++;
             }
 
-            if (_inventory.activeWeapons.Count > 0)
+            if (_inventory.ActiveWeapons.Count > 0)
             {
                 //creates empty slot
                 CreateSlot(index);

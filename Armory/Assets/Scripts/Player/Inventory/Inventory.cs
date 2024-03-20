@@ -10,8 +10,8 @@ namespace Player.Inventory
 {
     public class Inventory : MonoBehaviour
     {
-        [NonSerialized] public List<GameObject> activeWeapons = new List<GameObject>();
-        [NonSerialized] public List<GameObject> availableWeapons = new List<GameObject>();
+        [NonSerialized] public List<GameObject> ActiveWeapons = new List<GameObject>();
+        [NonSerialized] public List<GameObject> AvailableWeapons = new List<GameObject>();
 
         [NonSerialized] private int _currentWeapon;
         [NonSerialized] private float _switchWeapon;
@@ -28,7 +28,7 @@ namespace Player.Inventory
             for (int i = 0; i < _weaponsTransform.childCount; i++)
             {
                 GameObject weaponChild = _weaponsTransform.GetChild(i).gameObject;
-                availableWeapons.Add(weaponChild);
+                AvailableWeapons.Add(weaponChild);
                 weaponChild.GetComponent<AmmoDisplay>().SetDisplay();
             }
         }
@@ -41,11 +41,11 @@ namespace Player.Inventory
 
         private void FixedUpdate()
         {
-            if (activeWeapons.Count > 0 && _switchWeapon != 0)
+            if (ActiveWeapons.Count > 0 && _switchWeapon != 0)
             {
                 int targetWeapon = _currentWeapon + (int)_switchWeapon;
-                targetWeapon %= activeWeapons.Count;
-                targetWeapon = targetWeapon < 0 ? activeWeapons.Count - 1 : targetWeapon;
+                targetWeapon %= ActiveWeapons.Count;
+                targetWeapon = targetWeapon < 0 ? ActiveWeapons.Count - 1 : targetWeapon;
                 ChangeWeapon(targetWeapon);
             }
 
@@ -55,8 +55,8 @@ namespace Player.Inventory
         private void ChangeWeapon(int index)
         {
             _inventoryUid.HighlightSlot(index);
-            GameObject currentWeapon = activeWeapons[_currentWeapon];
-            GameObject targetWeapon = activeWeapons[index];
+            GameObject currentWeapon = ActiveWeapons[_currentWeapon];
+            GameObject targetWeapon = ActiveWeapons[index];
             ToggleWeapon(currentWeapon);
             ActivateWeapon(targetWeapon);
             _currentWeapon = index;
@@ -88,25 +88,25 @@ namespace Player.Inventory
         public void PickUpWeapon(WeaponPickUp.WeaponType weaponPickup)
         {
             GameObject weapon = ObjectSearch.FindChild(_weaponsTransform, weaponPickup.ToString()).gameObject;
-            activeWeapons.Add(weapon);
+            ActiveWeapons.Add(weapon);
             RefreshInventory();
         }
 
         public void Clear()
         {
-            foreach (GameObject weapon in availableWeapons)
+            foreach (GameObject weapon in AvailableWeapons)
             {
                 weapon.GetComponent<AmmoDisplay>().HideAmmo();
                 ToggleWeapon(weapon);
                 weapon.SetActive(false);
             }
 
-            activeWeapons.Clear();
+            ActiveWeapons.Clear();
         }
 
         public void AddWeapon(GameObject weapon, int ammo)
         {
-            activeWeapons.Add(weapon);
+            ActiveWeapons.Add(weapon);
             weapon.SetActive(true);
             ToggleWeapon(weapon);
 
@@ -117,17 +117,17 @@ namespace Player.Inventory
 
         public void RefreshInventory()
         {
-            foreach (GameObject weapon in activeWeapons)
+            foreach (GameObject weapon in ActiveWeapons)
             {
                 weapon.SetActive(true);
                 ToggleWeapon(weapon);
             }
 
-            if (activeWeapons.Count > 0)
+            if (ActiveWeapons.Count > 0)
             {
                 _currentWeapon = 0;
-                activeWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
-                ActivateWeapon(activeWeapons[0]);
+                ActiveWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
+                ActivateWeapon(ActiveWeapons[0]);
                 _playerMovements.Armed = true;
                 _inventoryUid.RefreshInventoryUid();
             }

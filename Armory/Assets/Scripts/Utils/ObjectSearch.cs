@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -10,12 +11,7 @@ namespace Utils
         public static Transform FindRoot(string pattern)
         {
             Regex regex = new Regex(pattern);
-            Scene activeScene = SceneManager.GetActiveScene();
-            if (!activeScene.IsValid())
-            {
-                return null;
-            }
-            GameObject[] rootObjects = activeScene.GetRootGameObjects();
+            GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
             foreach (GameObject obj in rootObjects)
             {
@@ -26,6 +22,28 @@ namespace Utils
             }
 
             return null;
+        }
+        
+        public static IEnumerator FindRootInScene(string sceneName, string pattern)
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+            Scene scene = SceneManager.GetSceneByName(sceneName);
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            Regex regex = new Regex(pattern);
+            foreach (GameObject obj in rootObjects)
+            {
+                if (regex.Match(obj.name).Success)
+                {
+                    SceneManager.UnloadSceneAsync(sceneName);
+                    yield return obj.transform;
+                }
+            }
+            SceneManager.UnloadSceneAsync(sceneName);
+            yield return null;
         }
 
         public static List<Transform> FindAllRoots(string pattern)

@@ -1,14 +1,1 @@
-{
-  "levels": [
-    {
-      "number": 1,
-      "name": "Level 1",
-      "completed": false
-    },
-    {
-      "number": 2,
-      "name": "Level 2",
-      "completed": false
-    }
-  ]
-}
+{}

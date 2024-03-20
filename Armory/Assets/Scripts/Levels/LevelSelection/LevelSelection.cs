@@ -183,7 +183,7 @@ namespace Levels.LevelSelection
 
         private void StartLevel(int levelIndex)
         {
-            GameManager.CurrentLevelNumber = levelIndex;
+            LevelManager.CurrentLevelNumber = levelIndex;
             SceneManager.LoadScene("MainScene");
         }
     }

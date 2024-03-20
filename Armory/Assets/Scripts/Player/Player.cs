@@ -16,7 +16,7 @@ namespace Player
         [NonSerialized] public PlayerKnockback PlayerKnockback;
 
         [NonSerialized] private Rigidbody2D _rigidbody2D;
-        [NonSerialized] private GameManager _gameManager;
+        [NonSerialized] private LevelManager _levelManager;
 
         [NonSerialized] public Transform PlayerSprite;
         [NonSerialized] public SpriteRenderer PlayerSpriteRenderer;
@@ -33,7 +33,7 @@ namespace Player
             PlayerKnockback = GetComponent<PlayerKnockback>();
 
             _rigidbody2D = GetComponent<Rigidbody2D>();
-            _gameManager = ObjectSearch.FindRoot("GameManager").GetComponent<GameManager>();
+            _levelManager = ObjectSearch.FindRoot("GameManager").GetComponent<LevelManager>();
 
             PlayerSprite = ObjectSearch.FindChild(transform, "PlayerObject");
             PlayerSpriteRenderer = PlayerSprite.GetComponent<SpriteRenderer>();
@@ -78,7 +78,7 @@ namespace Player
             PlayerSpriteRenderer.transform.rotation = Quaternion.identity;
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0, 0, 0);
             _rigidbody2D.velocity = Vector2.zero;
-            _gameManager.CurrentLevel.StartLevel();
+            _levelManager.CurrentLevel.StartLevel();
             GetComponent<BoxCollider2D>().enabled = true;
         }
 
