@@ -4,6 +4,7 @@ using Levels.Restartables;
 using Player;
 using Player.Inventory;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Utils;
 using weapons;
@@ -109,17 +110,17 @@ namespace Levels
         {
             ObjectSearch.FindChildrenWithScript<Restartable>(transform).ForEach(restartable => restartable.Exit());
             _active = false;
-            throw new Exception("No menu yet");
+            SceneManager.LoadScene("LevelSelection");
         }
 
         private void SaveCompleteLevel(int index)
         {
             LevelSelection.LevelSelection.LevelData levelData = Data.LoadJsonFromFile<LevelSelection.LevelSelection.LevelData>(Application.dataPath + "/Data/Levels.json");
-            if (levelData.levels.Length <= index)
+            if (levelData.levels.Length < index)
             {
                 throw new Exception("No entry for level " + index + " in Levels.json");
             }
-            levelData.levels[index].completed = true;
+            levelData.levels[index-1].completed = true;
             Data.UpdateJsonFile(levelData, Application.dataPath + "/Data/Levels.json");
         }
     }

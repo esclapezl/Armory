@@ -1,1 +1,19 @@
-{}
+{
+    "levels": [
+        {
+            "name": "zozo",
+            "number": 1,
+            "completed": true
+        },
+        {
+            "name": "zaza",
+            "number": 2,
+            "completed": true
+        },
+        {
+            "name": "zeze",
+            "number": 3,
+            "completed": true
+        }
+    ]
+}

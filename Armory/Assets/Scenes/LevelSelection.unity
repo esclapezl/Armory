@@ -180,7 +180,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}
@@ -351,7 +351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2
+  m_text: 3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}
@@ -504,7 +504,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 270295695}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: 923208878}
   - component: {fileID: 923208877}
   m_Layer: 0
-  m_Name: 0_Getting Started
+  m_Name: 1_zozo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -967,7 +967,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Getting Started
+  m_text: zozo
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}
@@ -1138,7 +1138,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}
@@ -1282,15 +1282,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelInfos:
-  - name: Getting Started
-    number: 0
-    completed: 0
-  - name: Duck
-    number: 1
-    completed: 0
-  - name: Reunion
-    number: 2
-    completed: 0
+    levels:
+    - name: zozo
+      number: 1
+      completed: 1
+    - name: zaza
+      number: 2
+      completed: 1
+    - name: zeze
+      number: 3
+      completed: 1
   levelSelectorPrefab: {fileID: 4821484717915965775, guid: a29c3f67892bb5640a75451cbbb6dfaf, type: 3}
   verticalGap: 1.1
   verticalMargin: 2.43
@@ -1353,7 +1354,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1425465127}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1494,7 +1495,7 @@ GameObject:
   - component: {fileID: 1668219673}
   - component: {fileID: 1668219672}
   m_Layer: 0
-  m_Name: 1_Duck
+  m_Name: 2_zaza
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1640,7 +1641,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Reunion
+  m_text: zeze
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}
@@ -1766,7 +1767,7 @@ GameObject:
   - component: {fileID: 1921082911}
   - component: {fileID: 1921082910}
   m_Layer: 0
-  m_Name: 2_Reunion
+  m_Name: 3_zeze
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1894,7 +1895,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1934788369}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1996,7 +1997,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Duck
+  m_text: zaza
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9691e7d995321274983469db637b709b, type: 2}
   m_sharedMaterial: {fileID: 1310565170533868985, guid: 9691e7d995321274983469db637b709b, type: 2}

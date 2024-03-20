@@ -27,7 +27,7 @@ namespace Levels.LevelSelection
         }
         
 
-        [SerializeField] private LevelInfo[] levelInfos;
+        [SerializeField] private LevelData levelInfos;
 
         [NonSerialized] private List<Transform> _levelTransforms;
         [NonSerialized] private int _selectedLevel = -1;
@@ -43,7 +43,6 @@ namespace Levels.LevelSelection
         
         private void OnRenderObject()
         {
-            Data.UpdateJsonFile(levelInfos, Application.dataPath + "/Data/Levels.json");
             if (_levelTransforms == null || transform.childCount != _levelTransforms.Count)
             {
                 _levelTransforms = new List<Transform>();
@@ -53,7 +52,7 @@ namespace Levels.LevelSelection
                 }
             }
 
-            if (levelInfos.Length > _levelTransforms.Count)
+            if (levelInfos.levels.Length > _levelTransforms.Count)
             {
                 CreateLevelSelector();
             }
@@ -67,7 +66,7 @@ namespace Levels.LevelSelection
         private void CreateLevelSelector()
         {
             int index = _levelTransforms.Count;
-            LevelInfo levelInfo = levelInfos[index];
+            LevelInfo levelInfo = levelInfos.levels[index];
             levelInfo.number = index;
             // levelInfo.Completed = à chopper dans le saveFile?;
 
@@ -78,6 +77,7 @@ namespace Levels.LevelSelection
 
         private void RefreshLevels()
         {
+            RefreshProgression();
             float levelSelectorSize = 1;
             UnityEngine.Camera mainCamera = UnityEngine.Camera.main;
             float cameraHeight = 2f * mainCamera.orthographicSize;
@@ -89,10 +89,10 @@ namespace Levels.LevelSelection
                 cameraWidth - (_levelsPerRow * (levelSelectorSize + horizontalGap)) - horizontalMargin;
 
             int index = 0;
-            foreach (LevelInfo levelInfo in levelInfos)
+            foreach (LevelInfo levelInfo in levelInfos.levels)
             {
                 Transform levelSelectorTransform = _levelTransforms[index];
-                levelInfo.number = index;
+                levelInfo.number = index + 1;
                 levelSelectorTransform.name = levelInfo.number + "_" + levelInfo.name;
 
                 float x = (index % _levelsPerRow * (levelSelectorSize + horizontalGap)) + remaingingWidth / 2 +
@@ -107,20 +107,30 @@ namespace Levels.LevelSelection
             }
         }
 
+        private void RefreshProgression()
+        {
+            levelInfos = Data.LoadJsonFromFile<LevelData>(Application.dataPath + "/Data/Levels.json");
+            //faire des anims pour les levels complétés ??
+        }
+
         private void Update()
         {
             Dictionary<KeyCode, Func<int>> keyToFunctionMap = new Dictionary<KeyCode, Func<int>>
             {
-                { KeyCode.LeftArrow, () => _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? _levelsPerRow - 1 : 
+                { KeyCode.LeftArrow, 
+                    () => _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? _levelsPerRow - 1 : 
                     _selectedLevel % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ?  _levelTransforms.Count % _levelsPerRow  - 1 : 
                     -1 },
-                { KeyCode.RightArrow, () => (_selectedLevel + 1) % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? -_levelsPerRow + 1 : 
+                { KeyCode.RightArrow, 
+                    () => (_selectedLevel + 1) % _levelsPerRow == 0 && _selectedLevel/_levelsPerRow < _levelTransforms.Count/_levelsPerRow ? -_levelsPerRow + 1 : 
                     _selectedLevel  == _levelTransforms.Count - 1 ? -(_levelTransforms.Count % _levelsPerRow) + 1 : 
                     1 },
-                { KeyCode.UpArrow, () => _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow < _levelTransforms.Count%_levelsPerRow ? (_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                { KeyCode.UpArrow, 
+                    () => _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow < _levelTransforms.Count%_levelsPerRow ? (_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
                     _selectedLevel/_levelsPerRow == 0 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? ((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
                     -_levelsPerRow },
-                { KeyCode.DownArrow, () => _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ? -(_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
+                { KeyCode.DownArrow, 
+                    () => _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow ? -(_levelTransforms.Count/_levelsPerRow)*_levelsPerRow :
                     _selectedLevel/_levelsPerRow == _levelTransforms.Count/_levelsPerRow - 1 && _selectedLevel%_levelsPerRow >= _levelTransforms.Count%_levelsPerRow ? -((_levelTransforms.Count/_levelsPerRow)-1)*_levelsPerRow :
                     _levelsPerRow }
             };
@@ -183,6 +193,7 @@ namespace Levels.LevelSelection
 
         private void StartLevel(int levelIndex)
         {
+            Data.UpdateJsonFile(levelInfos, Application.dataPath + "/Data/Levels.json");
             LevelManager.CurrentLevelNumber = levelIndex;
             SceneManager.LoadScene("MainScene");
         }

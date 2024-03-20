@@ -131,8 +131,14 @@ namespace Player.Controls
 
             if (jumpHold > 0)
             {
-                float appliedJumpForce = jumpHoldForce * jumpHold / jumpHoldTime;
+                // Adjust the jumpHold value to avoid negative or undefined logarithm values
+                float adjustedJumpHold = jumpHold + 1;
+
+                // Apply the logarithmic jump force
+                float appliedJumpForce = jumpHoldForce * Mathf.Log(adjustedJumpHold) / jumpHoldTime;
                 _rigidbody2D.AddForce(new Vector2(0f, appliedJumpForce));
+
+                // Decrement the jumpHold value
                 jumpHold = Mathf.Max(jumpHold - Time.fixedDeltaTime, 0);
             }
         }
