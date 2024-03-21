@@ -1,5 +1,6 @@
 using System;
 using Camera;
+using Levels.LevelSelection;
 using UnityEngine;
 using Utils;
 
@@ -11,12 +12,12 @@ namespace Levels
         [SerializeField] public static int CurrentLevelNumber;
         [NonSerialized] public Transform LevelFolder;
         [NonSerialized] public Level CurrentLevel;
-        [NonSerialized] public LevelSelection.LevelSelection.LevelData LevelData;
+        [NonSerialized] public LevelData LevelData;
         [SerializeField] private CameraMovements cameraMovements;
         private void Awake()
         {
             LevelFolder = ObjectSearch.FindChild(transform, "Levels");
-            LevelData = Data.LoadJsonFromFile<LevelSelection.LevelSelection.LevelData>(Application.dataPath + "/Data/Levels.json");
+            LevelData = Data.LoadJsonFromFile<LevelData>(Application.dataPath + "/Data/Levels.json");
             RefreshLevels();
         }
     

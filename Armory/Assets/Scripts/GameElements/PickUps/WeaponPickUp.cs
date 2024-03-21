@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Player;
 using Player.Inventory;
 using UnityEngine;
 using Utils;
-using weapons;
 
-namespace Weapons
+namespace GameElements.PickUps
 {
     [ExecuteInEditMode]
     public class WeaponPickUp : MonoBehaviour

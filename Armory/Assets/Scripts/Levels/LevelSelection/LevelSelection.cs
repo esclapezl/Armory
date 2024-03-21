@@ -12,19 +12,7 @@ namespace Levels.LevelSelection
     [ExecuteInEditMode]
     public class LevelSelection : MonoBehaviour
     {
-        [Serializable]
-        public class LevelInfo
-        {
-            public string name;
-            public int number;
-            public bool completed;
-        }
         
-        [Serializable]
-        public class LevelData
-        {
-            public LevelInfo[] levels;
-        }
         
 
         [SerializeField] private LevelData levelInfos;

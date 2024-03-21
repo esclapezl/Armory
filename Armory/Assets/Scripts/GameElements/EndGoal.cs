@@ -1,7 +1,8 @@
+using Levels;
 using UnityEngine;
 using Utils;
 
-namespace Levels
+namespace GameElements
 {
     public class EndGoal : MonoBehaviour
     {

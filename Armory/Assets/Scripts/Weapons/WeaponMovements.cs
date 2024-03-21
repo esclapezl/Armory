@@ -19,7 +19,7 @@ namespace Weapons
 
         private void FixedUpdate()
         {
-            if (!Player.dead && Player.PlayerMovements.Armed)
+            if (!Player.Dead && Player.PlayerMovements.Armed)
             {
                 //weapon rotation
                 Vector3 mouseWorld = UnityEngine.Camera.main!.ScreenToWorldPoint(Input.mousePosition);

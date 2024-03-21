@@ -25,7 +25,7 @@ namespace Levels.LevelSelection
             _completedSpriteRenderer.enabled = false;
         }
         
-        public void SetInfo(LevelSelection.LevelInfo levelInfo)
+        public void SetInfo(LevelInfo levelInfo)
         {
             LevelNumber = levelInfo.number;
             LevelTitle = levelInfo.name;

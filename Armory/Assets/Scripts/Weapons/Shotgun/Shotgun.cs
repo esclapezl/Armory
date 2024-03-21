@@ -66,7 +66,7 @@ namespace Weapons.Shotgun
 
             transform.localRotation = originalRotation;
             IsReloading = false;
-            reloadCoroutine = null;
+            ReloadCoroutine = null;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Player.Controls
 
         private void Update()
         {
-            if (!_player.dead && Input.GetButton("Crouch"))
+            if (!_player.Dead && Input.GetButton("Crouch"))
             {
                 _crouchInput = true;
             }
@@ -48,7 +48,7 @@ namespace Player.Controls
 
         private void FixedUpdate()
         {
-            if (!_player.dead)
+            if (!_player.Dead)
             {
                 CrouchControl(_crouchInput);
                 _crouchInput = false;

@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Levels.Restartables
+namespace GameElements.Restartables
 {
     public class AmmoPickUpRestart : Restartable
     {

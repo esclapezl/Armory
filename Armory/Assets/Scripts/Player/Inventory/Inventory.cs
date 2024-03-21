@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameElements.PickUps;
 using Player.Controls;
 using UnityEngine;
 using weapons;
@@ -70,10 +71,10 @@ namespace Player.Inventory
             weapon.GetComponent<AmmoDisplay>().HideAmmo();
             if (weaponInfo.IsReloading)
             {
-                weaponInfo.StopCoroutine(weaponInfo.reloadCoroutine);
+                weaponInfo.StopCoroutine(weaponInfo.ReloadCoroutine);
                 weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
                 weaponInfo.IsReloading = false;
-                weaponInfo.reloadCoroutine = null;
+                weaponInfo.ReloadCoroutine = null;
             }
         }
 

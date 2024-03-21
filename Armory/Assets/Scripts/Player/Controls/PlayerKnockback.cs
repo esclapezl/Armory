@@ -31,7 +31,7 @@ namespace Player.Controls
 
         private void Update()
         {
-            if (!_player.dead && _playerMovements.HorizontalInput != 0 &&
+            if (!_player.Dead && _playerMovements.HorizontalInput != 0 &&
                 _playerMovements.HorizontalInput != _playerMovements.PreviousHorizontalInput)
             {
                 ShotDirection = "none";

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GameElements.PickUps;
 using Player;
 using Player.Inventory;
 using Unity.VisualScripting;
@@ -47,8 +48,8 @@ namespace weapons
         [NonSerialized] protected float NextFireTime;
         [NonSerialized] private Inventory _inventory;
 
-        protected Coroutine gunKnockBackCoroutine;
-        public Coroutine reloadCoroutine;
+        protected Coroutine GunKnockBackCoroutine;
+        public Coroutine ReloadCoroutine;
 
         private void Awake()
         {
@@ -74,7 +75,7 @@ namespace weapons
 
         void Update()
         {
-            if (!Player.dead && active && !IsReloading)
+            if (!Player.Dead && active && !IsReloading)
             {
                 if (Input.GetButtonDown("Fire") && NextFireTime <= 0 && currentAmmo > 0)
                 {
@@ -86,12 +87,12 @@ namespace weapons
                     && totalAmmo > 0
                     && Player.PlayerJump.Grounded)
                 {
-                    if (reloadCoroutine != null)
+                    if (ReloadCoroutine != null)
                     {
-                        StopCoroutine(reloadCoroutine);
+                        StopCoroutine(ReloadCoroutine);
                     }
 
-                    reloadCoroutine = StartCoroutine(Reload());
+                    ReloadCoroutine = StartCoroutine(Reload());
                 }
             }
         }
@@ -107,12 +108,12 @@ namespace weapons
         public void KnockBack()
         {
             PlayerKnockBack();
-            if (gunKnockBackCoroutine != null)
+            if (GunKnockBackCoroutine != null)
             {
-                StopCoroutine(gunKnockBackCoroutine);
+                StopCoroutine(GunKnockBackCoroutine);
             }
 
-            gunKnockBackCoroutine = StartCoroutine(GunKnockBack());
+            GunKnockBackCoroutine = StartCoroutine(GunKnockBack());
         }
 
         private void PlayerKnockBack()
@@ -132,7 +133,7 @@ namespace weapons
                 yield return null;
             }
 
-            gunKnockBackCoroutine = null;
+            GunKnockBackCoroutine = null;
         }
 
         protected virtual void Shoot()

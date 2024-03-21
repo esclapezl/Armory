@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Levels.Restartables;
+using GameElements.Restartables;
+using Levels.LevelSelection;
 using Player;
 using Player.Inventory;
 using UnityEngine;
@@ -115,7 +116,7 @@ namespace Levels
 
         private void SaveCompleteLevel(int index)
         {
-            LevelSelection.LevelSelection.LevelData levelData = Data.LoadJsonFromFile<LevelSelection.LevelSelection.LevelData>(Application.dataPath + "/Data/Levels.json");
+            LevelData levelData = Data.LoadJsonFromFile<LevelData>(Application.dataPath + "/Data/Levels.json");
             if (levelData.levels.Length < index)
             {
                 throw new Exception("No entry for level " + index + " in Levels.json");

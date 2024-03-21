@@ -40,7 +40,7 @@ namespace Player.Controls
 
         private void Update()
         {
-            if (!_player.dead)
+            if (!_player.Dead)
             {
                 HorizontalInput = (int)Input.GetAxisRaw("Horizontal");
                 HorizontalMove = (HorizontalInput * runSpeed);
@@ -55,7 +55,7 @@ namespace Player.Controls
 
         private void FixedUpdate()
         {
-            if (!_player.dead)
+            if (!_player.Dead)
             {
                 MoveControl(HorizontalMove * Time.fixedDeltaTime, Armed);
             }

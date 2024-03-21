@@ -6,7 +6,7 @@ namespace Weapons
     {
         public float lifetime = 2f;
         private int _bouces = 2;
-        private float speed = 10f;
+        private float _speed = 10f;
 
         private Rigidbody2D _rb;
 
@@ -15,12 +15,12 @@ namespace Weapons
         {
             _rb = GetComponent<Rigidbody2D>();
             Destroy(gameObject, lifetime);
-            _rb.velocity = transform.right * speed;
+            _rb.velocity = transform.right * _speed;
         }
 
         public void SetSpeed(float newSpeed)
         {
-            speed = newSpeed;
+            _speed = newSpeed;
             _rb.velocity = transform.right * newSpeed;
         }
 
@@ -61,7 +61,7 @@ namespace Weapons
                 transform.localEulerAngles = new Vector3(0, 0, newRotation);
 
                 Vector2 newDirection = Quaternion.Euler(0, 0, newRotation) * Vector2.right;
-                _rb.velocity = newDirection * speed;
+                _rb.velocity = newDirection * _speed;
 
                 _bouces--;
             }

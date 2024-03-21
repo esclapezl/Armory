@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Levels.Restartables
+namespace GameElements.Restartables
 {
     public abstract class Restartable : MonoBehaviour
     {

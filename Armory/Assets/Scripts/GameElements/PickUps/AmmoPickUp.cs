@@ -3,7 +3,7 @@ using UnityEngine;
 using Utils;
 using weapons;
 
-namespace Weapons
+namespace GameElements.PickUps
 {
     [ExecuteInEditMode]
     public class Ammo : MonoBehaviour

@@ -30,7 +30,7 @@ namespace Player.Inventory
             transform.position = new Vector3(cameraPosition.x, cameraPosition.y, transform.position.z);
         }
 
-        public void ClearInventoryUID()
+        public void ClearInventoryUid()
         {
             foreach (InventorySlotUid slot in _inventorySlots)
             {
@@ -42,7 +42,7 @@ namespace Player.Inventory
 
         public void RefreshInventoryUid()
         {
-            ClearInventoryUID();
+            ClearInventoryUid();
             int index = 0;
             foreach (GameObject weaponObject in _inventory.ActiveWeapons)
             {

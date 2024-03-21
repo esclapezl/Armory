@@ -58,7 +58,7 @@ namespace Weapons.Pistol
 
             transform.localRotation = originalRotation;
             IsReloading = false;
-            reloadCoroutine = null;
+            ReloadCoroutine = null;
         }
     }
 }

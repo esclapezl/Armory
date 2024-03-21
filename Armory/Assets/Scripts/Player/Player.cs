@@ -23,7 +23,7 @@ namespace Player
         [NonSerialized] public SpriteRenderer PlayerSpriteRenderer;
         [NonSerialized] public SpriteRenderer PlayerFilterSpriteRenderer;
         [SerializeField] public int health = 3;
-        [NonSerialized] public bool dead = false;
+        [NonSerialized] public bool Dead = false;
         [NonSerialized] private Coroutine _damageCoroutine;
 
         private void Awake()
@@ -52,7 +52,7 @@ namespace Player
 
         private void Die()
         {
-            dead = true;
+            Dead = true;
             GetComponent<BoxCollider2D>().enabled = false;
 
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0, 0, -5);
@@ -64,7 +64,7 @@ namespace Player
         private IEnumerator DieRotation(float rotationSpeed)
         {
             float absSpeed = Mathf.Abs(rotationSpeed);
-            while (absSpeed > 0 && dead)
+            while (absSpeed > 0 && Dead)
             {
                 PlayerSpriteRenderer.transform.Rotate(0, 0, (rotationSpeed + 100) * Time.deltaTime);
                 absSpeed -= Time.deltaTime;
@@ -74,7 +74,7 @@ namespace Player
 
         private void Respawn()
         {
-            dead = false;
+            Dead = false;
             StopCoroutine(DieRotation(0));
             PlayerSpriteRenderer.transform.rotation = Quaternion.identity;
             PlayerSpriteRenderer.transform.localPosition = new Vector3(0, 0, 0);

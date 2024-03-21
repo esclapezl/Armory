@@ -30,7 +30,7 @@ namespace Player.Controls
         [Range(0, 1f)] [SerializeField] private float jumpHoldTime = 0.2f;
         [SerializeField] private float jumpHoldForce = 2f;
 
-        private float jumpHold;
+        private float _jumpHold;
         private bool _holdingJump;
 
         private void Awake()
@@ -47,7 +47,7 @@ namespace Player.Controls
 
         private void Update()
         {
-            if (!_player.dead)
+            if (!_player.Dead)
             {
                 _holdingJump = Input.GetButton("Jump");
                 if (Input.GetButtonDown("Jump"))
@@ -56,14 +56,14 @@ namespace Player.Controls
                 }
                 else if (Input.GetButtonUp("Jump"))
                 {
-                    jumpHold = 0;
+                    _jumpHold = 0;
                 }
             }
         }
 
         private void FixedUpdate()
         {
-            if (!_player.dead)
+            if (!_player.Dead)
             {
                 JumpControl(_jumpInput);
                 _jumpInput = false;
@@ -91,7 +91,7 @@ namespace Player.Controls
             {
                 if (Grounded || _coyoteTime > 0) //check for ground or remaining coyote time
                 {
-                    jumpHold = jumpHoldTime;
+                    _jumpHold = jumpHoldTime;
                     Jump();
                 }
                 else
@@ -106,7 +106,7 @@ namespace Player.Controls
                 {
                     if (_holdingJump)
                     {
-                        jumpHold = jumpHoldTime;
+                        _jumpHold = jumpHoldTime;
                     }
 
                     Jump();
@@ -129,17 +129,17 @@ namespace Player.Controls
                 }
             }
 
-            if (jumpHold > 0)
+            if (_jumpHold > 0)
             {
                 // Adjust the jumpHold value to avoid negative or undefined logarithm values
-                float adjustedJumpHold = jumpHold + 1;
+                float adjustedJumpHold = _jumpHold + 1;
 
                 // Apply the logarithmic jump force
                 float appliedJumpForce = jumpHoldForce * Mathf.Log(adjustedJumpHold) / jumpHoldTime;
                 _rigidbody2D.AddForce(new Vector2(0f, appliedJumpForce));
 
                 // Decrement the jumpHold value
-                jumpHold = Mathf.Max(jumpHold - Time.fixedDeltaTime, 0);
+                _jumpHold = Mathf.Max(_jumpHold - Time.fixedDeltaTime, 0);
             }
         }
 
