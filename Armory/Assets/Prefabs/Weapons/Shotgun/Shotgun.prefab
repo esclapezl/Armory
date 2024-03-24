@@ -99,15 +99,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa5ffe599aed49959974aa0c8e222e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   gunRecoil: 2
   playerRecoilForce: 19
   playerRecoilBoostWhileEmbracingRecoil: 1.2
   playerRecoilDuration: 0.2
   bulletPrefab: {fileID: 1932262067096333803, guid: 7db461ab9bfd6a34f9b36676f1c336e0, type: 3}
   magazineSize: 1
-  currentAmmo: 0
-  totalAmmo: 0
+  currentAmmo: 1
+  totalAmmo: 998
   reloadTime: 0.5
   bulletSpeed: 15
   fireRate: 0.1
