@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GameElements.PickUps;
 using Player.Controls;
 using UnityEngine;
+using UnityEngine.Serialization;
 using weapons;
 using Weapons;
 using ObjectSearch = Utils.ObjectSearch;
@@ -11,8 +12,9 @@ namespace Player.Inventory
 {
     public class Inventory : MonoBehaviour
     {
+        [SerializeField] public GameObject[] availableWeapons;
         [NonSerialized] public List<GameObject> ActiveWeapons = new List<GameObject>();
-        [NonSerialized] public List<GameObject> AvailableWeapons = new List<GameObject>();
+        [NonSerialized] private Dictionary<string, int> _ammoStock = new Dictionary<string, int>();
 
         [NonSerialized] private int _currentWeapon;
         [NonSerialized] private float _switchWeapon;
@@ -22,16 +24,15 @@ namespace Player.Inventory
 
         private void Awake()
         {
+            foreach (GameObject weapon in availableWeapons)
+            {
+                _ammoStock.Add(weapon.name, 0);
+            }
+            
             _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID")
                 .GetComponent<InventoryUid>();
             _playerMovements = ObjectSearch.FindParentWithScript<PlayerMovements>(transform);
             _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
-            for (int i = 0; i < _weaponsTransform.childCount; i++)
-            {
-                GameObject weaponChild = _weaponsTransform.GetChild(i).gameObject;
-                AvailableWeapons.Add(weaponChild);
-                weaponChild.GetComponent<AmmoDisplay>().SetDisplay();
-            }
         }
 
         void Update()
@@ -88,14 +89,23 @@ namespace Player.Inventory
 
         public void PickUpWeapon(WeaponPickUp.WeaponType weaponPickup)
         {
-            GameObject weapon = ObjectSearch.FindChild(_weaponsTransform, weaponPickup.ToString()).gameObject;
-            ActiveWeapons.Add(weapon);
-            RefreshInventory();
+            string weaponScriptName = weaponPickup.ToString();
+            foreach (GameObject availableWeapon in availableWeapons)
+            {
+                if (availableWeapon.name == weaponScriptName)
+                {
+                    AddWeapon(availableWeapon, 0);
+                    RefreshInventory();
+                    return;
+                }
+            }
+            
+            throw new Exception("Weapon not found in armory");
         }
 
         public void Clear()
         {
-            foreach (GameObject weapon in AvailableWeapons)
+            foreach (GameObject weapon in ActiveWeapons)
             {
                 weapon.GetComponent<AmmoDisplay>().HideAmmo();
                 ToggleWeapon(weapon);
@@ -105,13 +115,16 @@ namespace Player.Inventory
             ActiveWeapons.Clear();
         }
 
-        public void AddWeapon(GameObject weapon, int ammo)
+        public void AddWeapon(GameObject weaponPrefab, int ammo)
         {
+            GameObject weapon = Instantiate(weaponPrefab, _weaponsTransform.position, Quaternion.identity, _weaponsTransform);
+            weapon.transform.parent = _weaponsTransform;
             ActiveWeapons.Add(weapon);
             weapon.SetActive(true);
             ToggleWeapon(weapon);
 
             Weapon weaponInfo = weapon.GetComponent<Weapon>();
+            weaponInfo.GetComponent<AmmoDisplay>().SetDisplay();
             weaponInfo.currentAmmo = Mathf.Min(weaponInfo.magazineSize, ammo);
             weaponInfo.totalAmmo = ammo - weaponInfo.currentAmmo;
         }
@@ -123,9 +136,10 @@ namespace Player.Inventory
                 weapon.SetActive(true);
                 ToggleWeapon(weapon);
             }
-
+            
             if (ActiveWeapons.Count > 0)
             {
+                
                 _currentWeapon = 0;
                 ActiveWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
                 ActivateWeapon(ActiveWeapons[0]);

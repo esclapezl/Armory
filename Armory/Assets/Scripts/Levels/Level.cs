@@ -77,7 +77,7 @@ namespace Levels
 
             //Prepare the inventory
             _inventory.Clear();
-            foreach (GameObject weaponGameObject in _inventory.AvailableWeapons)
+            foreach (GameObject weaponGameObject in _inventory.availableWeapons)
             {
                 if (weaponGameObject.name == "Pistol" && hasPistol)
                 {
