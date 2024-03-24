@@ -9,7 +9,8 @@ namespace Levels
     [ExecuteInEditMode]
     public class LevelManager : MonoBehaviour
     {
-        [SerializeField] public static int CurrentLevelNumber;
+        [SerializeField] private int startingLevel;
+        [NonSerialized] public static int CurrentLevelNumber;
         [NonSerialized] public Transform LevelFolder;
         [NonSerialized] public Level CurrentLevel;
         [NonSerialized] public LevelData LevelData;
@@ -34,6 +35,10 @@ namespace Levels
 
         public void UpdateLevel()
         {
+            if (CurrentLevel == null)
+            {
+                StartLevel(startingLevel);
+            }
             if (CurrentLevel == null || CurrentLevelNumber != CurrentLevel.LevelNumber)
             {
                 if (CurrentLevelNumber > LevelFolder.childCount)

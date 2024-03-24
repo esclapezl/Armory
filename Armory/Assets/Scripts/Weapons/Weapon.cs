@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Camera;
 using GameElements.PickUps;
 using Player;
 using Player.Inventory;
@@ -48,8 +49,10 @@ namespace weapons
         [NonSerialized] protected float NextFireTime;
         [NonSerialized] private Inventory _inventory;
 
-        protected Coroutine GunKnockBackCoroutine;
-        public Coroutine ReloadCoroutine;
+        [NonSerialized] protected Coroutine GunKnockBackCoroutine;
+        [NonSerialized] public Coroutine ReloadCoroutine;
+        
+        [NonSerialized] protected CameraShake CameraShake;
 
         private void Awake()
         {
@@ -58,6 +61,7 @@ namespace weapons
             CannonTransform = transform.GetChild(0);
             AmmoDisplay = GetComponent<AmmoDisplay>();
             _inventory = ObjectSearch.FindParentWithScript<Inventory>(transform);
+            CameraShake = ObjectSearch.FindRoot("Main Camera").GetComponent<CameraShake>();
         }
 
         private void Start()
@@ -137,6 +141,23 @@ namespace weapons
         }
 
         protected virtual void Shoot()
+        {
+            StartCoroutine(CameraShake.Shake(0.1f, playerRecoilForce/1000));
+            Collider2D hitCollider =
+                Physics2D.OverlapCircle(CannonTransform.position, 0.1f, Player.PlayerJump.whatIsGround);
+            if (hitCollider == null)
+            {
+                ShootingMethod();
+            }
+
+            NextFireTime = fireRate;
+            AmmoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
+            currentAmmo--;
+
+            KnockBack();
+        }
+
+        protected virtual void ShootingMethod()
         {
             throw new NotImplementedException();
         }

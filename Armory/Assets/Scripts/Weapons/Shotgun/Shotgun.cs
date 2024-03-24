@@ -8,29 +8,20 @@ namespace Weapons.Shotgun
 {
     public class Shotgun : Weapon
     {
-        protected override void Shoot()
+        protected override void ShootingMethod()
         {
-            Collider2D hitCollider = Physics2D.OverlapCircle(CannonTransform.position, 0.1f);
-            if (hitCollider == null)
+            for (int i = 0; i < 5; i++)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector3 bulletRotation = transform.rotation.eulerAngles;
-                    bulletRotation.z += Random.Range(-10, 10);
-                    GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position,
-                        Quaternion.Euler(bulletRotation));
-                    Bullet bullet = bulletObject.GetComponent<Bullet>();
-                    bulletObject.transform.localScale = new Vector3(2.5f, 2.5f, 1);
-                    bullet.SetSpeed(Random.Range(bulletSpeed - 5, bulletSpeed));
-                }
+                Vector3 bulletRotation = transform.rotation.eulerAngles;
+                bulletRotation.z += Random.Range(-10, 10);
+                GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position,
+                    Quaternion.Euler(bulletRotation));
+                Bullet bullet = bulletObject.GetComponent<Bullet>();
+                bulletObject.transform.localScale = new Vector3(2.5f, 2.5f, 1);
+                bullet.SetSpeed(Random.Range(bulletSpeed - 5, bulletSpeed));
             }
-
-            NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
-            currentAmmo--;
-
-            KnockBack();
         }
+        
 
         protected override IEnumerator Reload()
         {

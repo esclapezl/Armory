@@ -6,22 +6,11 @@ namespace Weapons.Pistol
 {
     public class Pistol : Weapon
     {
-        protected override void Shoot()
+        protected override void ShootingMethod()
         {
-            Collider2D hitCollider =
-                Physics2D.OverlapCircle(CannonTransform.position, 0.1f, Player.PlayerJump.whatIsGround);
-            if (hitCollider == null)
-            {
-                GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
-                Bullet bullet = bulletObject.GetComponent<Bullet>();
-                bullet.SetSpeed(bulletSpeed);
-            }
-
-            NextFireTime = fireRate;
-            AmmoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
-            currentAmmo--;
-
-            KnockBack();
+            GameObject bulletObject = Instantiate(bulletPrefab, CannonTransform.position, transform.rotation);
+            Bullet bullet = bulletObject.GetComponent<Bullet>();
+            bullet.SetSpeed(bulletSpeed);
         }
 
         protected override IEnumerator Reload()
