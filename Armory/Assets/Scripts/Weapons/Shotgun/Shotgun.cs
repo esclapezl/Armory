@@ -1,4 +1,5 @@
 using System.Collections;
+using Player.Inventory;
 using TreeEditor;
 using UnityEngine;
 using weapons;
@@ -39,12 +40,14 @@ namespace Weapons.Shotgun
             }
 
             //refill mag
-            int totalAmmo = _inventory.GetAmmoForWeapon(transform.name).ammo;
+            Inventory.WeaponAmmo weaponAmmo = _inventory.GetAmmoForWeapon(transform.name);
+            int totalAmmo = weaponAmmo.ammo;
             for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
                 AmmoDisplay.EnableBullet(magazineSize - i - 1);
                 currentAmmo++;
-                totalAmmo--;
+                weaponAmmo.ammo--;
+                _inventory.InventoryUid.RefreshInventoryUid();
                 yield return new WaitForSeconds(reloadTime / magazineSize);
             }
 

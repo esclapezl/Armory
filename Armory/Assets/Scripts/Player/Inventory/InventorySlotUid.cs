@@ -26,10 +26,10 @@ namespace Player.Inventory
             TotalAmmoText = ObjectSearch.FindChild(transform, "AmmoNumber").GetComponent<TextMeshPro>();
         }
 
-        public void SetSlot(Sprite weaponSprite, int totalAmmo, Sprite ammoSprite)
+        public void SetSlot(Sprite weaponSprite, string totalAmmoNumber, Sprite ammoSprite)
         {
             _weaponSpriteRenderer.sprite = weaponSprite;
-            TotalAmmoText.text = totalAmmo.ToString();
+            TotalAmmoText.text = totalAmmoNumber;
             _ammoSpriteRenderer.sprite = ammoSprite;
         }
 

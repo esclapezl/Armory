@@ -41,7 +41,7 @@ namespace Player.Controls
             _player = GetComponent<Player>();
 
             _groundCheck = ObjectSearch.FindChild(transform, "GroundCheck");
-            _groundCheckSize = new Vector2(GetComponent<BoxCollider2D>().size.x - 0.01f, 0.1f);
+            _groundCheckSize = new Vector2(GetComponent<BoxCollider2D>().size.x - 0.05f, 0.1f);
             _rigidbody2D = GetComponent<Rigidbody2D>();
         }
 

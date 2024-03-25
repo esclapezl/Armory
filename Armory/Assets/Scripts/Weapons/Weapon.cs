@@ -141,9 +141,9 @@ namespace weapons
             GunKnockBackCoroutine = null;
         }
 
-        protected virtual void Shoot()
+        protected void Shoot()
         {
-            StartCoroutine(CameraShake.Shake(0.1f, playerRecoilForce/1000));
+            StartCoroutine(CameraShake.Shake(0.1f, playerRecoilForce/100));
             Collider2D hitCollider =
                 Physics2D.OverlapCircle(CannonTransform.position, 0.1f, Player.PlayerJump.whatIsGround);
             if (hitCollider == null)
@@ -154,6 +154,7 @@ namespace weapons
             NextFireTime = fireRate;
             AmmoDisplay.ToggleUidBullet(magazineSize - currentAmmo);
             currentAmmo--;
+            _inventory.InventoryUid.RefreshInventoryUid();
 
             KnockBack();
         }

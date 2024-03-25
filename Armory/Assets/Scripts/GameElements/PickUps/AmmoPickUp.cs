@@ -43,7 +43,7 @@ namespace GameElements.PickUps
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                Inventory inventory = ObjectSearch.FindChild(other.transform, ammoType.ToString()).GetComponent<Inventory>();
+                Inventory inventory = ObjectSearch.FindChildWithScript<Inventory>(other.transform);
                 PickUp(inventory);
             }
         }

@@ -40,25 +40,38 @@ namespace Player.Inventory
             _inventorySlots.Clear();
         }
 
+        public void StartInventoryUid()
+        {
+            RefreshInventoryUid();
+            if (_inventory.ActiveWeapons.Count > 0)
+            {
+                HighlightSlot(0);
+            }
+        }
+
         public void RefreshInventoryUid()
         {
             ClearInventoryUid();
             int index = 0;
             foreach (GameObject weaponObject in _inventory.ActiveWeapons)
             {
+                Weapon weapon = weaponObject.GetComponent<Weapon>();
+                int weaponAmmo = _inventory.GetAmmoForWeapon(weaponObject.name).ammo;
+                string weaponAmmoNumber = weaponAmmo < 100 ? weaponAmmo.ToString() : "+99";
                 CreateSlot(index).SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
-                    _inventory.GetAmmoForWeapon(weaponObject.name).ammo ,
-                    weaponObject.GetComponent<Weapon>().AmmoSprite);
+                    weaponAmmo.ToString(),
+                    weapon.AmmoSprite);
                 index++;
             }
-
+            
             if (_inventory.ActiveWeapons.Count > 0)
             {
                 //creates empty slot
                 CreateSlot(index);
-                HighlightSlot(0);
+                HighlightSlot(_inventory.CurrentWeapon);
             }
         }
+        
 
         private InventorySlotUid CreateSlot(int index)
         {

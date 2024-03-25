@@ -20,28 +20,28 @@ namespace Player.Inventory
             public int ammo;
         }
 
-        [NonSerialized] public WeaponAmmo[] ammoStock;
+        [NonSerialized] public WeaponAmmo[] AmmoStock;
 
-        [NonSerialized] private int _currentWeapon;
+        [NonSerialized] public int CurrentWeapon;
         [NonSerialized] private float _switchWeapon;
         [NonSerialized] private Transform _weaponsTransform;
         [NonSerialized] private PlayerMovements _playerMovements;
-        [NonSerialized] private InventoryUid _inventoryUid;
+        [NonSerialized] public InventoryUid InventoryUid;
 
         private void Awake()
         {
-            ammoStock = new WeaponAmmo[availableWeapons.Length];
+            AmmoStock = new WeaponAmmo[availableWeapons.Length];
             int i = 0;
             foreach (GameObject weapon in availableWeapons)
             {
                 WeaponAmmo weaponAmmo = new WeaponAmmo();
                 weaponAmmo.weaponName = weapon.name;
                 weaponAmmo.ammo = 0;
-                ammoStock[i] = weaponAmmo;
+                AmmoStock[i] = weaponAmmo;
                 i++;
             }
             
-            _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID")
+            InventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID")
                 .GetComponent<InventoryUid>();
             _playerMovements = ObjectSearch.FindParentWithScript<PlayerMovements>(transform);
             _weaponsTransform = ObjectSearch.FindChild(transform, "Weapons");
@@ -57,7 +57,7 @@ namespace Player.Inventory
         {
             if (ActiveWeapons.Count > 0 && _switchWeapon != 0)
             {
-                int targetWeapon = _currentWeapon + (int)_switchWeapon;
+                int targetWeapon = CurrentWeapon + (int)_switchWeapon;
                 targetWeapon %= ActiveWeapons.Count;
                 targetWeapon = targetWeapon < 0 ? ActiveWeapons.Count - 1 : targetWeapon;
                 ChangeWeapon(targetWeapon);
@@ -68,12 +68,12 @@ namespace Player.Inventory
 
         private void ChangeWeapon(int index)
         {
-            _inventoryUid.HighlightSlot(index);
-            GameObject currentWeapon = ActiveWeapons[_currentWeapon];
+            InventoryUid.HighlightSlot(index);
+            GameObject currentWeapon = ActiveWeapons[CurrentWeapon];
             GameObject targetWeapon = ActiveWeapons[index];
             ToggleWeapon(currentWeapon);
             ActivateWeapon(targetWeapon);
-            _currentWeapon = index;
+            CurrentWeapon = index;
         }
 
         private void ToggleWeapon(GameObject weapon)
@@ -131,10 +131,13 @@ namespace Player.Inventory
         {
             GameObject weapon = Instantiate(weaponPrefab, _weaponsTransform.position, Quaternion.identity, _weaponsTransform);
             weapon.name = weaponPrefab.name;
+            weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
             weapon.transform.parent = _weaponsTransform;
             ActiveWeapons.Add(weapon);
             weapon.SetActive(true);
             ToggleWeapon(weapon);
+            
+            GetAmmoForWeapon(weaponPrefab.name).ammo += ammo;
 
             Weapon weaponInfo = weapon.GetComponent<Weapon>();
             weaponInfo.GetComponent<AmmoDisplay>().SetDisplay();
@@ -151,12 +154,11 @@ namespace Player.Inventory
             
             if (ActiveWeapons.Count > 0)
             {
-                
-                _currentWeapon = 0;
+                CurrentWeapon = 0;
                 ActiveWeapons[0].GetComponent<AmmoDisplay>().DisplayAmmo();
                 ActivateWeapon(ActiveWeapons[0]);
                 _playerMovements.Armed = true;
-                _inventoryUid.RefreshInventoryUid();
+                InventoryUid.StartInventoryUid();
             }
             else
             {
@@ -166,7 +168,7 @@ namespace Player.Inventory
 
         public WeaponAmmo GetAmmoForWeapon(string weaponName)
         {
-            foreach (WeaponAmmo weaponAmmo in ammoStock)
+            foreach (WeaponAmmo weaponAmmo in AmmoStock)
             {
                 if (weaponAmmo.weaponName == weaponName)
                 {
@@ -178,12 +180,12 @@ namespace Player.Inventory
         
         public void PickUpAmmo(Ammo.AmmoType ammoType)
         {
-            GameObject activeWeapon = ActiveWeapons[_currentWeapon];
+            GameObject activeWeapon = ActiveWeapons[CurrentWeapon];
             string ammoName = ammoType.ToString();
             
             if (activeWeapon.name == ammoName)
             {
-                Weapon weapon = ActiveWeapons[_currentWeapon].GetComponent<Weapon>();
+                Weapon weapon = ActiveWeapons[CurrentWeapon].GetComponent<Weapon>();
                 if (weapon.active && weapon.currentAmmo < weapon.magazineSize)
                 {
                     weapon.currentAmmo++;
@@ -191,15 +193,20 @@ namespace Player.Inventory
                 }
                 else
                 {
-                    WeaponAmmo weaponAmmo = GetAmmoForWeapon(ammoName);
-                    weaponAmmo.ammo++;
+                    StoreAmmo(ammoName);
                 }
             }
             else
             {
-                WeaponAmmo weaponAmmo = GetAmmoForWeapon(ammoName);
-                weaponAmmo.ammo++;
+                StoreAmmo(ammoName);
             }
+        }
+
+        private void StoreAmmo(string ammoName)
+        {
+            WeaponAmmo weaponAmmo = GetAmmoForWeapon(ammoName);
+            weaponAmmo.ammo++;
+            InventoryUid.RefreshInventoryUid();
         }
     }
 }

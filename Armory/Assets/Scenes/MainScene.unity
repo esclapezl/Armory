@@ -624,11 +624,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: pistolAmmo
-      value: 999
+      value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 3059677041793742746, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: shotgunAmmo
-      value: 999
+      value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 6554218471368944902, guid: a18c44c2575f82f4da5302d5f34433fd, type: 3}
       propertyPath: m_Name
@@ -873,7 +873,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 4.5
+  m_GravityScale: 5.5
   m_Material: {fileID: 6200000, guid: 555ba5501e999f94898521d5a7c11783, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 128
-  jumpForce: 450
+  jumpForce: 550
   coyoteTimeDuration: 0.08
   jumpBufferDuration: 0.2
   jumpHoldTime: 0.2

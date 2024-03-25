@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 2ec599051624a074b90b84db2f8ba238, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -101,16 +101,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 0
   gunRecoil: 1
-  playerRecoilForce: 15
+  playerRecoilForce: 18
   playerRecoilBoostWhileEmbracingRecoil: 1.4
   playerRecoilDuration: 0.1
   bulletPrefab: {fileID: 1932262067096333803, guid: 5eb4ea674cededa4e8dfb4abed9e3b64, type: 3}
   magazineSize: 5
   currentAmmo: 5
-  totalAmmo: 994
   reloadTime: 0.5
   bulletSpeed: 15
   fireRate: 0.2
+  AmmoSprite: {fileID: 21300000, guid: 9a1e250fb10bb1e4c9a84baf1e7bcf50, type: 3}
 --- !u!114 &3422233997698789358
 MonoBehaviour:
   m_ObjectHideFlags: 0
