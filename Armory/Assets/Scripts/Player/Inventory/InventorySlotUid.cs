@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using Utils;
 
@@ -8,23 +9,28 @@ namespace Player.Inventory
     {
         [NonSerialized] public int SlotNumber;
         [NonSerialized] public Sprite WeaponSprite;
-        [NonSerialized] public int TotalAmmo;
+        [NonSerialized] public TextMeshPro TotalAmmoText;
+        [NonSerialized] public Sprite AmmoSprite;
         [NonSerialized] public bool Active;
 
         [SerializeField] public Sprite highlightSprite;
         [NonSerialized] private SpriteRenderer _highlightSpriteRenderer;
         [NonSerialized] private SpriteRenderer _weaponSpriteRenderer;
+        [NonSerialized] private SpriteRenderer _ammoSpriteRenderer;
 
         private void Awake()
         {
             _highlightSpriteRenderer = ObjectSearch.FindChild(transform, "Highlight").GetComponent<SpriteRenderer>();
             _weaponSpriteRenderer = ObjectSearch.FindChild(transform, "Weapon").GetComponent<SpriteRenderer>();
+            _ammoSpriteRenderer = ObjectSearch.FindChild(transform, "AmmoIcon").GetComponent<SpriteRenderer>();
+            TotalAmmoText = ObjectSearch.FindChild(transform, "AmmoNumber").GetComponent<TextMeshPro>();
         }
 
-        public void SetSlot(Sprite weaponSprite, int totalAmmo)
+        public void SetSlot(Sprite weaponSprite, int totalAmmo, Sprite ammoSprite)
         {
             _weaponSpriteRenderer.sprite = weaponSprite;
-            TotalAmmo = totalAmmo;
+            TotalAmmoText.text = totalAmmo.ToString();
+            _ammoSpriteRenderer.sprite = ammoSprite;
         }
 
         public void SetActive(bool active)
@@ -34,7 +40,7 @@ namespace Player.Inventory
 
         public void SetAmmo(int totalAmmo)
         {
-            TotalAmmo = totalAmmo;
+            TotalAmmoText.text = totalAmmo.ToString();
         }
 
         public void Highlight()

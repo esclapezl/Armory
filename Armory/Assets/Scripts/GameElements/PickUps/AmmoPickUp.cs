@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Player.Inventory;
 using UnityEngine;
 using Utils;
 using weapons;
@@ -42,14 +43,14 @@ namespace GameElements.PickUps
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                Weapon weapon = ObjectSearch.FindChild(other.transform, ammoType.ToString()).GetComponent<Weapon>();
-                PickUp(weapon);
+                Inventory inventory = ObjectSearch.FindChild(other.transform, ammoType.ToString()).GetComponent<Inventory>();
+                PickUp(inventory);
             }
         }
 
-        void PickUp(Weapon weapon)
+        void PickUp(Inventory inventory)
         {
-            weapon.PickUpAmmo(ammoType);
+            inventory.PickUpAmmo(ammoType);
             GetComponent<BoxCollider2D>().enabled = false;
             GetComponent<SpriteRenderer>().enabled = false;
         }

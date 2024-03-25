@@ -47,7 +47,8 @@ namespace Player.Inventory
             foreach (GameObject weaponObject in _inventory.ActiveWeapons)
             {
                 CreateSlot(index).SetSlot(weaponObject.GetComponent<SpriteRenderer>().sprite,
-                    weaponObject.GetComponent<Weapon>().totalAmmo);
+                    _inventory.GetAmmoForWeapon(weaponObject.name).ammo ,
+                    weaponObject.GetComponent<Weapon>().AmmoSprite);
                 index++;
             }
 

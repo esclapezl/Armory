@@ -29,6 +29,7 @@ namespace Weapons.Pistol
             }
 
             //refill mag
+            int totalAmmo = _inventory.GetAmmoForWeapon(transform.name).ammo;
             for (int i = currentAmmo; i < Mathf.Min(totalAmmo + currentAmmo, magazineSize); i++)
             {
                 AmmoDisplay.EnableBullet(magazineSize - i - 1);

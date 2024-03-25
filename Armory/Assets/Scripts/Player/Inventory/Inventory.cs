@@ -14,7 +14,13 @@ namespace Player.Inventory
     {
         [SerializeField] public GameObject[] availableWeapons;
         [NonSerialized] public List<GameObject> ActiveWeapons = new List<GameObject>();
-        [NonSerialized] private Dictionary<string, int> _ammoStock = new Dictionary<string, int>();
+        [Serializable] public class WeaponAmmo
+        {
+            public string weaponName;
+            public int ammo;
+        }
+
+        [NonSerialized] public WeaponAmmo[] ammoStock;
 
         [NonSerialized] private int _currentWeapon;
         [NonSerialized] private float _switchWeapon;
@@ -24,9 +30,15 @@ namespace Player.Inventory
 
         private void Awake()
         {
+            ammoStock = new WeaponAmmo[availableWeapons.Length];
+            int i = 0;
             foreach (GameObject weapon in availableWeapons)
             {
-                _ammoStock.Add(weapon.name, 0);
+                WeaponAmmo weaponAmmo = new WeaponAmmo();
+                weaponAmmo.weaponName = weapon.name;
+                weaponAmmo.ammo = 0;
+                ammoStock[i] = weaponAmmo;
+                i++;
             }
             
             _inventoryUid = ObjectSearch.FindChild(UnityEngine.Camera.main!.transform, "InventoryUID")
@@ -118,6 +130,7 @@ namespace Player.Inventory
         public void AddWeapon(GameObject weaponPrefab, int ammo)
         {
             GameObject weapon = Instantiate(weaponPrefab, _weaponsTransform.position, Quaternion.identity, _weaponsTransform);
+            weapon.name = weaponPrefab.name;
             weapon.transform.parent = _weaponsTransform;
             ActiveWeapons.Add(weapon);
             weapon.SetActive(true);
@@ -126,7 +139,6 @@ namespace Player.Inventory
             Weapon weaponInfo = weapon.GetComponent<Weapon>();
             weaponInfo.GetComponent<AmmoDisplay>().SetDisplay();
             weaponInfo.currentAmmo = Mathf.Min(weaponInfo.magazineSize, ammo);
-            weaponInfo.totalAmmo = ammo - weaponInfo.currentAmmo;
         }
 
         public void RefreshInventory()
@@ -149,6 +161,44 @@ namespace Player.Inventory
             else
             {
                 _playerMovements.Armed = false;
+            }
+        }
+
+        public WeaponAmmo GetAmmoForWeapon(string weaponName)
+        {
+            foreach (WeaponAmmo weaponAmmo in ammoStock)
+            {
+                if (weaponAmmo.weaponName == weaponName)
+                {
+                    return weaponAmmo;
+                }
+            }
+            throw new Exception("Weapon not found in armory");
+        }
+        
+        public void PickUpAmmo(Ammo.AmmoType ammoType)
+        {
+            GameObject activeWeapon = ActiveWeapons[_currentWeapon];
+            string ammoName = ammoType.ToString();
+            
+            if (activeWeapon.name == ammoName)
+            {
+                Weapon weapon = ActiveWeapons[_currentWeapon].GetComponent<Weapon>();
+                if (weapon.active && weapon.currentAmmo < weapon.magazineSize)
+                {
+                    weapon.currentAmmo++;
+                    weapon.AmmoDisplay.DisplayAmmo();
+                }
+                else
+                {
+                    WeaponAmmo weaponAmmo = GetAmmoForWeapon(ammoName);
+                    weaponAmmo.ammo++;
+                }
+            }
+            else
+            {
+                WeaponAmmo weaponAmmo = GetAmmoForWeapon(ammoName);
+                weaponAmmo.ammo++;
             }
         }
     }

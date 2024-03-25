@@ -37,7 +37,6 @@ namespace weapons
 
         [SerializeField] [Range(0, 100)] public int magazineSize;
         [SerializeField] public int currentAmmo;
-        [SerializeField] public int totalAmmo;
         [SerializeField] [Range(0, 10)] public float reloadTime;
         [SerializeField] [Range(0, 20)] public float bulletSpeed;
         [NonSerialized] public bool IsReloading;
@@ -47,12 +46,14 @@ namespace weapons
         public float fireRate;
 
         [NonSerialized] protected float NextFireTime;
-        [NonSerialized] private Inventory _inventory;
+        [NonSerialized] protected Inventory _inventory;
 
         [NonSerialized] protected Coroutine GunKnockBackCoroutine;
         [NonSerialized] public Coroutine ReloadCoroutine;
         
         [NonSerialized] protected CameraShake CameraShake;
+
+        [SerializeField] public Sprite AmmoSprite;
 
         private void Awake()
         {
@@ -88,7 +89,7 @@ namespace weapons
 
                 if ((currentAmmo == 0 || Input.GetButtonDown("Reload"))
                     && currentAmmo < magazineSize
-                    && totalAmmo > 0
+                    && _inventory.GetAmmoForWeapon(transform.name).ammo > 0
                     && Player.PlayerJump.Grounded)
                 {
                     if (ReloadCoroutine != null)
@@ -177,19 +178,6 @@ namespace weapons
         {
             AmmoDisplay.HideAmmo();
             gameObject.SetActive(false);
-        }
-
-        public void PickUpAmmo(Ammo.AmmoType ammoType)
-        {
-            if (active && currentAmmo < magazineSize)
-            {
-                currentAmmo++;
-                AmmoDisplay.DisplayAmmo();
-            }
-            else
-            {
-                totalAmmo++;
-            }
         }
     }
 }
