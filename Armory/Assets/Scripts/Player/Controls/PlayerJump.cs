@@ -29,6 +29,8 @@ namespace Player.Controls
 
         [Range(0, 1f)] [SerializeField] private float jumpHoldTime = 0.2f;
         [SerializeField] private float jumpHoldForce = 2f;
+        
+        [NonSerialized] Squishable _squishable;
 
         private float _jumpHold;
         private bool _holdingJump;
@@ -43,6 +45,8 @@ namespace Player.Controls
             _groundCheck = ObjectSearch.FindChild(transform, "GroundCheck");
             _groundCheckSize = new Vector2(GetComponent<BoxCollider2D>().size.x - 0.05f, 0.1f);
             _rigidbody2D = GetComponent<Rigidbody2D>();
+            
+            _squishable = GetComponent<Squishable>();
         }
 
         private void Update()
@@ -153,6 +157,7 @@ namespace Player.Controls
             _coyoteTime = 0;
             _jumpBuffer = 0;
             StartCoroutine(JumpCoroutine());
+            StartCoroutine(_squishable.Squish(0.3f, 0.7f, true));
         }
 
         private IEnumerator JumpCoroutine()
