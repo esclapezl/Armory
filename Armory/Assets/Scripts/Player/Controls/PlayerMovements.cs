@@ -1,5 +1,8 @@
 using System;
+using Effects;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Utils;
 using Weapons;
 
 namespace Player.Controls
@@ -12,7 +15,7 @@ namespace Player.Controls
         [NonSerialized] private Player _player;
         [NonSerialized] private WeaponMovements _weaponMovements;
 
-        [NonSerialized] private Transform _playerTransform;
+        [NonSerialized] private Transform _playerDirection;
         [NonSerialized] public bool FacingRight = true;
         [NonSerialized] public bool Armed = true;
         [SerializeField] private int runSpeed;
@@ -25,6 +28,10 @@ namespace Player.Controls
         [SerializeField] public float airControl;
         [NonSerialized] private Rigidbody2D _rigidbody2D;
         [NonSerialized] private Vector3 _velocity;
+        
+        [NonSerialized] private Squishable _squishable;
+        [SerializeField] private float runSquishSpeed;
+        [NonSerialized] private float _runSquishSpeedTimer;
 
         private void Awake()
         {
@@ -34,8 +41,10 @@ namespace Player.Controls
             _player = GetComponent<Player>();
             _weaponMovements = GetComponent<WeaponMovements>();
 
-            _playerTransform = transform.Find("PlayerObject");
+            _playerDirection = ObjectSearch.FindChild(transform, "PlayerDirection");
             _rigidbody2D = GetComponent<Rigidbody2D>();
+            
+            _squishable = GetComponent<Squishable>();
         }
 
         private void Update()
@@ -63,6 +72,7 @@ namespace Player.Controls
 
         public void MoveControl(float moveInput, bool armed)
         {
+            _runSquishSpeedTimer -= Time.deltaTime;
             if (_playerJump.Grounded || canAirControl)
             {
                 if (_playerCrouch.Crouching)
@@ -88,6 +98,11 @@ namespace Player.Controls
                     else
                     {
                         smoothingModifier *= enterMovementSmoothing;
+                        if (_runSquishSpeedTimer <= 0 && _playerJump.Grounded)
+                        {
+                            StartCoroutine(_squishable.GroundedSquish(runSquishSpeed, 0.5f, false));
+                            _runSquishSpeedTimer = runSquishSpeed;
+                        }
                     }
 
                     _rigidbody2D.velocity = Vector3.SmoothDamp(
@@ -110,9 +125,9 @@ namespace Player.Controls
         public void FlipPlayer()
         {
             FacingRight = !FacingRight;
-            Vector3 theScale = _playerTransform.localScale;
+            Vector3 theScale = _playerDirection.localScale;
             theScale.x *= -1;
-            _playerTransform.localScale = theScale;
+            _playerDirection.localScale = theScale;
         }
     }
 }

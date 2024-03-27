@@ -36,7 +36,7 @@ namespace Player
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _levelManager = ObjectSearch.FindRoot("GameManager").GetComponent<LevelManager>();
 
-            PlayerSprite = ObjectSearch.FindChild(transform, "PlayerObject");
+            PlayerSprite = ObjectSearch.FindChild(transform, "PlayerSprite");
             PlayerSpriteRenderer = PlayerSprite.GetComponent<SpriteRenderer>();
             PlayerFilterSpriteRenderer =
                 ObjectSearch.FindChild(transform, "PlayerFilter").GetComponent<SpriteRenderer>();

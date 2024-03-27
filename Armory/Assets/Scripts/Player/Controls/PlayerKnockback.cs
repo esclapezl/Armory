@@ -25,7 +25,7 @@ namespace Player.Controls
             _playerCrouch = GetComponent<PlayerCrouch>();
             _player = GetComponent<Player>();
 
-            _playerTransform = transform.Find("PlayerObject");
+            _playerTransform = transform.Find("PlayerSprite");
             Rigidbody2D = GetComponent<Rigidbody2D>();
         }
 

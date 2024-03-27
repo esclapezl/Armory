@@ -32,7 +32,7 @@ namespace Player.Controls
 
             _originalColliderSize = GetComponent<BoxCollider2D>().size;
             _originalColliderOffset = GetComponent<BoxCollider2D>().offset;
-            _playerTransform = transform.Find("PlayerObject");
+            _playerTransform = transform.Find("PlayerSprite");
             _inventoryTransform = transform.Find("Inventory");
             _ceilingCheck = ObjectSearch.FindChild(transform, "CeilingCheck");
             _ceillingCheckSize = new Vector2(0.1f, GetComponent<BoxCollider2D>().size.x);
